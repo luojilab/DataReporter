@@ -28,15 +28,15 @@ Choose [Android](#android) or [iOS](#apple)
 
 ## Source Compile
 Preparation Condition:
-1.AndroidStudio3.1 And above
-2.android-ndk-r14b And above
+1. AndroidStudio3.1 And above
+2. android-ndk-r14b And above
 
 step:
-1.Use AndroidStuido open build/android in the source path
-2.open File menu on AndroidStudio and build Structure menu
-3.config the NDK path on the Android NDK location
-4.run the datareporter release compile task
-5.the Generated datareporter-release.aar use for your build
+1. Use AndroidStuido open build/android in the source path
+2. open File menu on AndroidStudio and build Structure menu
+3. config the NDK path on the Android NDK location
+4. run the datareporter release compile task
+5. the Generated datareporter-release.aar use for your build
 
 ## Way of use
 
@@ -133,18 +133,18 @@ step:
 ### <a name="apple">[iOS]()</a>
 
 ## use static library
-1.Copy the static library file corresponding to the architecture under release\iOS to the application build.
-2.Refer to the following call mode to access
+1. Copy the static library file corresponding to the architecture under release\iOS to the application build.
+2. Refer to the following call mode to access
 
 Preparation Condition:
-1.xcode last version
-2.cmake last version
+1. xcode last version
+2. cmake last version
 
 step:
 1. Use the terminal to enter the build\iOS directory in the build.
-a) Compile the real machine library and execute the static library file generated after the build_os_arch.sh execution. libdata-reporter.a in the build folder.
-b) Compile the emulator library to execute the build_x86_64.sh static library file generated after execution in the build folder libdata-reporter.a
-c) Generate debug build execution generate_project.sh will generate debug xcode build after execution, build file in build folder
+2. Compile the real machine library and execute the static library file generated after the build_os_arch.sh execution. libdata-reporter.a in the build folder.
+3. Compile the emulator library to execute the build_x86_64.sh static library file generated after execution in the build folder libdata-reporter.a
+4. Generate debug build execution generate_project.sh will generate debug xcode build after execution, build file in build folder
 
 ## way of use
 
@@ -276,20 +276,20 @@ demo 的使用请参考[这里]()。
 
 ### <a name="android_cn">[Android]()</a>
 ## aar接入
-1.导入项目目录release\Android中的aar到应用的项目中
-2.按照下面的调用方式接入
+1. 导入项目目录release\Android中的aar到应用的项目中
+2. 按照下面的调用方式接入
 
 ## 源码编译
 准备条件：
-1.AndroidStudio3.1及以上版本
-2.android-ndk-r14b及以上版本
+1. AndroidStudio3.1及以上版本
+2. android-ndk-r14b及以上版本
 
 步骤：
-1.AndroidStuido打开源码路径project/android AndroidStuido项目文件
-2.打开AndroidStudio中File菜单，Project Structure菜单
-3.在Android NDK location中配置NDK位置
-4.在AndroidStuido中的Gradle菜单中找到位于Android菜单下的datareporter，在Tasks中找到build，选择assembleRelease进行编译。
-5.生成datareporter-release.aar 导入到项目中进行使用
+1. AndroidStuido打开源码路径project/android AndroidStuido项目文件
+2. 打开AndroidStudio中File菜单，Project Structure菜单
+3. 在Android NDK location中配置NDK位置
+4. 在AndroidStuido中的Gradle菜单中找到位于Android菜单下的datareporter，在Tasks中找到build，选择assembleRelease进行编译。
+5. 生成datareporter-release.aar 导入到项目中进行使用
 
 ## 调用方式
 
@@ -387,19 +387,19 @@ demo 的使用请参考[这里]()。
 ### <a name="apple_cn">[iOS]()</a>
 
 ## 库接入
-1.拷贝release\iOS下对应架构的静态库文件导入到应用项目
-2.参照下面的调用方式接入
+1. 拷贝release\iOS下对应架构的静态库文件导入到应用项目
+2. 参照下面的调用方式接入
 
 ## 源码编译
 准备条件：
-1.xcode最新版本
-2.cmake最新版本
+1. xcode最新版本
+2. cmake最新版本
 
 步骤：
-1.使用终端进入项目中project\iOS目录
-a)编译真机版本库执行 build_os_arch.sh 执行后生成的静态库文件在build文件夹下libdata-reporter.a
-b)编译模拟器版本库执行 build_x86_64.sh 执行后生成的静态库文件在build文件夹下libdata-reporter.a
-c)生成调试工程执行 generate_project.sh 执行后会生成调试的xcode工程，工程文件在build文件夹下
+1. 使用终端进入项目中project\iOS目录
+2. 编译真机版本库执行 build_os_arch.sh 执行后生成的静态库文件在build文件夹下libdata-reporter.a
+3. 编译模拟器版本库执行 build_x86_64.sh 执行后生成的静态库文件在build文件夹下libdata-reporter.a
+4. 生成调试工程执行 generate_project.sh 执行后会生成调试的xcode工程，工程文件在build文件夹下
 
 ## 调用方式
 
