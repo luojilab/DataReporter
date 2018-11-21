@@ -9,11 +9,11 @@
 DataReporter is a cross-platform infrastructure component developed by luojisiwei dedao ebook Team.
 It is proved to be effective by tens of millions of dedao users.
 
-# 1. Cross platform, easy to deploy if you are developing multi-platform or multi-business application.
-# 2. Suitable for Real-time reporting of data.
-# 3. Anti-data loss.
-# 4. Orderly reporting of data.
-# 5. Mobile platform friendly, low power.
+#### 1. Cross platform, easy to deploy if you are developing multi-platform or multi-business application.
+#### 2. Suitable for Real-time reporting of data.
+#### 3. Anti-data loss.
+#### 4. Orderly reporting of data.
+#### 5. Mobile platform friendly, low power.
 
 ## Samples
 Start with sample usage [here](https://github.com/luojilab/DataReporter/tree/master/sample).
@@ -23,20 +23,20 @@ Choose [Android](#android) or [iOS](#apple)
 
 ### <a name="android">[Android]()</a>
 ## Use AAR
-# 1.import the aar at release\Android dir
-# 2.see Way of use to how to use
+#### 1.import the aar at release\Android dir
+#### 2.see Way of use to how to use
 
 ## Source Compile
-# Preparation Condition:
-# 1.AndroidStudio3.1 And above
-# 2.android-ndk-r14b And above
+#### Preparation Condition:
+#### 1.AndroidStudio3.1 And above
+#### 2.android-ndk-r14b And above
 
-# step:
-# 1.Use AndroidStuido open build/android in the source path
-# 2.open File menu on AndroidStudio and build Structure menu
-# 3.config the NDK path on the Android NDK location
-# 4.run the datareporter release compile task
-# 5.the Generated datareporter-release.aar use for your build
+#### step:
+#### 1.Use AndroidStuido open build/android in the source path
+#### 2.open File menu on AndroidStudio and build Structure menu
+#### 3.config the NDK path on the Android NDK location
+#### 4.run the datareporter release compile task
+#### 5.the Generated datareporter-release.aar use for your build
 
 ## Way of use
 
@@ -133,18 +133,18 @@ Choose [Android](#android) or [iOS](#apple)
 ### <a name="apple">[iOS]()</a>
 
 ## use static library
-# 1.Copy the static library file corresponding to the architecture under release\iOS to the application build.
-# 2.Refer to the following call mode to access
+#### 1.Copy the static library file corresponding to the architecture under release\iOS to the application build.
+#### 2.Refer to the following call mode to access
 
-# Preparation Condition:
-# 1.xcode last version
-# 2.cmake last version
+#### Preparation Condition:
+#### 1.xcode last version
+#### 2.cmake last version
 
-# step:
-# 1. Use the terminal to enter the build\iOS directory in the build.
-# a) Compile the real machine library and execute the static library file generated after the build_os_arch.sh execution. libdata-reporter.a in the build folder.
-# b) Compile the emulator library to execute the build_x86_64.sh static library file generated after execution in the build folder libdata-reporter.a
-# c) Generate debug build execution generate_project.sh will generate debug xcode build after execution, build file in build folder
+#### step:
+#### 1. Use the terminal to enter the build\iOS directory in the build.
+#### a) Compile the real machine library and execute the static library file generated after the build_os_arch.sh execution. libdata-reporter.a in the build folder.
+#### b) Compile the emulator library to execute the build_x86_64.sh static library file generated after execution in the build folder libdata-reporter.a
+#### c) Generate debug build execution generate_project.sh will generate debug xcode build after execution, build file in build folder
 
 ## way of use
 
@@ -259,11 +259,11 @@ DataReporter 是基于mmap的数据实时上报组件
 主要用于数据的高性能实时上报，网络情况不好时，数据会缓存到本地。网络状态转好，马上上报。保证数据顺序上报。防数据丢失，即使应用发生崩溃，缓存数据不会丢失。
 
 ## 特点：
-# 1.跨平台，DataReporter是跨平台实现，适用于Android和iOS。
-# 2.准实时上报，网络状态好，直接上报，网络状态不好在网络转好后上报，同时上报顺序不乱序。
-# 3.不丢数据，采用mmap实现缓冲区。即使发生应用crash或者进程被杀，数据不会丢失，下次启动会再次上报。
-# 4.低功耗，采用c++实现，整个上报共用一个线程，多实例多业务场景共用同一线程，当数据全部上报完成后，线程休眠。
-# 5.高效率，可配置一次上报数据条数。增加上报效率。有效利用网络。减少链接次数。同时采用native方式实现，性能方面更优秀。
+#### 1.跨平台，DataReporter是跨平台实现，适用于Android和iOS。
+#### 2.准实时上报，网络状态好，直接上报，网络状态不好在网络转好后上报，同时上报顺序不乱序。
+#### 3.不丢数据，采用mmap实现缓冲区。即使发生应用crash或者进程被杀，数据不会丢失，下次启动会再次上报。
+#### 4.低功耗，采用c++实现，整个上报共用一个线程，多实例多业务场景共用同一线程，当数据全部上报完成后，线程休眠。
+#### 5.高效率，可配置一次上报数据条数。增加上报效率。有效利用网络。减少链接次数。同时采用native方式实现，性能方面更优秀。
 
 ## 原理
 数据通过调用接口进入DataReporter，先缓存到数据缓冲区，缓冲区实现是mmap，即使发生crash数据不丢失。然后启动线程进行上报。上报开始调用上报接口。成功后调用者通知上报完成，开始进行下一批数据上报。当上层调用过快，缓冲区数据达到指定阈值，数据开始下沉写入文件。写文件缓冲区同样采用mmap实现，防止数据丢失。上报优先级是先取文件数据，然后再取内存数据。保证数据顺序与调用顺序相同。
@@ -276,20 +276,20 @@ demo 的使用请参考[这里]()。
 
 ### <a name="android_cn">[Android]()</a>
 ## aar接入
-1.导入项目目录release\Android中的aar到应用的项目中
-2.按照下面的调用方式接入
+#### 1.导入项目目录release\Android中的aar到应用的项目中
+#### 2.按照下面的调用方式接入
 
 ## 源码编译
 准备条件：
-1.AndroidStudio3.1及以上版本
-2.android-ndk-r14b及以上版本
+#### 1.AndroidStudio3.1及以上版本
+#### 2.android-ndk-r14b及以上版本
 
-步骤：
-1.AndroidStuido打开源码路径project/android AndroidStuido项目文件
-2.打开AndroidStudio中File菜单，Project Structure菜单
-3.在Android NDK location中配置NDK位置
-4.在AndroidStuido中的Gradle菜单中找到位于Android菜单下的datareporter，在Tasks中找到build，选择assembleRelease进行编译。
-5.生成datareporter-release.aar 导入到项目中进行使用
+#### 步骤：
+#### 1.AndroidStuido打开源码路径project/android AndroidStuido项目文件
+#### 2.打开AndroidStudio中File菜单，Project Structure菜单
+#### 3.在Android NDK location中配置NDK位置
+#### 4.在AndroidStuido中的Gradle菜单中找到位于Android菜单下的datareporter，在Tasks中找到build，选择assembleRelease进行编译。
+#### 5.生成datareporter-release.aar 导入到项目中进行使用
 
 ## 调用方式
 
@@ -387,19 +387,19 @@ demo 的使用请参考[这里]()。
 ### <a name="apple_cn">[iOS]()</a>
 
 ## 库接入
-1.拷贝release\iOS下对应架构的静态库文件导入到应用项目
-2.参照下面的调用方式接入
+#### 1.拷贝release\iOS下对应架构的静态库文件导入到应用项目
+#### 2.参照下面的调用方式接入
 
 ## 源码编译
 准备条件：
-1.xcode最新版本
-2.cmake最新版本
+#### 1.xcode最新版本
+#### 2.cmake最新版本
 
-步骤：
-1.使用终端进入项目中project\iOS目录
-a)编译真机版本库执行 build_os_arch.sh 执行后生成的静态库文件在build文件夹下libdata-reporter.a
-b)编译模拟器版本库执行 build_x86_64.sh 执行后生成的静态库文件在build文件夹下libdata-reporter.a
-c)生成调试工程执行 generate_project.sh 执行后会生成调试的xcode工程，工程文件在build文件夹下
+#### 步骤：
+#### 1.使用终端进入项目中project\iOS目录
+#### a)编译真机版本库执行 build_os_arch.sh 执行后生成的静态库文件在build文件夹下libdata-reporter.a
+#### b)编译模拟器版本库执行 build_x86_64.sh 执行后生成的静态库文件在build文件夹下libdata-reporter.a
+#### c)生成调试工程执行 generate_project.sh 执行后会生成调试的xcode工程，工程文件在build文件夹下
 
 ## 调用方式
 
