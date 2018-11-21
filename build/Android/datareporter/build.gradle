@@ -1,0 +1,87 @@
+apply plugin: 'com.android.library'
+apply plugin: 'maven-publish'
+apply plugin: 'maven'
+
+android {
+    compileSdkVersion 28
+
+
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0.5"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        externalNativeBuild {
+            cmake {
+                cppFlags "-std=c++1y",
+                        "-fPIC",
+                        "-Oz", //gcc use Os
+                        "-DNDEBUG",
+                        "-fvisibility=hidden",
+                        "-llog",
+                        //"-latomic", //gcc use
+                        "-march=armv7-a",
+                        "-mfloat-abi=softfp",
+                        "-mfpu=vfpv3-d16",
+                        "-ffunction-sections -fdata-sections"
+                cFlags "-fvisibility=hidden"
+
+                abiFilters "armeabi-v7a"
+                arguments '-DANDROID_ARM_NEON=TRUE',
+                        '-DANDROID_PLATFORM=android-17',
+                        '-DANDROID_TOOLCHAIN=clang', '-DANDROID_STL=gnustl_static',
+                        '-DANDROID_ABI=armeabi-v7a', "-DCMAKE_BUILD_TYPE=Release"
+            }
+        }
+
+        ndk {
+            // 设置支持的 SO 库架构，注意这里要根据你的实际情况来设置
+            abiFilters 'armeabi-v7a'
+            //''armeabi','armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64', 'mips', 'mips64'
+        }
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "../../../../DataReporter/src/CMakeLists.txt"
+        }
+    }
+
+    android.libraryVariants.all { variant ->
+        variant.outputs.all {
+            def date = new Date().format("yyyyMMdd", TimeZone.getTimeZone("GMT+08"))
+            def outFileName = outputFileName.toString()
+            outFileName = outFileName.replace(".aar","")
+            if (variant.buildType.name.equals('debug')) {
+                outputFileName = "${outFileName}_${defaultConfig.versionName}.aar"
+            }
+            if (variant.buildType.name.equals('release')) {
+                outputFileName = "${outFileName}_${defaultConfig.versionName}.aar"
+            }
+        }
+    }
+
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
+
