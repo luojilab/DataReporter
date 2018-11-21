@@ -128,7 +128,7 @@ step:
 ##Note: After calling this method, you can not call any of the above methods. Because the instance has been released
 	
 ##Confused configuration
--keep class com.iget.datareporter {*;}
+-keep class com.iget.datareporter.**{*;}
 
 ### <a name="apple">[iOS]()</a>
 
@@ -381,7 +381,7 @@ demo 的使用请参考[这里]()。
 ##注意：调用该方法后，不可以再调用以上任何方法。因为实例已经释放
 	
 ##混淆配置
--keep class com.iget.datareporter {*;}
+-keep class com.iget.datareporter.**{*;}
 
 
 ### <a name="apple_cn">[iOS]()</a>
@@ -512,7 +512,7 @@ c)生成调试工程执行 generate_project.sh 执行后会生成调试的xcode�
 
 还有其他问题？
 
-1. 参看 [DataReporter/sample](https://github.com/luojilab/DataReporter/tree/master/build)；
+1. 参看 [DataReporter/sample](https://github.com/luojilab/DataReporter/tree/master/sample)；
 2. 阅读 [源码](https://github.com/luojilab/DataReporter/tree/master/src)；
 3. 阅读 [wiki](https://github.com/luojilab/DataReporter/wiki)；
 4. 联系我们。得到电子书技术组
