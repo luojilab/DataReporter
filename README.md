@@ -16,17 +16,17 @@ It is proved to be effective by tens of millions of dedao users.
 5. Mobile platform friendly, low power.
 
 ## Samples
-Start with sample usage [here]().
+Start with sample usage [here](https://github.com/luojilab/DataReporter/tree/master/sample).
 
 ## Getting started
 Choose [Android](#android) or [iOS](#apple)
 
 ### <a name="android">[Android]()</a>
-##Use AAR
+## Use AAR
 1.import the aar at release\Android dir
 2.see Way of use to how to use
 
-##Source Compile
+## Source Compile
 Preparation Condition:
 1.AndroidStudio3.1 And above
 2.android-ndk-r14b And above
@@ -125,14 +125,14 @@ step:
     public static native void releaseReporter(int nativeReporter);
 	
 	The method is to release the report instance method. When the report function is no longer used, the method is called to release the report instance.
-##Note: After calling this method, you can not call any of the above methods. Because the instance has been released
+## Note: After calling this method, you can not call any of the above methods. Because the instance has been released
 	
-##Confused configuration
+## Confused configuration
 -keep class com.iget.datareporter.**{*;}
 
 ### <a name="apple">[iOS]()</a>
 
-##use static library
+## use static library
 1.Copy the static library file corresponding to the architecture under release\iOS to the application build.
 2.Refer to the following call mode to access
 
@@ -251,7 +251,7 @@ After the network is unavailable or other scenarios cause the network to fail, t
 */
 + (void)ReleaseReporter:(void *)nativeReporter;
 The method is to release the report instance method. When the report function is no longer used, the method is called to release the report instance.
-##Note: After calling this method, you can no longer call any of the above methods. Because the instance has been released
+## Note: After calling this method, you can no longer call any of the above methods. Because the instance has been released
 
 ## <a name="data_reporter_cn">DataReporter</a>
 
@@ -265,7 +265,7 @@ DataReporter 是基于mmap的数据实时上报组件
 4.低功耗，采用c++实现，整个上报共用一个线程，多实例多业务场景共用同一线程，当数据全部上报完成后，线程休眠。
 5.高效率，可配置一次上报数据条数。增加上报效率。有效利用网络。减少链接次数。同时采用native方式实现，性能方面更优秀。
 
-##原理
+## 原理
 数据通过调用接口进入DataReporter，先缓存到数据缓冲区，缓冲区实现是mmap，即使发生crash数据不丢失。然后启动线程进行上报。上报开始调用上报接口。成功后调用者通知上报完成，开始进行下一批数据上报。当上层调用过快，缓冲区数据达到指定阈值，数据开始下沉写入文件。写文件缓冲区同样采用mmap实现，防止数据丢失。上报优先级是先取文件数据，然后再取内存数据。保证数据顺序与调用顺序相同。
 
 demo 的使用请参考[这里]()。
@@ -275,11 +275,11 @@ demo 的使用请参考[这里]()。
 接入 [Android](#android_cn) 或者 [iOS](#apple_cn)
 
 ### <a name="android_cn">[Android]()</a>
-##aar接入
+## aar接入
 1.导入项目目录release\Android中的aar到应用的项目中
 2.按照下面的调用方式接入
 
-##源码编译
+## 源码编译
 准备条件：
 1.AndroidStudio3.1及以上版本
 2.android-ndk-r14b及以上版本
@@ -378,19 +378,19 @@ demo 的使用请参考[这里]()。
      */
     public static native void releaseReporter(int nativeReporter);
 	该方法为释放上报实例方法，当上报功能不再使用，调用该方法，释放上报实例。
-##注意：调用该方法后，不可以再调用以上任何方法。因为实例已经释放
+## 注意：调用该方法后，不可以再调用以上任何方法。因为实例已经释放
 	
-##混淆配置
+## 混淆配置
 -keep class com.iget.datareporter.**{*;}
 
 
 ### <a name="apple_cn">[iOS]()</a>
 
-##库接入
+## 库接入
 1.拷贝release\iOS下对应架构的静态库文件导入到应用项目
 2.参照下面的调用方式接入
 
-##源码编译
+## 源码编译
 准备条件：
 1.xcode最新版本
 2.cmake最新版本
@@ -517,7 +517,7 @@ c)生成调试工程执行 generate_project.sh 执行后会生成调试的xcode�
 3. 阅读 [wiki](https://github.com/luojilab/DataReporter/wiki)；
 4. 联系我们。得到电子书技术组
 
-##致谢：
+## 致谢：
 感谢腾讯团队开源的MMKV项目。本项目借鉴了部分源码。
 感谢开源。
 
