@@ -39,6 +39,22 @@ MakeReporter(JNIEnv *env, jobject obj, jstring uuid, jstring cachePath, jobject 
     return (jint) reporter;
 }
 
+static void SetReportCount(JNIEnv *env, jobject obj, jint nativeReporter, jint count) {
+    future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);
+    if (reporter == NULL) {
+        return;
+    }
+    reporter->SetUploadItemSize((int) count);
+}
+
+static void SetFileMaxSize(JNIEnv *env, jobject obj, jint nativeReporter, jint fileMaxSize) {
+    future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);
+    if (reporter == NULL) {
+        return;
+    }
+    reporter->SetFileMaxSize(fileMaxSize);
+}
+
 static void Start(JNIEnv *env, jobject obj, jint nativeReporter) {
     future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);
     if (reporter == NULL) {
@@ -62,22 +78,6 @@ static void Push(JNIEnv *env, jobject obj, jint nativeReporter, jstring data) {
     }
     std::string dataCstr = AndroidUtil::fromJavaString(env, data);
     reporter->Push(dataCstr);
-}
-
-static void SetReportCount(JNIEnv *env, jobject obj, jint nativeReporter, jint count) {
-    future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);
-    if (reporter == NULL) {
-        return;
-    }
-    reporter->SetUploadItemSize((int) count);
-}
-
-static void SetFileMaxSize(JNIEnv *env, jobject obj, jint nativeReporter, jint fileMaxSize) {
-    future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);
-    if (reporter == NULL) {
-        return;
-    }
-    reporter->SetFileMaxSize(fileMaxSize);
 }
 
 static void UploadSucess(JNIEnv *env, jobject obj, jint nativeReporter, jlong key) {
@@ -106,11 +106,11 @@ static void ReleaseReporter(JNIEnv *env, jobject obj, jint nativeReporter) {
 
 static JNINativeMethod gJavaDataReporterMethods[] = {
         {"makeReporter",    "(Ljava/lang/String;Ljava/lang/String;Lcom/iget/datareporter/IReport;)I", (void *) MakeReporter},
+        {"setReportCount",  "(II)V",                                                                  (void *) SetReportCount},
+        {"setFileMaxSize",  "(II)V",                                                                  (void *) SetFileMaxSize},
         {"start",           "(I)V",                                                                   (void *) Start},
         {"reaWaken",        "(I)V",                                                                   (void *) ReaWaken},
         {"push",            "(ILjava/lang/String;)V",                                                 (void *) Push},
-        {"setReportCount",  "(II)V",                                                                  (void *) SetReportCount},
-        {"setFileMaxSize",  "(II)V",                                                                  (void *) SetFileMaxSize},
         {"uploadSucess",    "(IJ)V",                                                                  (void *) UploadSucess},
         {"uploadFailed",    "(IJ)V",                                                                  (void *) UploadFailed},
         {"releaseReporter", "(I)V",                                                                   (void *) ReleaseReporter},

@@ -23,8 +23,8 @@ Choose [Android](#android) or [iOS](#apple)
 
 ### <a name="android">[Android]()</a>
 ## Use AAR
-1.import the aar at release\Android dir
-2.see Way of use to how to use
+1. import the aar at release\Android dir
+2. see Way of use to how to use
 
 ## Source Compile
 Preparation Condition:
@@ -52,6 +52,24 @@ step:
 	This method is used to create a DataReporter instance. This method is used to create an escalation instance.
 	Different businesses can create different instances without worrying about performance consumption because all instances share a single reporting thread.
 	
+    /**
+     * Set the number of data to be reported in a single time, and call it before start
+     *
+     * @param nativeReporter return by makeReporter
+     * @param count          Number of data reported at one time
+     */
+    public static native void setReportCount(int nativeReporter, int count);
+    The method is to set the amount of data reported once, for example, set to 5, which is that the data sent by the reporting interface is spit out every 5 times.
+	This method can not be called, the default value is 5
+	
+    /**
+     * Set the maximum size limit of the cache file single file, the default value is 10k
+     *
+     * @param nativeReporter return by makeReporter
+     * @param fileMaxSize    Cache file maximum size
+     */
+    public static native void setFileMaxSize(int nativeReporter, int fileMaxSize);
+	This method is to set the cache file single file size limit, can not be called, the default value is 10k
 
     /**
      * Start reporting thread After setting the relevant parameters, execute it once.
@@ -78,25 +96,6 @@ step:
      */
     public static native void push(int nativeReporter, String data);
 	The method is a call interface for reporting, data is data to be reported, and the data needs to be a string type.
-
-    /**
-     * Set the number of data to be reported in a single time, and call it before start
-     *
-     * @param nativeReporter return by makeReporter
-     * @param count          Number of data reported at one time
-     */
-    public static native void setReportCount(int nativeReporter, int count);
-    The method is to set the amount of data reported once, for example, set to 5, which is that the data sent by the reporting interface is spit out every 5 times.
-	This method can not be called, the default value is 5
-	
-    /**
-     * Set the maximum size limit of the cache file single file, the default value is 10k
-     *
-     * @param nativeReporter return by makeReporter
-     * @param fileMaxSize    Cache file maximum size
-     */
-    public static native void setFileMaxSize(int nativeReporter, int fileMaxSize);
-	This method is to set the cache file single file size limit, can not be called, the default value is 10k
 
     /**
      * Call this method after the report is successful
@@ -161,18 +160,7 @@ step:
            uploadBlock:(void(^)(int64_t key,
                                 NSArray *dataArray))uploadBlock;
 This method is used to create a DataReporter instance. This method is used to create an escalation instance.
-Different businesses can create different instances without worrying about performance consumption because all instances share a single reporting thread.
-
-								
-/**
-* Data reporting call interface
-*
-* @param nativeReporter The value returned by makeReporter
-* @param data           Data to be reported
-*/
-+ (void)Push:(void *)nativeReporter
-        data:(NSString *)data;
-The method is a call interface that is reported, data is data that needs to be reported, and the data needs to be a string type.	
+Different businesses can create different instances without worrying about performance consumption because all instances share a single reporting thread.	
     
 /**
 * Set the number of data to be reported in a single time, and call it before start
@@ -184,7 +172,43 @@ The method is a call interface that is reported, data is data that needs to be r
                  count:(NSInteger)count;
 The method is to set the amount of data reported once, for example, set to 5, which is that the data sent by the reporting interface is spit out every 5 times.
 This method can not be called, the default value is 5
-    
+
+/**
+* Set the maximum size limit of the cache file single file, the default value is 10k
+*
+* @param nativeReporter The value returned by makeReporter
+* @param fileMaxSize    Cache file maximum size
+*/				 
++ (void)SetFileMaxSize:(void *)nativeReporter
+           fileMaxSize:(NSUInteger)fileMaxSize;
+This method is to set the cache file single file size limit, can not be called, the default value is 10k
+
+/**
+* Start reporting thread After setting the relevant parameters, execute it once.
+*
+* @param nativeReporter The value returned by makeReporter
+*/
++ (void)Start:(void *)nativeReporter;
+The method is to start reporting threads. After creating the instance, set the corresponding parameters and call
+
+/**
+* Wake up the report, call when the network status is good or other wake up scene call
+*
+* @param nativeReporter The value returned by makeReporter
+*/		   
++ (void)ReaWaken:(void *)nativeReporter;
+After the network is unavailable or other scenarios cause the network to fail, the method is called after the network is restored, and the logic is triggered again.
+   
+/**
+* Data reporting call interface
+*
+* @param nativeReporter The value returned by makeReporter
+* @param data           Data to be reported
+*/
++ (void)Push:(void *)nativeReporter
+        data:(NSString *)data;
+The method is a call interface that is reported, data is data that needs to be reported, and the data needs to be a string type.   
+   
 /**
 * Call this method after the report is successful
 *
@@ -204,45 +228,7 @@ The method is a method that is called after the report is successful, and the me
 */
 + (void)UploadFailed:(void *)nativeReporter
                  key:(NSInteger)key;
-The method is called after the report fails, and the method is called after the data fails to be reported through the network. Notify Reporter data report failure
-	
-
-/**
-* Start reporting thread After setting the relevant parameters, execute it once.
-*
-* @param nativeReporter The value returned by makeReporter
-*/
-+ (void)Start:(void *)nativeReporter;
-The method is to start reporting threads. After creating the instance, set the corresponding parameters and call
-
-/**
-* Set the number of data to be reported in a single time, and call it before start
-*
-* @param nativeReporter The value returned by makeReporter
-* @param itemSize          Number of data reported at one time
-*/
-+ (void)SetUploadItemSize:(void *)nativeReporter
-                 itemSize:(NSUInteger)itemSize;
-The method is to set the amount of data reported once, for example, set to 5, which is that the data sent by the reporting interface is spit out every 5 times.
-This method can not be called, the default value is 5
-				 
-/**
-* Set the maximum size limit of the cache file single file, the default value is 10k
-*
-* @param nativeReporter The value returned by makeReporter
-* @param fileMaxSize    Cache file maximum size
-*/				 
-+ (void)SetFileMaxSize:(void *)nativeReporter
-           fileMaxSize:(NSUInteger)fileMaxSize;
-This method is to set the cache file single file size limit, can not be called, the default value is 10k
-
-/**
-* Wake up the report, call when the network status is good or other wake up scene call
-*
-* @param nativeReporter The value returned by makeReporter
-*/		   
-+ (void)ReaWaken:(void *)nativeReporter;
-After the network is unavailable or other scenarios cause the network to fail, the method is called after the network is restored, and the logic is triggered again.
+The method is called after the report fails, and the method is called after the data fails to be reported through the network. Notify Reporter data report failure   
    
 /**
 * Release the report instance, other methods can not be called after release
@@ -306,6 +292,24 @@ demo 的使用请参考[这里]()。
 	该方法是创建DataReporter实例的方法，通过该方法创建上报实例。
 	不同的业务可以创建不同的实例，不必担心性能消耗，因为所有实例共用一个上报线程
 	
+    /**
+     * 设置单次上报的数据条数，在start之前调用
+     *
+     * @param nativeReporter 由makeReporter返回的值
+     * @param count          一次上报的数据条数
+     */
+    public static native void setReportCount(int nativeReporter, int count);
+    该方法是设置一次上报的数据数量，例如设置为5，这是上报接口吐出的数据就是按5条每次吐出。
+	该方法可以不调用，默认值为5
+	
+    /**
+     * 设置缓存文件单文件最大大小限制，默认值为10k
+     *
+     * @param nativeReporter 由makeReporter返回的值
+     * @param fileMaxSize    缓存文件最大大小
+     */
+    public static native void setFileMaxSize(int nativeReporter, int fileMaxSize);
+	该方法为设置缓存文件单文件大小限制，可不调用，默认值为10k
 
     /**
      * 开始上报线程 设置完相关参数之后，执行一次。
@@ -332,25 +336,6 @@ demo 的使用请参考[这里]()。
      */
     public static native void push(int nativeReporter, String data);
 	该方法为上报的调用接口，data为需要上报的数据，数据需要是字符串类型
-
-    /**
-     * 设置单次上报的数据条数，在start之前调用
-     *
-     * @param nativeReporter 由makeReporter返回的值
-     * @param count          一次上报的数据条数
-     */
-    public static native void setReportCount(int nativeReporter, int count);
-    该方法是设置一次上报的数据数量，例如设置为5，这是上报接口吐出的数据就是按5条每次吐出。
-	该方法可以不调用，默认值为5
-	
-    /**
-     * 设置缓存文件单文件最大大小限制，默认值为10k
-     *
-     * @param nativeReporter 由makeReporter返回的值
-     * @param fileMaxSize    缓存文件最大大小
-     */
-    public static native void setFileMaxSize(int nativeReporter, int fileMaxSize);
-	该方法为设置缓存文件单文件大小限制，可不调用，默认值为10k
 
     /**
      * 上报成功后调用该方法
@@ -416,18 +401,7 @@ demo 的使用请参考[这里]()。
            uploadBlock:(void(^)(int64_t key,
                                 NSArray *dataArray))uploadBlock;
 该方法是创建DataReporter实例的方法，通过该方法创建上报实例。
-不同的业务可以创建不同的实例，不必担心性能消耗，因为所有实例共用一个上报线程
-
-								
-/**
-* 数据上报调用接口
-*
-* @param nativeReporter 由makeReporter返回的值
-* @param data           需要上报的数据
-*/
-+ (void)Push:(void *)nativeReporter
-        data:(NSString *)data;
-该方法为上报的调用接口，data为需要上报的数据，数据需要是字符串类型	
+不同的业务可以创建不同的实例，不必担心性能消耗，因为所有实例共用一个上报线程	
     
 /**
 * 设置单次上报的数据条数，在start之前调用
@@ -440,6 +414,42 @@ demo 的使用请参考[这里]()。
 该方法是设置一次上报的数据数量，例如设置为5，这是上报接口吐出的数据就是按5条每次吐出。
 该方法可以不调用，默认值为5
     
+/**
+* 设置缓存文件单文件最大大小限制，默认值为10k
+*
+* @param nativeReporter 由makeReporter返回的值
+* @param fileMaxSize    缓存文件最大大小
+*/				 
++ (void)SetFileMaxSize:(void *)nativeReporter
+           fileMaxSize:(NSUInteger)fileMaxSize;
+该方法为设置缓存文件单文件大小限制，可不调用，默认值为10k
+
+/**
+* 开始上报线程 设置完相关参数之后，执行一次。
+*
+* @param nativeReporter 由makeReporter返回的值
+*/
++ (void)Start:(void *)nativeReporter;
+该方法是开始上报线程。在创建实例后，设置好相应参数后调用
+
+/**
+* 唤醒上报，在网络状态转好时调用或者其他想唤醒场景调用
+*
+* @param nativeReporter 由makeReporter返回的值
+*/		   
++ (void)ReaWaken:(void *)nativeReporter;
+在无网络后或者其他场景导致网络不通情况，网络恢复后调用该方法，触发再次上报逻辑
+
+/**
+* 数据上报调用接口
+*
+* @param nativeReporter 由makeReporter返回的值
+* @param data           需要上报的数据
+*/
++ (void)Push:(void *)nativeReporter
+        data:(NSString *)data;
+该方法为上报的调用接口，data为需要上报的数据，数据需要是字符串类型
+  
 /**
 * 上报成功后调用该方法
 *
@@ -460,45 +470,7 @@ demo 的使用请参考[这里]()。
 + (void)UploadFailed:(void *)nativeReporter
                  key:(NSInteger)key;
 该方法为上报失败后调用该方法，数据通过网络上报失败后调用该方法。通知Reporter数据上报失败
-	
-
-/**
-* 开始上报线程 设置完相关参数之后，执行一次。
-*
-* @param nativeReporter 由makeReporter返回的值
-*/
-+ (void)Start:(void *)nativeReporter;
-该方法是开始上报线程。在创建实例后，设置好相应参数后调用
-
-/**
-* 设置单次上报的数据条数，在start之前调用
-*
-* @param nativeReporter 由makeReporter返回的值
-* @param itemSize          一次上报的数据条数
-*/
-+ (void)SetUploadItemSize:(void *)nativeReporter
-                 itemSize:(NSUInteger)itemSize;
-该方法是设置一次上报的数据数量，例如设置为5，这是上报接口吐出的数据就是按5条每次吐出。
-该方法可以不调用，默认值为5
-				 
-/**
-* 设置缓存文件单文件最大大小限制，默认值为10k
-*
-* @param nativeReporter 由makeReporter返回的值
-* @param fileMaxSize    缓存文件最大大小
-*/				 
-+ (void)SetFileMaxSize:(void *)nativeReporter
-           fileMaxSize:(NSUInteger)fileMaxSize;
-该方法为设置缓存文件单文件大小限制，可不调用，默认值为10k
-
-/**
-* 唤醒上报，在网络状态转好时调用或者其他想唤醒场景调用
-*
-* @param nativeReporter 由makeReporter返回的值
-*/		   
-+ (void)ReaWaken:(void *)nativeReporter;
-在无网络后或者其他场景导致网络不通情况，网络恢复后调用该方法，触发再次上报逻辑
-   
+  
 /**
 * 释放上报实例，释放后其他方法都不可以调用
 *
@@ -515,7 +487,7 @@ demo 的使用请参考[这里]()。
 1. 参看 [DataReporter/sample](https://github.com/luojilab/DataReporter/tree/master/sample)；
 2. 阅读 [源码](https://github.com/luojilab/DataReporter/tree/master/src)；
 3. 阅读 [wiki](https://github.com/luojilab/DataReporter/wiki)；
-4. 联系我们。得到电子书技术组
+4. 联系我们。得到客户端技术组
 
 ## 致谢：
 感谢腾讯团队开源的MMKV项目。本项目借鉴了部分源码。

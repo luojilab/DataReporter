@@ -38,6 +38,42 @@
     return reporter;
 }
 
++ (void)SetReportCount:(void *)nativeReporter
+                 count:(NSInteger)count
+{
+    future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);
+    if (reporter == NULL) {
+        return;
+    }
+    reporter->SetUploadItemSize((int) count);
+}
+
++ (void)SetFileMaxSize:(void *)nativeReporter
+           fileMaxSize:(NSUInteger)fileMaxSize {
+    
+    future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);
+    if (reporter == NULL) {
+        return;
+    }
+    reporter->SetFileMaxSize(fileMaxSize);
+}
+    
++ (void)Start:(void *)nativeReporter {
+    future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);
+    if (reporter == NULL) {
+        return;
+    }
+    reporter->Start();
+}
+
++ (void)ReaWaken:(void *)nativeReporter {
+    future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);
+    if (reporter == NULL) {
+        return;
+    }
+    reporter->ReaWaken();
+}
+
 + (void)Push:(void *)nativeReporter
         data:(NSString *)data
 {
@@ -47,16 +83,6 @@
     }
     std::string dataCstr = [data UTF8String];
     reporter->Push(dataCstr);
-}
-
-+ (void)SetReportCount:(void *)nativeReporter
-                 count:(NSInteger)count
-{
-    future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);
-    if (reporter == NULL) {
-        return;
-    }
-    reporter->SetUploadItemSize((int) count);
 }
 
 + (void)UploadSucess:(void *)nativeReporter
@@ -77,43 +103,6 @@
         return;
     }
     reporter->UploadFailed(key);
-}
-    
-+ (void)Start:(void *)nativeReporter {
-    future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);
-    if (reporter == NULL) {
-        return;
-    }
-    reporter->Start();
-}
-    
-+ (void)SetUploadItemSize:(void *)nativeReporter
-                 itemSize:(NSUInteger)itemSize {
-    
-    future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);
-    if (reporter == NULL) {
-        return;
-    }
-    reporter->SetUploadItemSize(itemSize);
-}
-
-+ (void)SetFileMaxSize:(void *)nativeReporter
-           fileMaxSize:(NSUInteger)fileMaxSize {
-    
-    future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);
-    if (reporter == NULL) {
-        return;
-    }
-    reporter->SetFileMaxSize(fileMaxSize);
-}
-
-
-+ (void)ReaWaken:(void *)nativeReporter {
-    future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);
-    if (reporter == NULL) {
-        return;
-    }
-    reporter->ReaWaken();
 }
 
 + (void)ReleaseReporter:(void *)nativeReporter

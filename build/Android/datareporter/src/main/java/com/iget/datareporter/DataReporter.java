@@ -22,6 +22,22 @@ public class DataReporter {
     public static native int makeReporter(String uuid, String cachePath, IReport reportImp);
 
     /**
+     * 设置单次上报的数据条数，在start之前调用
+     *
+     * @param nativeReporter 由makeReporter返回的值
+     * @param count          一次上报的数据条数
+     */
+    public static native void setReportCount(int nativeReporter, int count);
+
+    /**
+     * 设置缓存文件单文件最大大小限制，默认值为10k
+     *
+     * @param nativeReporter 由makeReporter返回的值
+     * @param fileMaxSize    缓存文件最大大小
+     */
+    public static native void setFileMaxSize(int nativeReporter, int fileMaxSize);
+
+    /**
      * 开始上报线程 设置完相关参数之后，执行一次。
      *
      * @param nativeReporter 由makeReporter返回的值
@@ -43,23 +59,6 @@ public class DataReporter {
      * @param data           需要上报的数据
      */
     public static native void push(int nativeReporter, String data);
-
-
-    /**
-     * 设置单次上报的数据条数，在start之前调用
-     *
-     * @param nativeReporter 由makeReporter返回的值
-     * @param count          一次上报的数据条数
-     */
-    public static native void setReportCount(int nativeReporter, int count);
-
-    /**
-     * 设置缓存文件单文件最大大小限制，默认值为10k
-     *
-     * @param nativeReporter 由makeReporter返回的值
-     * @param fileMaxSize    缓存文件最大大小
-     */
-    public static native void setFileMaxSize(int nativeReporter, int fileMaxSize);
 
 
     /**
