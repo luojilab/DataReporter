@@ -81,7 +81,7 @@ namespace future {
     DataProvider::ReadFromFile(std::size_t count, std::int64_t expiredTime) {
         std::list<std::shared_ptr<CacheItem> > ret;
 
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < count; ) {
             if (m_Files.empty()) {
                 m_Files = ListFiles();
                 if (m_Files.empty()) {
@@ -123,6 +123,7 @@ namespace future {
                 m_UploadingFile.erase(fileNameWithoutExt);
             }
 
+            i += items.size();
             ret.insert(ret.end(), items.begin(), items.end());
             if (ret.size() == count) {
                 return ret;
