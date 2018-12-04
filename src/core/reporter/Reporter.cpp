@@ -23,7 +23,9 @@ namespace future {
                                           std::list<std::shared_ptr<CacheItem> > &data)> netImpl)
             : m_CachePath(cachePath), m_MaxFileSize(1024 * 10), m_ItemSize(5), m_UUid(uuid),
               m_RetryStep(RETRY_STEP),
-              m_CacheManager(NULL),
+              m_ExpiredTime(0),
+              m_ReportingInterval(0),
+              m_DataProvider(NULL),
               m_DataBuf(NULL),
               m_MemoryStream(NULL),
               m_IsStart(false),
@@ -72,7 +74,7 @@ namespace future {
             }
         }
 
-        delete m_CacheManager;
+        delete m_DataProvider;
         s_ReporterCount--;
         if (s_ReporterCount == 0) {
             s_HandlerThread->postMsg([]() {
@@ -89,14 +91,26 @@ namespace future {
         m_MaxFileSize = fileMaxSize;
     }
 
+    void Reporter::SetExpiredTime(std::size_t expiredTime) {
+        m_ExpiredTime = expiredTime;
+    }
+
+    void Reporter::SetReportingInterval(std::size_t reportingInterval) {
+        m_ReportingInterval = reportingInterval;
+    }
+
     void Reporter::Push(const std::string &data) {
         if (m_MemoryStream->GetOffset() + MiniPBCoder::CalculatedSize(data) >=
             m_DataBuf->Length()) {
             WrtiteToFile();
             return;
         }
-        m_MemoryStream->Write(data);
-        s_HandlerThread->postMsg(m_ReportFun);
+        int64_t now = GetNanoTime();
+        std::string nowStr = Int64ToStr(now);
+        m_MemoryStream->Write(data, nowStr);
+        //s_HandlerThread->postMsg(m_ReportFun);
+        WTF::TimeTask delayTask(m_ReportingInterval, 0, m_ReportFun);
+        s_HandlerThread->postPeriodTask(delayTask);
 
         if (IsWriteFile()) {
             s_HandlerThread->postMsg(m_WriteFileFun);
@@ -113,14 +127,16 @@ namespace future {
                 for (std::list<std::shared_ptr<CacheItem> >::iterator cacheIter = iter->second.begin();
                      cacheIter != iter->second.end(); cacheIter++) {
                     if (!(*cacheIter)->fromPath.empty()) {
-                        m_CacheManager->ClearFile((*cacheIter)->fromPath);
+                        m_DataProvider->ClearFile((*cacheIter)->fromPath);
                     } else if ((*cacheIter)->fromMem != NULL) {
-                        m_CacheManager->ClearMem();
+                        m_DataProvider->ClearMem();
                     }
                 }
             }
             m_Reporting.erase(key);
-            Report();
+            //Report();
+            WTF::TimeTask delayTask(m_ReportingInterval, 0, m_ReportFun);
+            s_HandlerThread->postPeriodTask(delayTask);
         });
     }
 
@@ -144,7 +160,8 @@ namespace future {
             return;
         }
 
-        std::list<std::shared_ptr<CacheItem> > data = m_CacheManager->ReadData(m_ItemSize);
+        std::list<std::shared_ptr<CacheItem> > data = m_DataProvider->ReadData(m_ItemSize,
+                                                                               m_ExpiredTime);
         if (data.empty()) {
             return;
         }
@@ -195,7 +212,7 @@ namespace future {
 
         m_MemoryStream = std::shared_ptr<MemoryStream>(new MemoryStream(m_DataBuf));
 
-        m_CacheManager = new CacheManager(m_CachePath, m_UploadBuf,
+        m_DataProvider = new DataProvider(m_CachePath, m_UploadBuf,
                                           std::bind(&Reporter::DumpDataBuf, this,
                                                     std::placeholders::_1, std::placeholders::_2));
 

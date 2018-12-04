@@ -4,6 +4,8 @@
 
 #include <MiniPBCoder.h>
 #include "FileInputStream.h"
+#include "DataProvider.h"
+#include "StringUtil.h"
 
 
 namespace future {
@@ -57,10 +59,11 @@ namespace future {
         m_Offset = 0;
     }
 
-    std::list<std::shared_ptr<CacheItem> > FileInputStream::ReadData(std::size_t count) {
+    std::list<std::shared_ptr<CacheItem> >
+    FileInputStream::ReadData(std::size_t count, std::int64_t expiredTime) {
         std::list<std::shared_ptr<CacheItem> > ret;
         long fileSize = Count();
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < count;) {
             PBEncodeItem pbEncodeItem;
             if (!MiniPBCoder::DecodeItem(pbEncodeItem, m_Fp, m_Offset)) {
                 return std::move(ret);
@@ -73,9 +76,26 @@ namespace future {
             std::shared_ptr<CacheItem> cacheItem(new CacheItem);
             cacheItem->pbEncodeItem = std::move(pbEncodeItem);
 
+            std::string dateStr;
+            dateStr.append((const char *) cacheItem->pbEncodeItem.date.GetBegin(),
+                           cacheItem->pbEncodeItem.date.Length());
+            std::int64_t dateInItem = StrToInt64(dateStr);
             if (m_Offset >= fileSize) {
-                cacheItem->fromPath = m_Path;
+                if (DataProvider::IsExpired(dateInItem, expiredTime)) {
+                    if (!ret.empty()) {
+                        ret.back()->fromPath = m_Path;
+                    }
+                    i++;
+                    continue;
+                } else {
+                    cacheItem->fromPath = m_Path;
+                }
             }
+            if (DataProvider::IsExpired(dateInItem, expiredTime)) {
+                continue;
+            }
+
+            i++;
             ret.push_back(cacheItem);
         }
         return std::move(ret);

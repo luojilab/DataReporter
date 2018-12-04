@@ -18,9 +18,9 @@ namespace future {
     class MiniPBCoder {
 
     public:
-        static Buffer EncodeString(const std::string &str) {
+        static Buffer EncodeString(const std::string &str, const std::string &date) {
             MiniPBCoder pbcoder;
-            return pbcoder.EncodeData(str);
+            return pbcoder.EncodeData(str, date);
         }
 
         static PBEncodeItem DecodeItem(const Buffer &buffer);
@@ -44,9 +44,9 @@ namespace future {
 
         ~MiniPBCoder();
 
-        Buffer EncodeData(const std::string &str);
+        Buffer EncodeData(const std::string &str, const std::string &date);
 
-        Buffer EncodeData(const Buffer &buffer);
+        Buffer EncodeData(const Buffer &buffer, const std::string &date);
 
         void WriteItem(Buffer &buffer, const PBEncodeItem &encodeItem);
 

@@ -11,6 +11,7 @@
 #include <string>
 #include <memory>
 #include <functional>
+#include <atomic>
 
 #include "MmapedFile.h"
 #include "PBEncodeItem.hpp"
@@ -19,14 +20,16 @@
 
 namespace future {
 
-    class CacheManager {
+    class DataProvider {
     public:
-        CacheManager(const std::string &fromPath, std::shared_ptr<Buffer> &fromMem,
+        static bool IsExpired(std::int64_t date, std::int64_t expiredTime);
+
+        DataProvider(const std::string &fromPath, std::shared_ptr<Buffer> &fromMem,
                      std::function<std::int64_t(void *, int)> updateMem);
 
-        ~CacheManager();
+        ~DataProvider();
 
-        std::list<std::shared_ptr<CacheItem> > ReadData(std::size_t count);
+        std::list<std::shared_ptr<CacheItem> > ReadData(std::size_t count, std::int64_t expiredTime);
 
         void ClearFile(const std::string &path);
 
@@ -35,9 +38,9 @@ namespace future {
     private:
         std::list<std::string> ListFiles();
 
-        std::list<std::shared_ptr<CacheItem> > ReadFromMem(std::size_t count);
+        std::list<std::shared_ptr<CacheItem> > ReadFromMem(std::size_t count, std::int64_t expiredTime);
 
-        std::list<std::shared_ptr<CacheItem> > ReadFromFile(std::size_t count);
+        std::list<std::shared_ptr<CacheItem> > ReadFromFile(std::size_t count, std::int64_t expiredTime);
 
     private:
         std::string m_FromPath;
@@ -49,6 +52,7 @@ namespace future {
         void *m_MemDataEndPos;
         void *m_MemOffset;
         bool m_IsUploadingMem;
+
     };
 
 }

@@ -12,7 +12,7 @@
 #include "MmapedFile.h"
 #include "HandlerThread.h"
 #include "MemoryStream.h"
-#include "CacheManager.h"
+#include "DataProvider.h"
 
 namespace future {
     class Reporter {
@@ -28,6 +28,10 @@ namespace future {
         void SetUploadItemSize(std::size_t itemSize);
 
         void SetFileMaxSize(std::size_t fileMaxSize);
+
+        void SetExpiredTime(std::size_t expiredTime);
+
+        void SetReportingInterval(std::size_t reportingInterval);
 
         void Push(const std::string &data);
 
@@ -72,7 +76,9 @@ namespace future {
         const std::string m_UUid;
         const std::string m_CachePath;
         std::atomic_int m_ItemSize;
-        std::size_t m_MaxFileSize;
+        std::atomic_uint m_MaxFileSize;
+        std::atomic_uint m_ExpiredTime;
+        std::atomic_uint m_ReportingInterval;
         std::atomic_bool m_IsStart;
         std::shared_ptr<Buffer> m_DataBuf;
         std::shared_ptr<MemoryStream> m_MemoryStream;
@@ -83,7 +89,7 @@ namespace future {
         std::shared_ptr<MmapedFile> m_WriteFileMmapFile;
         std::shared_ptr<MmapedFile> m_UploadMmapFile;
 
-        CacheManager *m_CacheManager;
+        DataProvider *m_DataProvider;
         std::map<int64_t, std::list<std::shared_ptr<CacheItem> > > m_Reporting;
         std::list<WTF::TimeTask> m_DelayUploadTasks;
 

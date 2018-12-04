@@ -34,7 +34,7 @@ namespace future {
         std::size_t ret = 0;
         ret += PBEncodeItemHeadLen();
         ret += encodeItem.data_len;
-        ret += encodeItem.extra_data_len;
+        ret += encodeItem.date_len;
         return ret;
     }
 
@@ -51,7 +51,7 @@ namespace future {
         ret += sizeof(pbEncodeItem.type);
         ret += sizeof(pbEncodeItem.crc);
         ret += sizeof(pbEncodeItem.data_len);
-        ret += sizeof(pbEncodeItem.extra_data_len);
+        ret += sizeof(pbEncodeItem.date_len);
         return ret;
     }
 
@@ -80,13 +80,13 @@ namespace future {
         encodeItem.type = (PBEncodeItemType) rawInput.ReadFixed32();
         encodeItem.data_len = rawInput.ReadFixed32();
         encodeItem.crc = rawInput.ReadFixed32();
-        encodeItem.extra_data_len = rawInput.ReadFixed32();
+        encodeItem.date_len = rawInput.ReadFixed32();
         if (encodeItem.data_len != 0) {
             encodeItem.data = std::move(rawInput.ReadData(encodeItem.data_len));
         }
 
-        if (encodeItem.extra_data_len != 0) {
-            encodeItem.extra_data = std::move(rawInput.ReadData(encodeItem.extra_data_len));
+        if (encodeItem.date_len != 0) {
+            encodeItem.date = std::move(rawInput.ReadData(encodeItem.date_len));
         }
         return std::move(encodeItem);
     }
@@ -109,7 +109,7 @@ namespace future {
         out.type = (PBEncodeItemType) rawInput.ReadFixed32();
         out.data_len = rawInput.ReadFixed32();
         out.crc = rawInput.ReadFixed32();
-        out.extra_data_len = rawInput.ReadFixed32();
+        out.date_len = rawInput.ReadFixed32();
         delete[] headBuf;
         if (out.data_len != 0) {
             Buffer data(out.data_len);
@@ -123,19 +123,19 @@ namespace future {
             out.data = std::move(data);
         }
 
-        if (out.extra_data_len != 0) {
-            Buffer extra_data(out.extra_data_len);
-            if (out.extra_data_len != fread(extra_data.GetBegin(), 1, extra_data.Length(), fp)) {
-                offset += out.extra_data_len;
+        if (out.date_len != 0) {
+            Buffer extra_data(out.date_len);
+            if (out.date_len != fread(extra_data.GetBegin(), 1, extra_data.Length(), fp)) {
+                offset += out.date_len;
                 return false;
             }
-            offset += out.extra_data_len;
-            out.extra_data = std::move(extra_data);
+            offset += out.date_len;
+            out.date = std::move(extra_data);
         }
         return true;
     }
 
-    Buffer MiniPBCoder::EncodeData(const std::string &str) {
+    Buffer MiniPBCoder::EncodeData(const std::string &str, const std::string &date) {
         PBEncodeItem encodeItem;
         encodeItem.type = PBEncodeItemType_String;
         encodeItem.data_len = static_cast<int32_t>(str.size());
@@ -143,7 +143,9 @@ namespace future {
         encodeItem.data = std::move(data);
         encodeItem.crc = (uint32_t) crc32(0, (const Bytef *) encodeItem.data.GetBegin(),
                                           (uint32_t) encodeItem.data_len);
-        encodeItem.extra_data_len = 0;
+        encodeItem.date_len = date.length();
+        Buffer dateBuf((void *) date.data(), encodeItem.date_len);
+        encodeItem.date = std::move(dateBuf);
         std::size_t count = CalculatedSize(encodeItem);
         Buffer outBuffer(count);
         WriteItem(outBuffer, encodeItem);
@@ -151,7 +153,7 @@ namespace future {
         return std::move(outBuffer);
     }
 
-    Buffer MiniPBCoder::EncodeData(const Buffer &buffer) {
+    Buffer MiniPBCoder::EncodeData(const Buffer &buffer, const std::string &date) {
         PBEncodeItem encodeItem;
         encodeItem.type = PBEncodeItemType_Data;
         Buffer data((void *) buffer.GetBegin(), buffer.Length());
@@ -159,7 +161,9 @@ namespace future {
         encodeItem.data_len = buffer.Length();
         encodeItem.crc = (uint32_t) crc32(0, (const Bytef *) encodeItem.data.GetBegin(),
                                           (uint32_t) encodeItem.data_len);
-        encodeItem.extra_data_len = 0;
+        encodeItem.date_len = date.length();
+        Buffer dateBuf((void *) date.data(), encodeItem.date_len);
+        encodeItem.date = std::move(dateBuf);
         std::size_t count = CalculatedSize(encodeItem);
         Buffer outBuffer(count);
         WriteItem(outBuffer, encodeItem);
@@ -171,9 +175,9 @@ namespace future {
         rawOutput.WriteFixed32(encodeItem.type);
         rawOutput.WriteFixed32(encodeItem.data_len);
         rawOutput.WriteFixed32(encodeItem.crc);
-        rawOutput.WriteFixed32(encodeItem.extra_data_len);
+        rawOutput.WriteFixed32(encodeItem.date_len);
         rawOutput.WriteRawData(encodeItem.data);
-        rawOutput.WriteRawData(encodeItem.extra_data);
+        rawOutput.WriteRawData(encodeItem.date);
     }
 
 }

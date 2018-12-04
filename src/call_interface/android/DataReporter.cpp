@@ -52,7 +52,24 @@ static void SetFileMaxSize(JNIEnv *env, jobject obj, jint nativeReporter, jint f
     if (reporter == NULL) {
         return;
     }
-    reporter->SetFileMaxSize(fileMaxSize);
+    reporter->SetFileMaxSize((int) fileMaxSize);
+}
+
+static void SetExpiredTime(JNIEnv *env, jobject obj, jint nativeReporter, jint expiredTime) {
+    future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);
+    if (reporter == NULL) {
+        return;
+    }
+    reporter->SetExpiredTime((int) expiredTime);
+}
+
+static void
+SetReportingInterval(JNIEnv *env, jobject obj, jint nativeReporter, jint reportingInterval) {
+    future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);
+    if (reporter == NULL) {
+        return;
+    }
+    reporter->SetReportingInterval((int) reportingInterval);
 }
 
 static void Start(JNIEnv *env, jobject obj, jint nativeReporter) {
@@ -105,15 +122,17 @@ static void ReleaseReporter(JNIEnv *env, jobject obj, jint nativeReporter) {
 }
 
 static JNINativeMethod gJavaDataReporterMethods[] = {
-        {"makeReporter",    "(Ljava/lang/String;Ljava/lang/String;Lcom/iget/datareporter/IReport;)I", (void *) MakeReporter},
-        {"setReportCount",  "(II)V",                                                                  (void *) SetReportCount},
-        {"setFileMaxSize",  "(II)V",                                                                  (void *) SetFileMaxSize},
-        {"start",           "(I)V",                                                                   (void *) Start},
-        {"reaWaken",        "(I)V",                                                                   (void *) ReaWaken},
-        {"push",            "(ILjava/lang/String;)V",                                                 (void *) Push},
-        {"uploadSucess",    "(IJ)V",                                                                  (void *) UploadSucess},
-        {"uploadFailed",    "(IJ)V",                                                                  (void *) UploadFailed},
-        {"releaseReporter", "(I)V",                                                                   (void *) ReleaseReporter},
+        {"makeReporter",         "(Ljava/lang/String;Ljava/lang/String;Lcom/iget/datareporter/IReport;)I", (void *) MakeReporter},
+        {"setReportCount",       "(II)V",                                                                  (void *) SetReportCount},
+        {"setFileMaxSize",       "(II)V",                                                                  (void *) SetFileMaxSize},
+        {"setExpiredTime",       "(II)V",                                                                  (void *) SetExpiredTime},
+        {"setReportingInterval", "(II)V",                                                                  (void *) SetReportingInterval},
+        {"start",                "(I)V",                                                                   (void *) Start},
+        {"reaWaken",             "(I)V",                                                                   (void *) ReaWaken},
+        {"push",                 "(ILjava/lang/String;)V",                                                 (void *) Push},
+        {"uploadSucess",         "(IJ)V",                                                                  (void *) UploadSucess},
+        {"uploadFailed",         "(IJ)V",                                                                  (void *) UploadFailed},
+        {"releaseReporter",      "(I)V",                                                                   (void *) ReleaseReporter},
 };
 
 int registerDataReporter(JNIEnv *env) {

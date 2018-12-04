@@ -23,9 +23,9 @@ namespace future {
     MemoryStream::~MemoryStream() {
     }
 
-    void MemoryStream::Write(const std::string &data) {
+    void MemoryStream::Write(const std::string &data, const std::string &date) {
         std::lock_guard<std::mutex> lk(m_Mut);
-        Buffer buffer = MiniPBCoder::EncodeString(data);
+        Buffer buffer = MiniPBCoder::EncodeString(data, date);
         RawOutput rawOutput(m_PosPtr, (unsigned char *) m_Buffer->GetEnd() - m_PosPtr);
         if (m_PosPtr + buffer.Length() > m_Buffer->GetEnd()) {
             return;
