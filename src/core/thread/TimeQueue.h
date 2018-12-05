@@ -55,6 +55,10 @@ namespace WTF {
             return this->m_next_execution_time > other.m_next_execution_time;
         }
 
+        inline void setFun(std::function<void(void)> fun){
+            m_fun = fun;
+        }
+
         inline const unsigned long period()const {
             return m_period;
         }

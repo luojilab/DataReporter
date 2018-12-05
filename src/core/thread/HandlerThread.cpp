@@ -83,8 +83,12 @@ namespace WTF {
         AndroidUtil::attachCurrentThread();
 #endif
         while (!m_IsStop) {
-            executePeriodTask();
+            {
+                std::unique_lock<std::mutex> lck(mut);
+                executePeriodTask();
+            }
             executeTask();
+
             {
                 std::unique_lock<std::mutex> lck(mut);
                 if (m_MsgQueue.empty()) {

@@ -63,7 +63,11 @@ namespace future {
 
         std::string MakeFileName(const std::string &path);
 
+        void DelayReport();
+
         void ClearDelayUploadTasks();
+
+        void ClearDelayReportTasks();
 
 
     public:
@@ -93,7 +97,8 @@ namespace future {
 
         DataProvider *m_DataProvider;
         std::map<int64_t, std::list<std::shared_ptr<CacheItem> > > m_Reporting;
-        std::list<WTF::TimeTask> m_DelayUploadTasks;
+        std::map<std::shared_ptr<WTF::TimeTask>, int> m_DelayUploadTasks;
+        std::map<std::shared_ptr<WTF::TimeTask>, int> m_DelayReportTasks;
 
         std::function<void(int64_t key, std::list<std::shared_ptr<CacheItem> > &data)> m_UploadImpl;
         std::function<void(void)> m_ReportFun;

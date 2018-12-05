@@ -57,6 +57,8 @@ namespace future {
 
     Reporter::~Reporter() {
         std::lock_guard<std::mutex> lk(m_Mut);
+        ClearDelayUploadTasks();
+        ClearDelayReportTasks();
 
         if (m_DataMmapFile != NULL) {
             if (m_DataMmapFile->IsOpened()) {
@@ -128,9 +130,10 @@ namespace future {
         int64_t now = GetNanoTime();
         std::string nowStr = Int64ToStr(now);
         m_MemoryStream->Write(data, nowStr);
-        //s_HandlerThread->postMsg(m_ReportFun);
-        WTF::TimeTask delayTask(m_ReportingInterval, 0, m_ReportFun);
-        s_HandlerThread->postPeriodTask(delayTask);
+
+        s_HandlerThread->postMsg([this]() {
+            DelayReport();
+        });
 
         if (IsWriteFile()) {
             s_HandlerThread->postMsg(m_WriteFileFun);
@@ -158,8 +161,7 @@ namespace future {
             }
             m_Reporting.erase(key);
             //Report();
-            WTF::TimeTask delayTask(m_ReportingInterval, 0, m_ReportFun);
-            s_HandlerThread->postPeriodTask(delayTask);
+            DelayReport();
         });
     }
 
@@ -169,16 +171,19 @@ namespace future {
             return;
         }
         m_RetryStep += RETRY_STEP;
-        WTF::TimeTask delayTask(m_RetryStep, 0, [this, key]() {
+        std::shared_ptr<WTF::TimeTask> delayTask(new WTF::TimeTask(m_RetryStep, 0, NULL));
+        delayTask->setFun([this, key, delayTask]() {
             std::map<int64_t, std::list<std::shared_ptr<CacheItem> > >::iterator iter = m_Reporting.find(
                     key);
             if (m_UploadImpl != NULL && iter != m_Reporting.end()) {
                 m_UploadImpl(key, m_Reporting[key]);
             }
+            std::lock_guard<std::mutex> lk(m_Mut);
+            m_DelayUploadTasks.erase(delayTask);
         });
 
-        m_DelayUploadTasks.push_back(delayTask);
-        s_HandlerThread->postPeriodTask(delayTask);
+        m_DelayUploadTasks[delayTask] = 0;
+        s_HandlerThread->postPeriodTask(*delayTask);
     }
 
     void Reporter::Report() {
@@ -352,10 +357,32 @@ namespace future {
         return ret;
     }
 
+    void Reporter::DelayReport() {
+        std::shared_ptr<WTF::TimeTask> delayTask(
+                new WTF::TimeTask(m_ReportingInterval, 0, NULL));
+        delayTask->setFun([this, delayTask]() {
+            std::lock_guard<std::mutex> lk(m_Mut);
+            if (m_ReportFun != NULL) {
+                m_ReportFun();
+            }
+            m_DelayReportTasks.erase(delayTask);
+        });
+
+        m_DelayReportTasks[delayTask] = 0;
+        s_HandlerThread->postPeriodTask(*delayTask);
+    }
+
     void Reporter::ClearDelayUploadTasks() {
-        for (std::list<WTF::TimeTask>::iterator iter = m_DelayUploadTasks.begin();
+        for (std::map<std::shared_ptr<WTF::TimeTask>, int>::iterator iter = m_DelayUploadTasks.begin();
              iter != m_DelayUploadTasks.end(); iter++) {
-            s_HandlerThread->cancelPeriodTask(*iter);
+            s_HandlerThread->cancelPeriodTask(*(iter->first));
+        }
+    }
+
+    void Reporter::ClearDelayReportTasks() {
+        for (std::map<std::shared_ptr<WTF::TimeTask>, int>::iterator iter = m_DelayReportTasks.begin();
+             iter != m_DelayReportTasks.end(); iter++) {
+            s_HandlerThread->cancelPeriodTask(*(iter->first));
         }
     }
 
