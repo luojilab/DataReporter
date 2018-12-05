@@ -170,20 +170,23 @@ namespace future {
         if (m_ThreadId != std::this_thread::get_id()) {
             return;
         }
-        m_RetryStep += RETRY_STEP;
-        std::shared_ptr<WTF::TimeTask> delayTask(new WTF::TimeTask(m_RetryStep, 0, NULL));
-        delayTask->setFun([this, key, delayTask]() {
-            std::map<int64_t, std::list<std::shared_ptr<CacheItem> > >::iterator iter = m_Reporting.find(
-                    key);
-            if (m_UploadImpl != NULL && iter != m_Reporting.end()) {
-                m_UploadImpl(key, m_Reporting[key]);
-            }
-            std::lock_guard<std::mutex> lk(m_Mut);
-            m_DelayUploadTasks.erase(delayTask);
-        });
 
-        m_DelayUploadTasks[delayTask] = 0;
-        s_HandlerThread->postPeriodTask(*delayTask);
+        s_HandlerThread->postMsg([this, key]() {
+            m_RetryStep += RETRY_STEP;
+            std::shared_ptr<WTF::TimeTask> delayTask(new WTF::TimeTask(m_RetryStep, 0, NULL));
+            delayTask->setFun([this, key, delayTask]() {
+                std::map<int64_t, std::list<std::shared_ptr<CacheItem> > >::iterator iter = m_Reporting.find(
+                        key);
+                if (m_UploadImpl != NULL && iter != m_Reporting.end()) {
+                    m_UploadImpl(key, m_Reporting[key]);
+                }
+                std::lock_guard<std::mutex> lk(m_Mut);
+                m_DelayUploadTasks.erase(delayTask);
+            });
+
+            m_DelayUploadTasks[delayTask] = 0;
+            s_HandlerThread->postPeriodTask(*delayTask);
+        });
     }
 
     void Reporter::Report() {
@@ -262,8 +265,12 @@ namespace future {
         if (m_ThreadId != std::this_thread::get_id()) {
             return;
         }
-        ClearDelayUploadTasks();
+
         s_HandlerThread->postMsg([this]() {
+            if (m_DelayUploadTasks.empty()) {
+                return;
+            }
+            ClearDelayUploadTasks();
             if (m_Reporting.empty()) {
                 return;
             }
