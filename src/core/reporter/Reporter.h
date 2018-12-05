@@ -47,6 +47,8 @@ namespace future {
 
         void ReaWaken();
 
+        std::thread::id &GetThreadId();
+
     private:
 
         ~Reporter();
@@ -97,6 +99,7 @@ namespace future {
         std::function<void(void)> m_ReportFun;
         std::function<void(void)> m_WriteFileFun;
         std::atomic_int m_RetryStep;
+        std::thread::id m_ThreadId;
 
     };
 }

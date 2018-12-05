@@ -31,6 +31,7 @@ namespace future {
               m_IsStart(false),
               m_UploadImpl(netImpl) {
         std::lock_guard<std::mutex> lk(m_Mut);
+        m_ThreadId = std::this_thread::get_id();
 
         if (!File::IsFileExist(cachePath)) {
             File::MkPath(cachePath);
@@ -45,6 +46,10 @@ namespace future {
     }
 
     void Reporter::Destroy(Reporter *reporter) {
+        if (reporter->GetThreadId() != std::this_thread::get_id()) {
+            return;
+        }
+
         s_HandlerThread->postMsg([reporter]() {
             delete reporter;
         });
@@ -84,22 +89,37 @@ namespace future {
     }
 
     void Reporter::SetUploadItemSize(std::size_t itemSize) {
+        if (m_ThreadId != std::this_thread::get_id()) {
+            return;
+        }
         m_ItemSize = itemSize;
     }
 
     void Reporter::SetFileMaxSize(std::size_t fileMaxSize) {
+        if (m_ThreadId != std::this_thread::get_id()) {
+            return;
+        }
         m_MaxFileSize = fileMaxSize;
     }
 
     void Reporter::SetExpiredTime(std::size_t expiredTime) {
+        if (m_ThreadId != std::this_thread::get_id()) {
+            return;
+        }
         m_ExpiredTime = expiredTime;
     }
 
     void Reporter::SetReportingInterval(std::size_t reportingInterval) {
+        if (m_ThreadId != std::this_thread::get_id()) {
+            return;
+        }
         m_ReportingInterval = reportingInterval;
     }
 
     void Reporter::Push(const std::string &data) {
+        if (m_ThreadId != std::this_thread::get_id()) {
+            return;
+        }
         if (m_MemoryStream->GetOffset() + MiniPBCoder::CalculatedSize(data) >=
             m_DataBuf->Length()) {
             WrtiteToFile();
@@ -119,6 +139,9 @@ namespace future {
 
     void Reporter::UoloadSuccess(int64_t key) {
         std::lock_guard<std::mutex> lk(m_Mut);
+        if (m_ThreadId != std::this_thread::get_id()) {
+            return;
+        }
         m_RetryStep = RETRY_STEP;
         s_HandlerThread->postMsg([this, key]() {
             std::map<int64_t, std::list<std::shared_ptr<CacheItem> > >::iterator iter = m_Reporting.find(
@@ -142,6 +165,9 @@ namespace future {
 
     void Reporter::UploadFailed(int64_t key) {
         std::lock_guard<std::mutex> lk(m_Mut);
+        if (m_ThreadId != std::this_thread::get_id()) {
+            return;
+        }
         m_RetryStep += RETRY_STEP;
         WTF::TimeTask delayTask(m_RetryStep, 0, [this, key]() {
             std::map<int64_t, std::list<std::shared_ptr<CacheItem> > >::iterator iter = m_Reporting.find(
@@ -174,6 +200,9 @@ namespace future {
 
     void Reporter::Start() {
         std::lock_guard<std::mutex> lk(m_Mut);
+        if (m_ThreadId != std::this_thread::get_id()) {
+            return;
+        }
         if (m_IsStart) {
             return;
         }
@@ -225,6 +254,9 @@ namespace future {
 
     void Reporter::ReaWaken() {
         std::lock_guard<std::mutex> lk(m_Mut);
+        if (m_ThreadId != std::this_thread::get_id()) {
+            return;
+        }
         ClearDelayUploadTasks();
         s_HandlerThread->postMsg([this]() {
             if (m_Reporting.empty()) {
@@ -232,6 +264,10 @@ namespace future {
             }
             m_UploadImpl(m_Reporting.begin()->first, m_Reporting.begin()->second);
         });
+    }
+
+    std::thread::id &Reporter::GetThreadId() {
+        return m_ThreadId;
     }
 
     void Reporter::WrtiteToFile() {

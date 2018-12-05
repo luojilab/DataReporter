@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         reportImp.setNativeReporter(mNativeReporter);
         DataReporter.setReportCount(mNativeReporter, 10);
         DataReporter.setFileMaxSize(mNativeReporter, 2 * 1024);
-        DataReporter.setExpiredTime(mNativeReporter,2 * 1000);
+        DataReporter.setExpiredTime(mNativeReporter,0 * 1000);
         DataReporter.start(mNativeReporter);
         mButtonStart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,11 +97,11 @@ public class MainActivity extends AppCompatActivity {
                         DataReporter.uploadSucess(mNativeReporter, key);
                     } else {
                         DataReporter.uploadFailed(mNativeReporter, key);
-                        DataReporter.reaWaken(mNativeReporter);
+                        //DataReporter.reaWaken(mNativeReporter);
                     }
 
                 }
-            }, 50);
+            }, 100);
 
         }
     }
