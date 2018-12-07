@@ -35,8 +35,13 @@ public class TestNetPost implements IReport {
                     if (mNativeReporter == 0) {
                         return;
                     }
-                    Log.d("DataReporter_java","uploadFailed" + this);
-                    DataReporter.uploadFailed(mNativeReporter, key);
+                    Log.d("DataReporter_java", "uploadFailed" + this);
+                    DataReporter.uploadSucess(mNativeReporter, key);
+                    StringBuffer stringBuffer = new StringBuffer();
+                    for (int i = 0; i < data.length; i++) {
+                        stringBuffer.append(data[i]);
+                    }
+                    Log.d("DataReporter:data_", stringBuffer.toString());
                 }
             }
         }, 100);
