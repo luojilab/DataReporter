@@ -71,6 +71,11 @@ namespace WTF {
                 auto now = std::chrono::steady_clock::now();
                 if (now < task.nextExecutionTime()) {
                     cond.wait_until(lck, task.nextExecutionTime());
+                    auto wakeNow = std::chrono::steady_clock::now();
+                    if (now < task.nextExecutionTime()) {
+                        m_MsgQueue.push(task);
+                        continue;
+                    }
                 }
 
                 if (task.period() != 0) {

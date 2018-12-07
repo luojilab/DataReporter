@@ -48,20 +48,21 @@ public class MainActivity extends AppCompatActivity {
         mIntentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         mNetworkChangeReceiver = new NetworkChangeReceiver();
         registerReceiver(mNetworkChangeReceiver, mIntentFilter);
-
-        final NetPost netPost = new NetPost();
-        mNativeReporter = DataReporter.makeReporter("test", MainActivity.this.getFilesDir().getPath(), netPost);
-        netPost.setNativeReporter(mNativeReporter);
-        DataReporter.setReportCount(mNativeReporter, 10);
-        DataReporter.setFileMaxSize(mNativeReporter, 2 * 1024);
-        DataReporter.setExpiredTime(mNativeReporter, 0 * 1000);
-        DataReporter.setReportingInterval(mNativeReporter, 3 * 1000);
-        DataReporter.start(mNativeReporter);
         mButtonStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                final NetPost netPost = new NetPost();
+                mNativeReporter = DataReporter.makeReporter("test", MainActivity.this.getFilesDir().getPath(), netPost);
+                netPost.setNativeReporter(mNativeReporter);
+                DataReporter.setReportCount(mNativeReporter, 10);
+                DataReporter.setFileMaxSize(mNativeReporter, 2 * 1024);
+                DataReporter.setExpiredTime(mNativeReporter, 0 * 1000);
+                DataReporter.setReportingInterval(mNativeReporter, 0 * 1000);
+                DataReporter.start(mNativeReporter);
+
                 for (int i = 0; i < 5000; i++) {
-                    DataReporter.push(mNativeReporter, "{\"progress\":\"11.59\",\"action\":\"pause\",\"uid\":\"10040106\",\"time\":\"1542107284.35\",\"alias_id\":\"6soKIdxYbmmHov0yYs8z\"}" + i);
+                    DataReporter.push(mNativeReporter, "{\"bid\":1919,\"bname\":\"《领导力21法则：如何培养领袖气质》\",\"progress\":\"97.674416\",\"time\":\"1544164416\",\"progress_title\":\"词汇表\"}" + i);
                 }
             }
         });
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         mButtonTestRelease.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int testCount = 200;
+                int testCount = 100;
                 final List<Integer> reporters = new ArrayList<>(testCount);
                 final List<TestNetPost> netPosts = new ArrayList<>(testCount);
                 for (int i = 0; i < testCount; i++) {
@@ -83,8 +84,8 @@ public class MainActivity extends AppCompatActivity {
                     DataReporter.setFileMaxSize(nativeReporter, 2 * 1024);
                     DataReporter.setExpiredTime(nativeReporter, 0 * 1000);
                     DataReporter.start(nativeReporter);
-                    for (int j = 0; j < 50; j++) {
-                        //DataReporter.push(nativeReporter, "{\"progress\":\"11.59\",\"action\":\"pause\",\"uid\":\"10040106\",\"time\":\"1542107284.35\",\"alias_id\":\"6soKIdxYbmmHov0yYs8z\"}");
+                    for (int j = 0; j < 1000; j++) {
+                        DataReporter.push(nativeReporter, " business id:" + i + " test_data: 10040106100401061004010610040106100401061004010610040106100401061004010610040106100401061004010610040106 data id: " + j);
                     }
                 }
 
@@ -100,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                             DataReporter.releaseReporter(one);
                         }
                     }
-                }, 2000);
+                }, 100000);
 
             }
         });
