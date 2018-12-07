@@ -95,7 +95,7 @@ namespace future {
         std::shared_ptr<MmapedFile> m_WriteFileMmapFile;
         std::shared_ptr<MmapedFile> m_UploadMmapFile;
 
-        DataProvider *m_DataProvider;
+        std::shared_ptr<DataProvider> m_DataProvider;
         std::map<int64_t, std::list<std::shared_ptr<CacheItem> > > m_Reporting;
         std::map<std::shared_ptr<WTF::TimeTask>, int> m_DelayUploadTasks;
         std::map<std::shared_ptr<WTF::TimeTask>, int> m_DelayReportTasks;

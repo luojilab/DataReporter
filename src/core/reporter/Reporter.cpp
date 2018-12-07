@@ -27,6 +27,8 @@ namespace future {
               m_ReportingInterval(0),
               m_DataProvider(NULL),
               m_DataBuf(NULL),
+              m_WriteFileBuf(NULL),
+              m_UploadBuf(NULL),
               m_MemoryStream(NULL),
               m_IsStart(false),
               m_UploadImpl(netImpl) {
@@ -38,6 +40,7 @@ namespace future {
         }
 
         if (s_ReporterCount == 0) {
+            Debug("Reporter addr:%p new WTF::HandlerThread()", this);
             s_HandlerThread = new WTF::HandlerThread();
         }
         s_ReporterCount++;
@@ -49,7 +52,7 @@ namespace future {
         if (reporter->GetThreadId() != std::this_thread::get_id()) {
             return;
         }
-
+        Debug("Destroy addr:%p", reporter);
         s_HandlerThread->postMsg([reporter]() {
             delete reporter;
         });
@@ -57,8 +60,7 @@ namespace future {
 
     Reporter::~Reporter() {
         std::lock_guard<std::mutex> lk(m_Mut);
-        ClearDelayUploadTasks();
-        ClearDelayReportTasks();
+        Debug("~Reporter addr:%p", this);
 
         if (m_DataMmapFile != NULL) {
             if (m_DataMmapFile->IsOpened()) {
@@ -81,7 +83,9 @@ namespace future {
             }
         }
 
-        delete m_DataProvider;
+        ClearDelayUploadTasks();
+        ClearDelayReportTasks();
+
         s_ReporterCount--;
         if (s_ReporterCount == 0) {
             s_HandlerThread->postMsg([]() {
@@ -119,6 +123,8 @@ namespace future {
     }
 
     void Reporter::Push(const std::string &data) {
+        std::lock_guard<std::mutex> lk(m_Mut);
+        Debug("Push addr:%p", this);
         if (m_ThreadId != std::this_thread::get_id()) {
             return;
         }
@@ -132,7 +138,9 @@ namespace future {
         m_MemoryStream->Write(data, nowStr);
 
         s_HandlerThread->postMsg([this]() {
-            DelayReport();
+            if (m_Reporting.empty()) {
+                DelayReport();
+            }
         });
 
         if (IsWriteFile()) {
@@ -141,7 +149,7 @@ namespace future {
     }
 
     void Reporter::UoloadSuccess(int64_t key) {
-        std::lock_guard<std::mutex> lk(m_Mut);
+        Debug("UoloadSuccess addr:%p", this);
         if (m_ThreadId != std::this_thread::get_id()) {
             return;
         }
@@ -160,13 +168,12 @@ namespace future {
                 }
             }
             m_Reporting.erase(key);
-            //Report();
             DelayReport();
         });
     }
 
     void Reporter::UploadFailed(int64_t key) {
-        std::lock_guard<std::mutex> lk(m_Mut);
+        Debug("UploadFailed addr:%p", this);
         if (m_ThreadId != std::this_thread::get_id()) {
             return;
         }
@@ -180,7 +187,6 @@ namespace future {
                 if (m_UploadImpl != NULL && iter != m_Reporting.end()) {
                     m_UploadImpl(key, m_Reporting[key]);
                 }
-                std::lock_guard<std::mutex> lk(m_Mut);
                 m_DelayUploadTasks.erase(delayTask);
             });
 
@@ -190,6 +196,7 @@ namespace future {
     }
 
     void Reporter::Report() {
+        Debug("Report addr:%p", this);
         if (!m_Reporting.empty()) {
             return;
         }
@@ -226,8 +233,8 @@ namespace future {
         } else {
             m_DataBuf = std::shared_ptr<Buffer>(
                     new Buffer(m_DataMmapFile->GetMaxSize()));
-            m_DataMmapFile = NULL;
             File::RemoveFile(m_DataMmapFile->GetPath());
+            m_DataMmapFile = NULL;
         }
 
         m_WriteFileMmapFile = std::shared_ptr<MmapedFile>(
@@ -243,19 +250,21 @@ namespace future {
         } else {
             m_UploadBuf = std::shared_ptr<Buffer>(
                     new Buffer(m_UploadMmapFile->GetMaxSize()));
-            m_UploadMmapFile = NULL;
             File::RemoveFile(m_UploadMmapFile->GetPath());
+            m_UploadMmapFile = NULL;
         }
 
         m_MemoryStream = std::shared_ptr<MemoryStream>(new MemoryStream(m_DataBuf));
 
-        m_DataProvider = new DataProvider(m_CachePath, m_UploadBuf,
-                                          std::bind(&Reporter::DumpDataBuf, this,
-                                                    std::placeholders::_1, std::placeholders::_2));
+        m_DataProvider = std::shared_ptr<DataProvider>(new DataProvider(m_CachePath, m_UploadBuf,
+                                                                        std::bind(
+                                                                                &Reporter::DumpDataBuf,
+                                                                                this,
+                                                                                std::placeholders::_1,
+                                                                                std::placeholders::_2)));
 
         CheckDataBuf();
-
-        s_HandlerThread->postMsg(std::bind(&Reporter::CheckWriteBuf, this));
+        CheckWriteBuf();
         s_HandlerThread->postMsg(m_ReportFun);
         s_HandlerThread->start();
     }
@@ -267,6 +276,7 @@ namespace future {
         }
 
         s_HandlerThread->postMsg([this]() {
+            std::lock_guard<std::mutex> lk(m_Mut);
             if (m_DelayUploadTasks.empty()) {
                 return;
             }
@@ -313,6 +323,7 @@ namespace future {
                 File::RemoveFile(m_WriteFileMmapFile->GetPath());
                 m_WriteFileBuf = std::shared_ptr<Buffer>(
                         new Buffer(m_WriteFileMmapFile->GetMaxSize()));
+                m_WriteFileMmapFile = NULL;
             }
         }
 
@@ -368,7 +379,6 @@ namespace future {
         std::shared_ptr<WTF::TimeTask> delayTask(
                 new WTF::TimeTask(m_ReportingInterval, 0, NULL));
         delayTask->setFun([this, delayTask]() {
-            std::lock_guard<std::mutex> lk(m_Mut);
             if (m_ReportFun != NULL) {
                 m_ReportFun();
             }
@@ -382,15 +392,17 @@ namespace future {
     void Reporter::ClearDelayUploadTasks() {
         for (std::map<std::shared_ptr<WTF::TimeTask>, int>::iterator iter = m_DelayUploadTasks.begin();
              iter != m_DelayUploadTasks.end(); iter++) {
-            s_HandlerThread->cancelPeriodTask(*(iter->first));
+            s_HandlerThread->cancelPeriodTask(*iter->first);
         }
+        m_DelayUploadTasks.clear();
     }
 
     void Reporter::ClearDelayReportTasks() {
         for (std::map<std::shared_ptr<WTF::TimeTask>, int>::iterator iter = m_DelayReportTasks.begin();
              iter != m_DelayReportTasks.end(); iter++) {
-            s_HandlerThread->cancelPeriodTask(*(iter->first));
+            s_HandlerThread->cancelPeriodTask(*iter->first);
         }
+        m_DelayReportTasks.clear();
     }
 
 }

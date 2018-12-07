@@ -101,11 +101,8 @@ namespace future {
                     std::string filePath = m_FileInputStream->GetPath();
                     std::string fileNameWithoutExt = File::GetFileNameWithExt(filePath);
                     m_UploadingFile.erase(fileNameWithoutExt);
-
                     m_FileInputStream = NULL;
-
                     m_Files.pop_front();
-
                     continue;
                 }
             }

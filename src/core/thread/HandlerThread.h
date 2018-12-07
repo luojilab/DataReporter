@@ -24,9 +24,9 @@ namespace WTF {
 
         void postMsg(std::function<void(void)> msg);
 
-        void postPeriodTask(TimeTask &task);
+        void postPeriodTask(const TimeTask &task);
 
-        void cancelPeriodTask(TimeTask &task);
+        void cancelPeriodTask(const TimeTask &task);
 
         void clearTask();
 
@@ -41,8 +41,7 @@ namespace WTF {
 
     private:
         std::atomic_bool m_IsStop;
-        threadsafe_queue<std::function<void(void)>> m_MsgQueue;
-        TimeQueue<TimeTask> m_PeriodTaskQueue;
+        TimeQueue<TimeTask > m_MsgQueue;
         std::mutex mut;
         std::condition_variable cond;
     };

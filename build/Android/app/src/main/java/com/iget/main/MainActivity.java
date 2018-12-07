@@ -19,6 +19,8 @@ import com.iget.data_reporter.R;
 import com.iget.datareporter.DataReporter;
 import com.iget.datareporter.IReport;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import static android.net.ConnectivityManager.TYPE_WIFI;
@@ -27,6 +29,9 @@ import static android.provider.ContactsContract.CommonDataKinds.Email.TYPE_MOBIL
 public class MainActivity extends AppCompatActivity {
 
     private Button mButtonStart;
+    private Button mButtonTestRelease;
+    private Button mButtonCheckData;
+
     private IntentFilter mIntentFilter;
     private NetworkChangeReceiver mNetworkChangeReceiver;
     private int mNativeReporter = 0;
@@ -36,19 +41,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mButtonStart = (Button) findViewById(R.id.button_start);
-
+        mButtonTestRelease = (Button) findViewById(R.id.button_test_release);
+        mButtonCheckData = (Button) findViewById(R.id.button_check_push_data);
         //监听网络状态
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         mNetworkChangeReceiver = new NetworkChangeReceiver();
         registerReceiver(mNetworkChangeReceiver, mIntentFilter);
 
-        final ReportImp reportImp = new ReportImp();
-        mNativeReporter = DataReporter.makeReporter("test", MainActivity.this.getFilesDir().getPath(), reportImp);
-        reportImp.setNativeReporter(mNativeReporter);
+        final NetPost netPost = new NetPost();
+        mNativeReporter = DataReporter.makeReporter("test", MainActivity.this.getFilesDir().getPath(), netPost);
+        netPost.setNativeReporter(mNativeReporter);
         DataReporter.setReportCount(mNativeReporter, 10);
         DataReporter.setFileMaxSize(mNativeReporter, 2 * 1024);
-        DataReporter.setExpiredTime(mNativeReporter,0 * 1000);
+        DataReporter.setExpiredTime(mNativeReporter, 0 * 1000);
+        DataReporter.setReportingInterval(mNativeReporter, 3 * 1000);
         DataReporter.start(mNativeReporter);
         mButtonStart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,59 +65,60 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-    }
 
-    static class ReportImp implements IReport {
-        private int mNativeReporter;
-        private Handler mUiHandler = new Handler(Looper.getMainLooper());
 
-        public ReportImp() {
-        }
-
-        public void setNativeReporter(int nativeReporter) {
-            mNativeReporter = nativeReporter;
-        }
-
-        @Override
-        public void upload(final long key, final String[] data) {
-
-            //模拟网络上报
-            mUiHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (mNativeReporter == 0) {
-                        return;
+        mButtonTestRelease.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int testCount = 200;
+                final List<Integer> reporters = new ArrayList<>(testCount);
+                final List<TestNetPost> netPosts = new ArrayList<>(testCount);
+                for (int i = 0; i < testCount; i++) {
+                    final TestNetPost netPost = new TestNetPost();
+                    int nativeReporter = DataReporter.makeReporter("testRelease", MainActivity.this.getFilesDir().getPath() + "/test_release" + i, netPost);
+                    reporters.add(nativeReporter);
+                    netPosts.add(netPost);
+                    netPost.setNativeReporter(nativeReporter);
+                    DataReporter.setReportCount(nativeReporter, 10);
+                    DataReporter.setFileMaxSize(nativeReporter, 2 * 1024);
+                    DataReporter.setExpiredTime(nativeReporter, 0 * 1000);
+                    DataReporter.start(nativeReporter);
+                    for (int j = 0; j < 50; j++) {
+                        //DataReporter.push(nativeReporter, "{\"progress\":\"11.59\",\"action\":\"pause\",\"uid\":\"10040106\",\"time\":\"1542107284.35\",\"alias_id\":\"6soKIdxYbmmHov0yYs8z\"}");
                     }
-
-                    int min = 0;
-                    int max = 10;
-                    Random random = new Random();
-                    int num = random.nextInt(max) % (max - min + 1) + min;
-
-                    //随机定义一个数值5 来模拟网络失败的情况
-                    if (num != 5) {
-                        StringBuffer stringBuffer = new StringBuffer();
-                        for (int i = 0; i < data.length; i++) {
-                            stringBuffer.append(data[i]);
-                        }
-                        Log.d("DataReporter:data_", stringBuffer.toString());
-                        DataReporter.uploadSucess(mNativeReporter, key);
-                    } else {
-                        DataReporter.uploadFailed(mNativeReporter, key);
-                        //DataReporter.reaWaken(mNativeReporter);
-                    }
-
                 }
-            }, 100);
 
-        }
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (TestNetPost netPost1 : netPosts) {
+                            netPost1.setNativeReporter(0);
+                        }
+
+                        for (Integer one : reporters) {
+                            DataReporter.releaseReporter(one);
+                        }
+                    }
+                }, 2000);
+
+            }
+        });
+
+        mButtonCheckData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
     }
 
     class NetworkChangeReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (checkNet(context)) {
+            if (isNetOk(context)) {
                 //网络状态好时 重新唤起下DataReporter
                 if (mNativeReporter == 0) {
                     return;
@@ -121,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public static boolean checkNet(Context context) {
+    public static boolean isNetOk(Context context) {
 
         try {
             ConnectivityManager connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);

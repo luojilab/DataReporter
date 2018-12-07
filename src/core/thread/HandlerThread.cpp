@@ -24,58 +24,30 @@ namespace WTF {
     }
 
     void HandlerThread::start() {
+        std::unique_lock<std::mutex> lck(mut);
         if (!m_IsStop) {
             return;
         }
         m_IsStop = false;
+
         std::function<void(void)> fun_run = std::bind(&HandlerThread::run, this);
         std::thread main_thread(fun_run);
         main_thread.detach();
     }
 
     void HandlerThread::stop() {
+        std::unique_lock<std::mutex> lck(mut);
         m_IsStop = true;
         cond.notify_all();
     }
 
     void HandlerThread::clearTask() {
-        std::unique_lock<std::mutex> lck(mut);
         m_MsgQueue.clear();
     }
 
     bool HandlerThread::isQueueEmpty() {
-        return m_MsgQueue.empty();
+        return (m_MsgQueue.size() == 0);
 
-    }
-
-    void HandlerThread::executeTask() {
-        std::shared_ptr<std::function<void(void)>> msg = m_MsgQueue.try_pop();
-        if (msg != NULL) {
-            std::function<void(void)> *msgPtr = msg.get();
-            (*msgPtr)();
-        }
-    }
-
-    void HandlerThread::executePeriodTask() {
-        std::shared_ptr<TimeTask> task = m_PeriodTaskQueue.get_min();
-        if (task != NULL) {
-            if (task->m_status == TimeTask::CANCELLED) {
-                m_PeriodTaskQueue.remove(*task);
-                return;
-            }
-            auto now = std::chrono::steady_clock::now();
-            if (now >= task->nextExecutionTime()) {
-                std::function<void(void)> fun_run = task->fun();
-                m_MsgQueue.push(fun_run);
-                if (task->period() != 0) {
-                    TimeTask newTimeTask = *task;
-                    newTimeTask.setNextExecutionTime(task->period());
-                    m_PeriodTaskQueue.reschedule_min(newTimeTask);
-                } else {
-                    m_PeriodTaskQueue.pop_min();
-                }
-            }
-        }
     }
 
     void HandlerThread::run() {
@@ -83,26 +55,35 @@ namespace WTF {
         AndroidUtil::attachCurrentThread();
 #endif
         while (!m_IsStop) {
+            TimeTask task;
             {
                 std::unique_lock<std::mutex> lck(mut);
-                executePeriodTask();
-            }
-            executeTask();
+                if (m_MsgQueue.size() == 0) {
+                    cond.wait(lck);
+                }
 
-            {
-                std::unique_lock<std::mutex> lck(mut);
-                if (m_MsgQueue.empty()) {
-                    if (m_PeriodTaskQueue.size() == 0) {
-                        cond.wait(lck);
-                    } else {
-                        std::shared_ptr<TimeTask> task = m_PeriodTaskQueue.get_min();
-                        auto now = std::chrono::steady_clock::now();
-                        if (now < task->nextExecutionTime()) {
-                            cond.wait_until(lck, task->nextExecutionTime());
-                        }
-                    }
+
+                task = m_MsgQueue.pop_min();
+                if (!task.fun()) {
+                    continue;
+                }
+
+                auto now = std::chrono::steady_clock::now();
+                if (now < task.nextExecutionTime()) {
+                    cond.wait_until(lck, task.nextExecutionTime());
+                }
+
+                if (task.period() != 0) {
+                    task.setNextExecutionTime(task.period());
+                    m_MsgQueue.push(task);
                 }
             }
+
+            std::function<void(void)> fun_run = task.fun();
+            if (fun_run) {
+                fun_run();
+            }
+
         }
 
 #if PLATFORM(ANDROID)
@@ -113,20 +94,19 @@ namespace WTF {
 
     void HandlerThread::postMsg(std::function<void(void)> msg) {
         std::unique_lock<std::mutex> lck(mut);
-        m_MsgQueue.push(msg);
+        TimeTask timeTask(0, 0, msg);
+        m_MsgQueue.push(timeTask);
         cond.notify_all();
     }
 
-    void HandlerThread::postPeriodTask(TimeTask &task) {
+    void HandlerThread::postPeriodTask(const TimeTask &task) {
         std::unique_lock<std::mutex> lck(mut);
-        task.m_status = TimeTask::SCHEDULED;
-        m_PeriodTaskQueue.push(task);
+        m_MsgQueue.push(task);
         cond.notify_all();
     }
 
-    void HandlerThread::cancelPeriodTask(TimeTask &task) {
+    void HandlerThread::cancelPeriodTask(const TimeTask &task) {
         std::unique_lock<std::mutex> lck(mut);
-        task.m_status = TimeTask::CANCELLED;
-        m_PeriodTaskQueue.remove(task);
+        m_MsgQueue.remove(task);
     }
 }

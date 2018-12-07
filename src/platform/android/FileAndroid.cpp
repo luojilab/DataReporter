@@ -56,12 +56,17 @@ namespace future {
 
     std::list<std::string> File::FileList(const std::string &path) {
         JNIEnv *env = AndroidUtil::getEnv();
+        std::list<std::string> retList;
         jstring javaPath = AndroidUtil::createJavaString(env, path);
         jobject javaFile = AndroidUtil::Constructor_File->call(javaPath);
         jobjectArray files = AndroidUtil::Method_filelist->call(javaFile);
+        if (files == NULL) {
+            env->DeleteLocalRef(javaPath);
+            env->DeleteLocalRef(javaFile);
+            return retList;
+        }
         jsize len = env->GetArrayLength(files);
 
-        std::list<std::string> retList;
         for (int i = 0; i < len; i++) {
             jobject jobj = env->GetObjectArrayElement(files, i);
             std::string tmpStr = AndroidUtil::fromJavaString(env, (jstring) jobj);

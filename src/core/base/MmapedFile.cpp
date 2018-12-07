@@ -27,7 +27,7 @@ namespace future {
 
     bool MmapedFile::Open() {
         m_Fd = open(m_Path.c_str(), O_RDWR | O_CREAT, S_IRWXU);
-        if (m_Fd < 0) {
+        if (m_Fd = -1) {
             Error("fail to open:%s, %s", m_Path.c_str(), strerror(errno));
             return false;
         }
@@ -79,7 +79,7 @@ namespace future {
             m_SegmentPtr = nullptr;
         }
 
-        if (m_Fd >= 0) {
+        if (m_Fd != -1) {
             close(m_Fd);
             m_Fd = -1;
         }
