@@ -29,9 +29,9 @@ namespace future {
 
         void SetFileMaxSize(std::size_t fileMaxSize);
 
-        void SetExpiredTime(std::size_t expiredTime);
+        void SetExpiredTime(std::int64_t expiredTime);
 
-        void SetReportingInterval(std::size_t reportingInterval);
+        void SetReportingInterval(std::int64_t reportingInterval);
 
         void Push(const std::string &data);
 
@@ -83,8 +83,8 @@ namespace future {
         const std::string m_CachePath;
         std::atomic_int m_ItemSize;
         std::atomic_uint m_MaxFileSize;
-        std::atomic_uint m_ExpiredTime;
-        std::atomic_uint m_ReportingInterval;
+        std::atomic_int_least64_t m_ExpiredTime;
+        std::atomic_int_least64_t m_ReportingInterval;
         std::atomic_bool m_IsStart;
         std::shared_ptr<Buffer> m_DataBuf;
         std::shared_ptr<MemoryStream> m_MemoryStream;

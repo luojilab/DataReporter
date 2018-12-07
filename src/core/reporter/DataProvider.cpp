@@ -18,7 +18,7 @@ namespace future {
             return false;
         }
         std::int64_t now = GetNanoTime();
-        std::int64_t deadLine = date + expiredTime * 1000000;
+        std::int64_t deadLine = date + expiredTime * 1000000000;
         if (now > deadLine) {
             return true;
         }
@@ -81,7 +81,7 @@ namespace future {
     DataProvider::ReadFromFile(std::size_t count, std::int64_t expiredTime) {
         std::list<std::shared_ptr<CacheItem> > ret;
 
-        for (int i = 0; i < count; ) {
+        for (int i = 0; i < count;) {
             if (m_Files.empty()) {
                 m_Files = ListFiles();
                 if (m_Files.empty()) {

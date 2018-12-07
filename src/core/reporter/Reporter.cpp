@@ -23,8 +23,8 @@ namespace future {
                                           std::list<std::shared_ptr<CacheItem> > &data)> netImpl)
             : m_CachePath(cachePath), m_MaxFileSize(1024 * 10), m_ItemSize(5), m_UUid(uuid),
               m_RetryStep(RETRY_STEP),
-              m_ExpiredTime(0),
-              m_ReportingInterval(0),
+              m_ExpiredTime(0),//in second
+              m_ReportingInterval(0),//in millisecond
               m_DataProvider(NULL),
               m_DataBuf(NULL),
               m_WriteFileBuf(NULL),
@@ -108,14 +108,14 @@ namespace future {
         m_MaxFileSize = fileMaxSize;
     }
 
-    void Reporter::SetExpiredTime(std::size_t expiredTime) {
+    void Reporter::SetExpiredTime(std::int64_t expiredTime) {
         if (m_ThreadId != std::this_thread::get_id()) {
             return;
         }
         m_ExpiredTime = expiredTime;
     }
 
-    void Reporter::SetReportingInterval(std::size_t reportingInterval) {
+    void Reporter::SetReportingInterval(std::int64_t reportingInterval) {
         if (m_ThreadId != std::this_thread::get_id()) {
             return;
         }

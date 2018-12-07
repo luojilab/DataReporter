@@ -55,21 +55,21 @@ static void SetFileMaxSize(JNIEnv *env, jobject obj, jint nativeReporter, jint f
     reporter->SetFileMaxSize((int) fileMaxSize);
 }
 
-static void SetExpiredTime(JNIEnv *env, jobject obj, jint nativeReporter, jint expiredTime) {
+static void SetExpiredTime(JNIEnv *env, jobject obj, jint nativeReporter, jlong expiredTime) {
     future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);
     if (reporter == NULL) {
         return;
     }
-    reporter->SetExpiredTime((int) expiredTime);
+    reporter->SetExpiredTime((std::int64_t) expiredTime);
 }
 
 static void
-SetReportingInterval(JNIEnv *env, jobject obj, jint nativeReporter, jint reportingInterval) {
+SetReportingInterval(JNIEnv *env, jobject obj, jint nativeReporter, jlong reportingInterval) {
     future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);
     if (reporter == NULL) {
         return;
     }
-    reporter->SetReportingInterval((int) reportingInterval);
+    reporter->SetReportingInterval((std::int64_t) reportingInterval);
 }
 
 static void Start(JNIEnv *env, jobject obj, jint nativeReporter) {
@@ -125,8 +125,8 @@ static JNINativeMethod gJavaDataReporterMethods[] = {
         {"makeReporter",         "(Ljava/lang/String;Ljava/lang/String;Lcom/iget/datareporter/IReport;)I", (void *) MakeReporter},
         {"setReportCount",       "(II)V",                                                                  (void *) SetReportCount},
         {"setFileMaxSize",       "(II)V",                                                                  (void *) SetFileMaxSize},
-        {"setExpiredTime",       "(II)V",                                                                  (void *) SetExpiredTime},
-        {"setReportingInterval", "(II)V",                                                                  (void *) SetReportingInterval},
+        {"setExpiredTime",       "(IJ)V",                                                                  (void *) SetExpiredTime},
+        {"setReportingInterval", "(IJ)V",                                                                  (void *) SetReportingInterval},
         {"start",                "(I)V",                                                                   (void *) Start},
         {"reaWaken",             "(I)V",                                                                   (void *) ReaWaken},
         {"push",                 "(ILjava/lang/String;)V",                                                 (void *) Push},
