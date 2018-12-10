@@ -23,10 +23,10 @@ DATA_REPORTER_EXPORT @interface DataReporter : NSObject
         data:(NSString *)data;
 
 + (void)UploadSucess:(void *)nativeReporter
-                 key:(NSInteger)key;
+                 key:(int64_t)key;
     
 + (void)UploadFailed:(void *)nativeReporter
-                 key:(NSInteger)key;
+                 key:(int64_t)key;
     
 + (void)ReleaseReporter:(void *)nativeReporter;
     
