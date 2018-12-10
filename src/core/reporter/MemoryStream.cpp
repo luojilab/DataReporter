@@ -8,7 +8,7 @@
 #include <File.h>
 #include <RawOutput.h>
 #include "MemoryStream.h"
-#include "NanoTime.h"
+#include "TimeUtil.h"
 #include "StringUtil.h"
 #include "IoUtil.h"
 

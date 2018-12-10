@@ -6,7 +6,7 @@
 #include "RawOutput.h"
 #include "Reporter.h"
 #include "MiniPBCoder.h"
-#include "NanoTime.h"
+#include "TimeUtil.h"
 #include "StringUtil.h"
 #include "IoUtil.h"
 
@@ -133,7 +133,7 @@ namespace future {
             WrtiteToFile();
             return;
         }
-        int64_t now = GetNanoTime();
+        std::int64_t now = TimeUtil::GetSecondsTime();
         std::string nowStr = Int64ToStr(now);
         m_MemoryStream->Write(data, nowStr);
 
@@ -206,7 +206,7 @@ namespace future {
         if (data.empty()) {
             return;
         }
-        int64_t now = GetNanoTime();
+        int64_t now = TimeUtil::GetNanoTime();
         if (m_UploadImpl != NULL) {
             m_Reporting[now] = std::move(data);
             m_UploadImpl(now, m_Reporting[now]);
@@ -371,7 +371,7 @@ namespace future {
     }
 
     std::string Reporter::MakeFileName(const std::string &path) {
-        std::string ret = path + "/" + Int64ToStr(GetNanoTime()) + DATA_SUFFIX;
+        std::string ret = path + "/" + Int64ToStr(TimeUtil::GetNanoTime()) + DATA_SUFFIX;
         return ret;
     }
 

@@ -96,7 +96,7 @@ if (APPLE)
                 ${SOURCE_FILES}
                 ${HEADER_FILES})
 else ()
-    add_library(data-reporter
+    add_library(data-reporter 
                 SHARED
                 ${SOURCE_FILES}
                 ${HEADER_FILES})

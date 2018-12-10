@@ -8,7 +8,7 @@
 #include "FileInputStream.h"
 #include "MiniPBCoder.h"
 #include "Reporter.h"
-#include "NanoTime.h"
+#include "TimeUtil.h"
 
 
 namespace future {
@@ -17,8 +17,8 @@ namespace future {
         if (expiredTime == 0 || date == 0) {
             return false;
         }
-        std::int64_t now = GetNanoTime();
-        std::int64_t deadLine = date + expiredTime * 1000000000;
+        std::int64_t now = TimeUtil::GetSecondsTime();
+        std::int64_t deadLine = date + expiredTime;
         if (now > deadLine) {
             return true;
         }

@@ -8,7 +8,12 @@ extern "C" { /* 如果没有采用C++，顺序预编译 */
 #endif
 
 namespace future {
-    int64_t GetNanoTime(void);
+    class TimeUtil {
+    public:
+        static std::int64_t GetNanoTime(void);
+
+        static std::int64_t GetSecondsTime();
+    };
 
 }
 #ifdef __cplusplus /* 结束使用C编译器 */
