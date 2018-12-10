@@ -86,7 +86,7 @@
 }
 
 + (void)UploadSucess:(void *)nativeReporter
-                 key:(NSInteger)key
+                 key:(int64_t)key
 {
     future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);
     if (reporter == NULL) {
@@ -96,7 +96,7 @@
 }
 
 + (void)UploadFailed:(void *)nativeReporter
-                 key:(NSInteger)key
+                 key:(int64_t)key
 {
     future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);
     if (reporter == NULL) {
