@@ -59,7 +59,7 @@
 }
 
 + (void)SetExpiredTime:(void *)nativeReporter
-           expiredTime:(NSUInteger)expiredTime {
+           expiredTime:(int64_t)expiredTime {
     
     future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);
     if (reporter == NULL) {
@@ -69,7 +69,7 @@
 }
 
 + (void)SetReportingInterval:(void *)nativeReporter
-           reportingInterval:(NSUInteger)reportingInterval {
+           reportingInterval:(int64_t)reportingInterval {
     
     future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);
     if (reporter == NULL) {

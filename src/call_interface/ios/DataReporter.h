@@ -16,10 +16,10 @@ DATA_REPORTER_EXPORT @interface DataReporter : NSObject
            fileMaxSize:(NSUInteger)fileMaxSize;
 		   
 + (void)SetExpiredTime:(void *)nativeReporter
-           expiredTime:(NSUInteger)expiredTime;
+           expiredTime:(int64_t)expiredTime;
 		   
 + (void)SetReportingInterval:(void *)nativeReporter
-           reportingInterval:(NSUInteger)reportingInterval;
+           reportingInterval:(int64_t)reportingInterval;
 		   
 + (void)Start:(void *)nativeReporter;
 
