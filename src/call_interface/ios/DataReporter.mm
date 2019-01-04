@@ -57,6 +57,26 @@
     }
     reporter->SetFileMaxSize(fileMaxSize);
 }
+
++ (void)SetExpiredTime:(void *)nativeReporter
+           expiredTime:(NSUInteger)expiredTime {
+    
+    future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);
+    if (reporter == NULL) {
+        return;
+    }
+    reporter->SetExpiredTime(expiredTime);
+}
+
++ (void)SetReportingInterval:(void *)nativeReporter
+           reportingInterval:(NSUInteger)reportingInterval {
+    
+    future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);
+    if (reporter == NULL) {
+        return;
+    }
+    reporter->SetReportingInterval(reportingInterval);
+}
     
 + (void)Start:(void *)nativeReporter {
     future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);
