@@ -71,6 +71,22 @@ step:
     public static native void setFileMaxSize(int nativeReporter, int fileMaxSize);
 	This method is to set the cache file single file size limit, can not be called, the default value is 10k
 
+	/**
+     * Set the cache file validity period
+     *
+     * @param nativeReporter return by makeReporter
+     * @param expiredTime    Data validity period
+     */
+    public static native void setExpiredTime(int nativeReporter, long expiredTime);
+	
+	 /**
+     * Set the reporting interval
+     *
+     * @param nativeReporter return by makeReporter
+     * @param reportingInterval   Reporting interval
+     */
+    public static native void setReportingInterval(int nativeReporter, long reportingInterval);
+	
     /**
      * Start reporting thread After setting the relevant parameters, execute it once.
      *
@@ -182,6 +198,24 @@ This method can not be called, the default value is 5
 + (void)SetFileMaxSize:(void *)nativeReporter
            fileMaxSize:(NSUInteger)fileMaxSize;
 This method is to set the cache file single file size limit, can not be called, the default value is 10k
+
+/**
+* Set the cache effective time in seconds
+*
+* @param nativeReporter The value returned by makeReporter
+* @param expiredTime    Validity period is the unit
+*/
++ (void)SetExpiredTime:(void *)nativeReporter
+           expiredTime:(int64_t)expiredTime;
+
+/**
+* Set the reporting interval
+*
+* @param nativeReporter The value returned by makeReporter
+* @param reportingInterval    Report interval, in seconds
+*/
++ (void)SetReportingInterval:(void *)nativeReporter
+           reportingInterval:(int64_t)reportingInterval;
 
 /**
 * Start reporting thread After setting the relevant parameters, execute it once.
@@ -311,6 +345,22 @@ demo 的使用请参考[这里](https://github.com/luojilab/DataReporter/tree/ma
     public static native void setFileMaxSize(int nativeReporter, int fileMaxSize);
 	该方法为设置缓存文件单文件大小限制，可不调用，默认值为10k
 
+	/**
+     * 设置缓存文件有效期
+     *
+     * @param nativeReporter 由makeReporter返回的值
+     * @param expiredTime    数据有效期
+     */
+    public static native void setExpiredTime(int nativeReporter, long expiredTime);
+	
+	 /**
+     * 设置上报间隔
+     *
+     * @param nativeReporter 由makeReporter返回的值
+     * @param reportingInterval   上报间隔
+     */
+    public static native void setReportingInterval(int nativeReporter, long reportingInterval);
+	
     /**
      * 开始上报线程 设置完相关参数之后，执行一次。
      *
@@ -424,6 +474,24 @@ demo 的使用请参考[这里](https://github.com/luojilab/DataReporter/tree/ma
            fileMaxSize:(NSUInteger)fileMaxSize;
 该方法为设置缓存文件单文件大小限制，可不调用，默认值为10k
 
+/**
+* 设置缓存有效时间，秒为单位
+*
+* @param nativeReporter 由makeReporter返回的值
+* @param expiredTime    有效期 秒为单位
+*/
++ (void)SetExpiredTime:(void *)nativeReporter
+           expiredTime:(int64_t)expiredTime;
+
+/**
+* 设置上报间隔
+*
+* @param nativeReporter 由makeReporter返回的值
+* @param reportingInterval    上报间隔，秒为单位
+*/
++ (void)SetReportingInterval:(void *)nativeReporter
+           reportingInterval:(int64_t)reportingInterval;
+		   
 /**
 * 开始上报线程 设置完相关参数之后，执行一次。
 *

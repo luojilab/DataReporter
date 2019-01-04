@@ -38,7 +38,7 @@ public class DataReporter {
     public static native void setFileMaxSize(int nativeReporter, int fileMaxSize);
 
     /**
-     * 设置缓存文件单文件最大大小限制，默认值为10k
+     * 设置缓存文件有效期
      *
      * @param nativeReporter 由makeReporter返回的值
      * @param expiredTime    数据有效期
@@ -46,7 +46,7 @@ public class DataReporter {
     public static native void setExpiredTime(int nativeReporter, long expiredTime);
 
     /**
-     * 设置缓存文件单文件最大大小限制，默认值为10k
+     * 设置上报间隔
      *
      * @param nativeReporter 由makeReporter返回的值
      * @param reportingInterval   上报间隔
