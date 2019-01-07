@@ -23,8 +23,13 @@ Choose [Android](#android) or [iOS](#apple)
 
 ### <a name="android">[Android]()</a>
 ## Use AAR
-1. import the aar at release\Android dir
-2. see Way of use to how to use
+1. Join to the build.gradle where in the project root directory
+repositories {
+        jcenter()
+    }
+2. Join to the build.gradle where in the project directory
+implementation 'com.luojilab.component:datareporter:1.2.0'
+3. Access according to the call mode of the demo
 
 ## Source Compile
 Preparation Condition:
@@ -296,8 +301,13 @@ demo 的使用请参考[这里](https://github.com/luojilab/DataReporter/tree/ma
 
 ### <a name="android_cn">[Android]()</a>
 ## aar接入
-1. 导入项目目录release\Android中的aar到应用的项目中
-2. 按照下面的调用方式接入
+1. 在项目跟目录build.gradle中加入
+repositories {
+        jcenter()
+    }
+2. 在项目build.gradle中加入
+implementation 'com.luojilab.component:datareporter:1.2.0'
+3. 按照demo的调用方式接入
 
 ## 源码编译
 准备条件：
