@@ -88,9 +88,16 @@ static void *reporterInstanse;
             DebugLog(@"UploadFailed -> should upload again = %lld",key);
         }
     }];
-    //set report max count
+    //set report max count  设置每次上报最大的数据量 10表示，一次最多10条报一次
     [DataReporter SetReportCount:reporterInstanse count:10];
-    //set save file size
+	
+	//set report ExpiredTime 0表示永久有效 所有数据上报，10*24*60*60 表示10天内有效，10天外数据不上报
+    [DataReporter SetExpiredTime:reporterInstanse expiredTime:0];
+	
+	//set report reporterInstanse 上报间隔 单位i秒  10 表示每隔10秒上报一次，0表示有数据立即上报
+    [DataReporter SetReportingInterval:reporterInstanse reportingInterval:10];
+	
+    //set save file size 设置缓存文件大小， 大小一定要比单条push进来的数据大
     [DataReporter SetFileMaxSize:reporterInstanse fileMaxSize:kMaxFileSize];
 }
 
