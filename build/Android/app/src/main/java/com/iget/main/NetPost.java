@@ -61,6 +61,14 @@ public class NetPost implements IReport {
                     }
                 }
 
+//                StringBuffer stringBuffer = new StringBuffer();
+//                for (int i = 0; i < data.length; i++) {
+//                    stringBuffer.append(data[i]);
+//                }
+//
+//                DataReporter.uploadSucess(mNativeReporter, key);
+//                long t = System.currentTimeMillis() / 1000;
+//                Log.d("DataReporter:data_", stringBuffer.toString() + " time:" + t);
             }
         }, 100);
 

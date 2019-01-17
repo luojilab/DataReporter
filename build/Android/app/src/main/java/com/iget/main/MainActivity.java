@@ -52,17 +52,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                final NetPost netPost = new NetPost();
-                mNativeReporter = DataReporter.makeReporter("test", MainActivity.this.getFilesDir().getPath(), netPost);
-                netPost.setNativeReporter(mNativeReporter);
-                DataReporter.setReportCount(mNativeReporter, 10);
-                DataReporter.setFileMaxSize(mNativeReporter, 2 * 1024);
-                DataReporter.setExpiredTime(mNativeReporter, 0 * 1000);
-                DataReporter.setReportingInterval(mNativeReporter, 0 * 1000);
-                DataReporter.start(mNativeReporter);
-
-                for (int i = 0; i < 5000; i++) {
-                    DataReporter.push(mNativeReporter, "{\"bid\":1919,\"bname\":\"《领导力21法则：如何培养领袖气质》\",\"progress\":\"97.674416\",\"time\":\"1544164416\",\"progress_title\":\"词汇表\"}" + i);
+                if (mNativeReporter == 0) {
+                    final NetPost netPost = new NetPost();
+                    mNativeReporter = DataReporter.makeReporter("test", MainActivity.this.getFilesDir().getPath(), netPost);
+                    netPost.setNativeReporter(mNativeReporter);
+                    DataReporter.setReportCount(mNativeReporter, 10);
+                    DataReporter.setFileMaxSize(mNativeReporter, 2 * 1024);
+                    DataReporter.setExpiredTime(mNativeReporter, 0 * 1000);
+                    DataReporter.setReportingInterval(mNativeReporter, 10 * 1000);
+                    DataReporter.start(mNativeReporter);
+                }
+                long t = System.currentTimeMillis() / 1000;
+                for (int i = 0; i < 5; i++) {
+                    DataReporter.push(mNativeReporter, "ev=s_paid_paid_impression&uid=12005419&scr=1080*2214&t=1547627349367082203&seid=dd86a82b76722c24427b9db1fb462a4d&net=wifi&mac=c6abbef9f4bea0a0&sid=dd86a82b76722c24427b9db1fb462a4d" + " time:" + t);
                 }
             }
         });
@@ -83,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
                     DataReporter.setReportCount(nativeReporter, 10);
                     DataReporter.setFileMaxSize(nativeReporter, 2 * 1024);
                     DataReporter.setExpiredTime(nativeReporter, 0 * 1000);
+                    DataReporter.setReportingInterval(nativeReporter, 1000 * 10);
                     DataReporter.start(nativeReporter);
                     for (int j = 0; j < 1000; j++) {
                         DataReporter.push(nativeReporter, " business id:" + i + " test_data: 10040106100401061004010610040106100401061004010610040106100401061004010610040106100401061004010610040106 data id: " + j);

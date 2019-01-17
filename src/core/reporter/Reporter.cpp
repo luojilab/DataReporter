@@ -376,6 +376,9 @@ namespace future {
     }
 
     void Reporter::DelayReport() {
+        if(!m_DelayReportTasks.empty()){
+            return;
+        }
         std::shared_ptr<WTF::TimeTask> delayTask(
                 new WTF::TimeTask(m_ReportingInterval, 0, NULL));
         delayTask->setFun([this, delayTask]() {
