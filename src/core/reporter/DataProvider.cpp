@@ -179,11 +179,11 @@ namespace future {
                 break;
             }
 
-            i++;
             //过期数据
             if (IsExpired(dateInItem, expiredTime)) {
                 continue;
             }
+            i++;
             ret.push_back(cacheItem);
         }
         return ret;

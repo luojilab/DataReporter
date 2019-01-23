@@ -91,11 +91,11 @@ namespace future {
                     cacheItem->fromPath = m_Path;
                 }
             }
-            i++;
-
             if (DataProvider::IsExpired(dateInItem, expiredTime)) {
                 continue;
             }
+
+            i++;
             ret.push_back(cacheItem);
         }
         return std::move(ret);
