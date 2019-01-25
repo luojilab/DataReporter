@@ -50,5 +50,16 @@ namespace future {
     {}
 #endif
 
+    inline void print_hex(unsigned char *buf, uint64_t len) {
+        //Print results:
+        int i;
+        for (i = 0; i < len; i++) {
+            Debug("%02X", buf[i]);
+            if (15 == i % 16)
+                Debug("\n");
+        }
+        Debug("\n");
+    }
+
 }
 #endif //LOG_H
