@@ -57,9 +57,11 @@ namespace future {
 
         void CheckWriteBuf();
 
-        std::int64_t DumpDataBuf(void *addr, int maxSize);
+        std::int64_t DumpDataBuf(void *addr, long maxSize);
 
-        bool IsWriteFile();
+        bool IsAsyncWriteFile();
+
+        bool IsSyncWriteFile(const std::string &data);
 
         std::string MakeFileName(const std::string &path);
 

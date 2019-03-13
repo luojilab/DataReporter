@@ -128,10 +128,8 @@ namespace future {
         if (m_ThreadId != std::this_thread::get_id()) {
             return;
         }
-        if (m_MemoryStream->GetOffset() + MiniPBCoder::CalculatedSize(data) >=
-            m_DataBuf->Length()) {
+        if (IsSyncWriteFile(data)) {
             WrtiteToFile();
-            return;
         }
         std::int64_t now = TimeUtil::GetSecondsTime();
         std::string nowStr = Int64ToStr(now);
@@ -143,7 +141,7 @@ namespace future {
             }
         });
 
-        if (IsWriteFile()) {
+        if (IsAsyncWriteFile()) {
             s_HandlerThread->postMsg(m_WriteFileFun);
         }
     }
@@ -160,11 +158,7 @@ namespace future {
             if (iter != m_Reporting.end()) {
                 for (std::list<std::shared_ptr<CacheItem> >::iterator cacheIter = iter->second.begin();
                      cacheIter != iter->second.end(); cacheIter++) {
-                    if (!(*cacheIter)->fromPath.empty()) {
-                        m_DataProvider->ClearFile((*cacheIter)->fromPath);
-                    } else if ((*cacheIter)->fromMem != NULL) {
-                        m_DataProvider->ClearMem();
-                    }
+                    m_DataProvider->ClearItem(*(*cacheIter));
                 }
             }
             m_Reporting.erase(key);
@@ -206,8 +200,16 @@ namespace future {
         if (data.empty()) {
             return;
         }
-        int64_t now = TimeUtil::GetNanoTime();
+
         if (m_UploadImpl != NULL) {
+            int64_t now = TimeUtil::GetNanoTime();
+            std::map<int64_t, std::list<std::shared_ptr<CacheItem> > >::iterator reportingIter = m_Reporting.find(
+                    now);
+            while (reportingIter != m_Reporting.end()) {
+                now = TimeUtil::GetNanoTime();
+                reportingIter = m_Reporting.find(now);
+            }
+
             m_Reporting[now] = std::move(data);
             m_UploadImpl(now, m_Reporting[now]);
         }
@@ -254,14 +256,26 @@ namespace future {
             m_UploadMmapFile = NULL;
         }
 
+        if (m_WriteFileMmapFile->Open()) {
+            m_WriteFileBuf = std::shared_ptr<Buffer>(
+                    new Buffer(m_WriteFileMmapFile->GetMemBegin(),
+                               m_WriteFileMmapFile->GetMaxSize(),
+                               BufferNoCopy));
+        } else {
+            m_WriteFileBuf = std::shared_ptr<Buffer>(
+                    new Buffer(m_WriteFileMmapFile->GetMaxSize()));
+            File::RemoveFile(m_WriteFileMmapFile->GetPath());
+            m_WriteFileMmapFile = NULL;
+        }
+
         m_MemoryStream = std::shared_ptr<MemoryStream>(new MemoryStream(m_DataBuf));
 
-        m_DataProvider = std::shared_ptr<DataProvider>(new DataProvider(m_CachePath, m_UploadBuf,
-                                                                        std::bind(
-                                                                                &Reporter::DumpDataBuf,
-                                                                                this,
-                                                                                std::placeholders::_1,
-                                                                                std::placeholders::_2)));
+        std::function<std::int64_t(void *, long)> dumpDataFun = std::bind(&Reporter::DumpDataBuf,
+                                                                          this,
+                                                                          std::placeholders::_1,
+                                                                          std::placeholders::_2);
+        m_DataProvider = std::shared_ptr<DataProvider>(
+                new DataProvider(m_CachePath, m_UploadBuf, dumpDataFun));
 
         CheckDataBuf();
         CheckWriteBuf();
@@ -293,7 +307,7 @@ namespace future {
     }
 
     void Reporter::WrtiteToFile() {
-        if (!IsWriteFile()) {
+        if (!IsAsyncWriteFile()) {
             return;
         }
         std::string fileName = MakeFileName(m_CachePath);
@@ -313,20 +327,6 @@ namespace future {
     }
 
     void Reporter::CheckWriteBuf() {
-        if (m_WriteFileBuf == NULL) {
-            if (m_WriteFileMmapFile->Open()) {
-                m_WriteFileBuf = std::shared_ptr<Buffer>(
-                        new Buffer(m_WriteFileMmapFile->GetMemBegin(),
-                                   m_WriteFileMmapFile->GetMaxSize(),
-                                   BufferNoCopy));
-            } else {
-                File::RemoveFile(m_WriteFileMmapFile->GetPath());
-                m_WriteFileBuf = std::shared_ptr<Buffer>(
-                        new Buffer(m_WriteFileMmapFile->GetMaxSize()));
-                m_WriteFileMmapFile = NULL;
-            }
-        }
-
         void *pos = GetValidMem(*m_WriteFileBuf);
         if (pos != NULL && pos != m_WriteFileBuf->GetBegin()) {
             std::string fileName = MakeFileName(m_CachePath);
@@ -347,8 +347,8 @@ namespace future {
 
         for (int i = 0; i < bufferSize; i++) {
             unsigned char *pos = (unsigned char *) begin + itemLen;
-            Buffer buffer(pos, bufferSize - itemLen, BufferNoCopy);
-            PBEncodeItem item = MiniPBCoder::DecodeItem(buffer);
+            Buffer decodeBuffer(pos, bufferSize - itemLen, BufferNoCopy);
+            PBEncodeItem item = MiniPBCoder::DecodeItem(decodeBuffer);
             if (!MiniPBCoder::VerifyItem(item)) {
                 return pos;
             }
@@ -357,17 +357,18 @@ namespace future {
         return buffer.GetEnd();
     }
 
-    std::int64_t Reporter::DumpDataBuf(void *addr, int maxSize) {
+    std::int64_t Reporter::DumpDataBuf(void *addr, long maxSize) {
         std::int64_t ret = m_MemoryStream->MoveToMem(addr, maxSize);
         return ret;
     }
 
-    bool Reporter::IsWriteFile() {
-        long offset = m_MemoryStream->GetOffset();
-        if (offset > m_MaxFileSize) {
-            return true;
-        }
-        return false;
+    bool Reporter::IsAsyncWriteFile() {
+        return m_MemoryStream->GetOffset() > m_MemoryStream->Size() / 2;
+    }
+
+    bool Reporter::IsSyncWriteFile(const std::string &data) {
+        return (m_MemoryStream->GetOffset() + MiniPBCoder::CalculatedSize(data) >=
+                m_MemoryStream->Size());
     }
 
     std::string Reporter::MakeFileName(const std::string &path) {
@@ -376,7 +377,7 @@ namespace future {
     }
 
     void Reporter::DelayReport() {
-        if(!m_DelayReportTasks.empty()){
+        if (!m_DelayReportTasks.empty()) {
             return;
         }
         std::shared_ptr<WTF::TimeTask> delayTask(

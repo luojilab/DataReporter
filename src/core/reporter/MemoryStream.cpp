@@ -95,4 +95,8 @@ namespace future {
         memset((unsigned char *) m_Buffer->GetBegin() + offset, 0,
                m_Buffer->Length() - offset);
     }
+
+    size_t MemoryStream::Size(){
+        return m_Buffer->Length();
+    }
 }

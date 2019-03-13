@@ -26,7 +26,7 @@ namespace future {
     }
 
     DataProvider::DataProvider(const std::string &fromPath, std::shared_ptr<Buffer> &fromMem,
-                               std::function<std::int64_t(void *, int)> updateMem)
+                               std::function<std::int64_t(void *, long)> updateMem)
             : m_FromPath(fromPath), m_FromMem(fromMem), m_UpdateMem(updateMem),
               m_MemDataEndPos(NULL), m_MemOffset(NULL), m_IsUploadingMem(false),
               m_FileInputStream(NULL) {
@@ -99,8 +99,8 @@ namespace future {
             if (!m_FileInputStream->IsOpened()) {
                 if (!m_FileInputStream->Open()) {
                     std::string filePath = m_FileInputStream->GetPath();
-                    std::string fileNameWithoutExt = File::GetFileNameWithExt(filePath);
-                    m_UploadingFile.erase(fileNameWithoutExt);
+                    std::string fileNameWithExt = File::GetFileNameWithExt(filePath);
+                    m_UploadingFile.erase(fileNameWithExt);
                     m_FileInputStream = NULL;
                     m_Files.pop_front();
                     continue;
@@ -187,6 +187,14 @@ namespace future {
             ret.push_back(cacheItem);
         }
         return ret;
+    }
+
+    void DataProvider::ClearItem(CacheItem &item){
+        if (!item.fromPath.empty()) {
+            ClearFile(item.fromPath);
+        } else if (item.fromMem != NULL) {
+            ClearMem();
+        }
     }
 
     void DataProvider::ClearFile(const std::string &path) {

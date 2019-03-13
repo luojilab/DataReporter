@@ -30,11 +30,9 @@ namespace future {
             size -= sizeof(zeros);
         }
 
-        if (size > 0) {
-            if (write(fd, zeros, size) < 0) {
-                Error("fail to write fd[%d], error:%s", fd, strerror(errno));
-                return false;
-            }
+        if (size > 0 && (write(fd, zeros, size) < 0)) {
+            Error("fail to write fd[%d], error:%s", fd, strerror(errno));
+            return false;
         }
         return true;
     }

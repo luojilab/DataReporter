@@ -25,11 +25,13 @@ namespace future {
         static bool IsExpired(std::int64_t date, std::int64_t expiredTime);
 
         DataProvider(const std::string &fromPath, std::shared_ptr<Buffer> &fromMem,
-                     std::function<std::int64_t(void *, int)> updateMem);
+                     std::function<std::int64_t(void *, long)> updateMem);
 
         ~DataProvider();
 
         std::list<std::shared_ptr<CacheItem> > ReadData(std::size_t count, std::int64_t expiredTime);
+
+        void ClearItem(CacheItem &item);
 
         void ClearFile(const std::string &path);
 

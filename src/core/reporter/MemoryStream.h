@@ -32,6 +32,8 @@ namespace future {
 
         void Clear(std::size_t offset);
 
+        size_t Size();
+
     private:
 
         unsigned char *m_PosPtr;
