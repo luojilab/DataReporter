@@ -1,6 +1,6 @@
 ## DataReporter
 
-[![name](https://img.shields.io/badge/release-1.2.1-green.svg?style=flat)]()
+[![name](https://img.shields.io/badge/relelase-1.2.3-green.svg?style=flat)]()
 [![license](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)]()
 [![platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS-red.svg?style=flat)]()
 
@@ -28,7 +28,7 @@ repositories {
         jcenter()
     }
 2. Join to the build.gradle where in the project directory
-implementation 'com.luojilab.component:datareporter:1.2.1'
+implementation 'com.luojilab.component:datareporter:1.2.3'
 3. Access according to the call mode of the demo
 
 ## Source Compile
@@ -52,7 +52,7 @@ step:
      * @param reportImp Reporting implementation interface
      * @return
      */
-    public static native int makeReporter(String uuid, String cachePath, IReport reportImp);
+    public static native long makeReporter(String uuid, String cachePath, IReport reportImp);
 	
 	This method is used to create a DataReporter instance. This method is used to create an escalation instance.
 	Different businesses can create different instances without worrying about performance consumption because all instances share a single reporting thread.
@@ -63,7 +63,7 @@ step:
      * @param nativeReporter return by makeReporter
      * @param count          Number of data reported at one time
      */
-    public static native void setReportCount(int nativeReporter, int count);
+    public static native void setReportCount(long nativeReporter, int count);
     The method is to set the amount of data reported once, for example, set to 5, which is that the data sent by the reporting interface is spit out every 5 times.
 	This method can not be called, the default value is 5
 	
@@ -73,7 +73,7 @@ step:
      * @param nativeReporter return by makeReporter
      * @param fileMaxSize    Cache file maximum size
      */
-    public static native void setFileMaxSize(int nativeReporter, int fileMaxSize);
+    public static native void setFileMaxSize(long nativeReporter, int fileMaxSize);
 	This method is to set the cache file single file size limit, can not be called, the default value is 10k
 
 	/**
@@ -82,7 +82,7 @@ step:
      * @param nativeReporter return by makeReporter
      * @param expiredTime    Data validity period
      */
-    public static native void setExpiredTime(int nativeReporter, long expiredTime);
+    public static native void setExpiredTime(long nativeReporter, long expiredTime);
 	
 	 /**
      * Set the reporting interval
@@ -90,14 +90,14 @@ step:
      * @param nativeReporter return by makeReporter
      * @param reportingInterval   Reporting interval
      */
-    public static native void setReportingInterval(int nativeReporter, long reportingInterval);
+    public static native void setReportingInterval(long nativeReporter, long reportingInterval);
 	
     /**
      * Start reporting thread After setting the relevant parameters, execute it once.
      *
      * @param nativeReporter return by makeReporter
      */
-    public static native void start(int nativeReporter);
+    public static native void start(long nativeReporter);
 	The method is to start reporting threads. After creating the instance, set the corresponding parameters and call
 
     /**
@@ -105,7 +105,7 @@ step:
      *
      * @param nativeReporter return by makeReporter
      */
-    public static native void reaWaken(int nativeReporter);
+    public static native void reaWaken(long nativeReporter);
 	After the network is unavailable or other scenarios cause the network to fail, the method is called after the network is restored, and the logic is triggered again.
 
 
@@ -115,7 +115,7 @@ step:
      * @param nativeReporter return by makeReporter
      * @param data           Data to be reported
      */
-    public static native void push(int nativeReporter, String data);
+    public static native void push(long nativeReporter, String data);
 	The method is a call interface for reporting, data is data to be reported, and the data needs to be a string type.
 
     /**
@@ -124,7 +124,7 @@ step:
      * @param nativeReporter return by makeReporter
      * @param key            The value returned by the escalation implementation interface
      */
-    public static native void uploadSucess(int nativeReporter, long key);
+    public static native void uploadSucess(long nativeReporter, long key);
 	The method is a method that is called after the report is successful, and the method is called after the data is successfully reported by the network. Notify Reporter that the data report is completed.
 
     /**
@@ -133,7 +133,7 @@ step:
      * @param nativeReporter return by makeReporter
      * @param key            The value returned by the escalation implementation interface
      */
-    public static native void uploadFailed(int nativeReporter, long key);
+    public static native void uploadFailed(long nativeReporter, long key);
 	The method is called after the report fails, and the method is called after the data fails to be reported through the network. Notify Reporter data report failure
 
 
@@ -142,7 +142,7 @@ step:
      *
      * @param nativeReporter return by makeReporter
      */
-    public static native void releaseReporter(int nativeReporter);
+    public static native void releaseReporter(long nativeReporter);
 	
 	The method is to release the report instance method. When the report function is no longer used, the method is called to release the report instance.
 ## Note: After calling this method, you can not call any of the above methods. Because the instance has been released
@@ -306,7 +306,7 @@ repositories {
         jcenter()
     }
 2. 在项目build.gradle中加入
-implementation 'com.luojilab.component:datareporter:1.2.1'
+implementation 'com.luojilab.component:datareporter:1.2.3'
 3. 按照demo的调用方式接入
 
 ## 源码编译
@@ -331,7 +331,7 @@ implementation 'com.luojilab.component:datareporter:1.2.1'
      * @param reportImp 上报实现接口
      * @return
      */
-    public static native int makeReporter(String uuid, String cachePath, IReport reportImp);
+    public static native long makeReporter(String uuid, String cachePath, IReport reportImp);
 	
 	该方法是创建DataReporter实例的方法，通过该方法创建上报实例。
 	不同的业务可以创建不同的实例，不必担心性能消耗，因为所有实例共用一个上报线程
@@ -342,7 +342,7 @@ implementation 'com.luojilab.component:datareporter:1.2.1'
      * @param nativeReporter 由makeReporter返回的值
      * @param count          一次上报的数据条数
      */
-    public static native void setReportCount(int nativeReporter, int count);
+    public static native void setReportCount(long nativeReporter, int count);
     该方法是设置一次上报的数据数量，例如设置为5，这是上报接口吐出的数据就是按5条每次吐出。
 	该方法可以不调用，默认值为5
 	
@@ -352,7 +352,7 @@ implementation 'com.luojilab.component:datareporter:1.2.1'
      * @param nativeReporter 由makeReporter返回的值
      * @param fileMaxSize    缓存文件最大大小
      */
-    public static native void setFileMaxSize(int nativeReporter, int fileMaxSize);
+    public static native void setFileMaxSize(long nativeReporter, int fileMaxSize);
 	该方法为设置缓存文件单文件大小限制，可不调用，默认值为10k
 
 	/**
@@ -361,7 +361,7 @@ implementation 'com.luojilab.component:datareporter:1.2.1'
      * @param nativeReporter 由makeReporter返回的值
      * @param expiredTime    数据有效期
      */
-    public static native void setExpiredTime(int nativeReporter, long expiredTime);
+    public static native void setExpiredTime(long nativeReporter, long expiredTime);
 	
 	 /**
      * 设置上报间隔
@@ -369,14 +369,14 @@ implementation 'com.luojilab.component:datareporter:1.2.1'
      * @param nativeReporter 由makeReporter返回的值
      * @param reportingInterval   上报间隔
      */
-    public static native void setReportingInterval(int nativeReporter, long reportingInterval);
+    public static native void setReportingInterval(long nativeReporter, long reportingInterval);
 	
     /**
      * 开始上报线程 设置完相关参数之后，执行一次。
      *
      * @param nativeReporter 由makeReporter返回的值
      */
-    public static native void start(int nativeReporter);
+    public static native void start(long nativeReporter);
 	该方法是开始上报线程。在创建实例后，设置好相应参数后调用
 
     /**
@@ -384,7 +384,7 @@ implementation 'com.luojilab.component:datareporter:1.2.1'
      *
      * @param nativeReporter 由makeReporter返回的值
      */
-    public static native void reaWaken(int nativeReporter);
+    public static native void reaWaken(long nativeReporter);
 	在无网络后或者其他场景导致网络不通情况，网络恢复后调用该方法，触发再次上报逻辑
 
 
@@ -394,7 +394,7 @@ implementation 'com.luojilab.component:datareporter:1.2.1'
      * @param nativeReporter 由makeReporter返回的值
      * @param data           需要上报的数据
      */
-    public static native void push(int nativeReporter, String data);
+    public static native void push(long nativeReporter, String data);
 	该方法为上报的调用接口，data为需要上报的数据，数据需要是字符串类型
 
     /**
@@ -403,7 +403,7 @@ implementation 'com.luojilab.component:datareporter:1.2.1'
      * @param nativeReporter 由makeReporter返回的值
      * @param key            由上报实现接口返回的值
      */
-    public static native void uploadSucess(int nativeReporter, long key);
+    public static native void uploadSucess(long nativeReporter, long key);
 	该方法为上报成功后调用的方法，数据通过网络上报成功后调用该方法。通知Reporter数据上报完成
 
     /**
@@ -412,7 +412,7 @@ implementation 'com.luojilab.component:datareporter:1.2.1'
      * @param nativeReporter 由makeReporter返回的值
      * @param key            由上报实现接口返回的值
      */
-    public static native void uploadFailed(int nativeReporter, long key);
+    public static native void uploadFailed(long nativeReporter, long key);
 	该方法为上报失败后调用该方法，数据通过网络上报失败后调用该方法。通知Reporter数据上报失败
 
 
@@ -421,7 +421,7 @@ implementation 'com.luojilab.component:datareporter:1.2.1'
      *
      * @param nativeReporter 由makeReporter返回的值
      */
-    public static native void releaseReporter(int nativeReporter);
+    public static native void releaseReporter(long nativeReporter);
 	该方法为释放上报实例方法，当上报功能不再使用，调用该方法，释放上报实例。
 ## 注意：调用该方法后，不可以再调用以上任何方法。因为实例已经释放
 	

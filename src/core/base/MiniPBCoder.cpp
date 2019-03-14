@@ -98,7 +98,6 @@ namespace future {
         int headLen = PBEncodeItemHeadLen();
         unsigned char *headBuf = new unsigned char[headLen];
         if (headLen != fread(headBuf, 1, headLen, fp)) {
-            offset += headLen;
             delete[] headBuf;
             return false;
         }
@@ -114,8 +113,6 @@ namespace future {
         if (out.data_len != 0) {
             Buffer data(out.data_len);
             if (out.data_len != fread(data.GetBegin(), 1, data.Length(), fp)) {
-                offset += out.data_len;
-                delete[] headBuf;
                 return false;
             }
 
@@ -126,7 +123,6 @@ namespace future {
         if (out.date_len != 0) {
             Buffer extra_data(out.date_len);
             if (out.date_len != fread(extra_data.GetBegin(), 1, extra_data.Length(), fp)) {
-                offset += out.date_len;
                 return false;
             }
             offset += out.date_len;

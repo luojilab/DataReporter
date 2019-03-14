@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     private IntentFilter mIntentFilter;
     private NetworkChangeReceiver mNetworkChangeReceiver;
-    private int mNativeReporter = 0;
+    private long mNativeReporter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,11 +74,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int testCount = 100;
-                final List<Integer> reporters = new ArrayList<>(testCount);
+                final List<Long> reporters = new ArrayList<>(testCount);
                 final List<TestNetPost> netPosts = new ArrayList<>(testCount);
                 for (int i = 0; i < testCount; i++) {
                     final TestNetPost netPost = new TestNetPost();
-                    int nativeReporter = DataReporter.makeReporter("testRelease", MainActivity.this.getFilesDir().getPath() + "/test_release" + i, netPost);
+                    long nativeReporter = DataReporter.makeReporter("testRelease", MainActivity.this.getFilesDir().getPath() + "/test_release" + i, netPost);
                     reporters.add(nativeReporter);
                     netPosts.add(netPost);
                     netPost.setNativeReporter(nativeReporter);
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
                             netPost1.setNativeReporter(0);
                         }
 
-                        for (Integer one : reporters) {
+                        for (Long one : reporters) {
                             DataReporter.releaseReporter(one);
                         }
                     }

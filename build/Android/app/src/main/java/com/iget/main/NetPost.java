@@ -12,14 +12,14 @@ import java.util.Random;
 public class NetPost implements IReport {
 
 
-    private int mNativeReporter;
+    private long mNativeReporter;
     private Object lock[] = new Object[0];
     private Handler mUiHandler = new Handler(Looper.getMainLooper());
 
     public NetPost() {
     }
 
-    public void setNativeReporter(int nativeReporter) {
+    public void setNativeReporter(long nativeReporter) {
         synchronized (lock) {
             mNativeReporter = nativeReporter;
         }

@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private Button mButtonStart;
     private IntentFilter mIntentFilter;
     private NetworkChangeReceiver mNetworkChangeReceiver;
-    private int mNativeReporter = 0;
+    private long mNativeReporter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,13 +60,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     static class ReportImp implements IReport {
-        private int mNativeReporter;
+        private long mNativeReporter;
         private Handler mUiHandler = new Handler(Looper.getMainLooper());
 
         public ReportImp() {
         }
 
-        public void setNativeReporter(int nativeReporter) {
+        public void setNativeReporter(long nativeReporter) {
             mNativeReporter = nativeReporter;
         }
 
