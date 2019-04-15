@@ -382,11 +382,13 @@ namespace future {
         }
         std::shared_ptr<WTF::TimeTask> delayTask(
                 new WTF::TimeTask(m_ReportingInterval, 0, NULL));
-        delayTask->setFun([this, delayTask]() {
+        
+        std::weak_ptr<WTF::TimeTask> weakDelayTask = delayTask;
+        delayTask->setFun([this, weakDelayTask]() {
             if (m_ReportFun != NULL) {
                 m_ReportFun();
             }
-            m_DelayReportTasks.erase(delayTask);
+            m_DelayReportTasks.erase(weakDelayTask.lock());
         });
 
         m_DelayReportTasks[delayTask] = 0;
