@@ -175,13 +175,14 @@ namespace future {
         s_HandlerThread->postMsg([this, key]() {
             m_RetryStep += RETRY_STEP;
             std::shared_ptr<WTF::TimeTask> delayTask(new WTF::TimeTask(m_RetryStep, 0, NULL));
-            delayTask->setFun([this, key, delayTask]() {
+            std::weak_ptr<WTF::TimeTask> weakDelayTask = delayTask;
+            delayTask->setFun([this, key, weakDelayTask]() {
                 std::map<int64_t, std::list<std::shared_ptr<CacheItem> > >::iterator iter = m_Reporting.find(
                         key);
                 if (m_UploadImpl != NULL && iter != m_Reporting.end()) {
                     m_UploadImpl(key, m_Reporting[key]);
                 }
-                m_DelayUploadTasks.erase(delayTask);
+                m_DelayUploadTasks.erase(weakDelayTask.lock());
             });
 
             m_DelayUploadTasks[delayTask] = 0;
