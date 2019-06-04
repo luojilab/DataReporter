@@ -3,7 +3,7 @@ apply plugin: 'maven'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
-version = '1.2.5'
+version = '1.2.6'
 
 android {
     compileSdkVersion 28
@@ -14,7 +14,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 28
         versionCode 1
-        versionName "1.2.5"
+        versionName "1.2.6"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -27,13 +27,13 @@ android {
                         "-fvisibility=hidden",
                         "-llog",
                         //"-latomic", //gcc use
-                        "-march=armv7-a",
+                        //"-march=armv7-a",
                         "-mfloat-abi=softfp",
                         "-mfpu=vfpv3-d16",
                         "-ffunction-sections -fdata-sections"
                 cFlags "-fvisibility=hidden"
 
-                abiFilters "armeabi-v7a"
+                abiFilters "armeabi-v7a",'arm64-v8a'
                 arguments '-DANDROID_ARM_NEON=TRUE',
                         '-DANDROID_PLATFORM=android-17',
                         '-DANDROID_TOOLCHAIN=clang', '-DANDROID_STL=gnustl_static',
@@ -43,7 +43,7 @@ android {
 
         ndk {
             // 设置支持的 SO 库架构，注意这里要根据你的实际情况来设置
-            abiFilters 'armeabi-v7a'
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
             //''armeabi','armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64', 'mips', 'mips64'
         }
 
