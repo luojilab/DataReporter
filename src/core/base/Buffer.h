@@ -4,6 +4,7 @@
 #include <memory>
 #include <cstdint>
 #include <cstddef>
+#include <string.h>
 
 namespace future {
 
