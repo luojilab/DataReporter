@@ -10,9 +10,11 @@ extern "C" { /* 如果没有采用C++，顺序预编译 */
 namespace future {
     class TimeUtil {
     public:
-        static std::int64_t GetNanoTime(void);
+        static std::int64_t GetSteadyClockNanoTime(void);
 
-        static std::int64_t GetSecondsTime();
+        static std::int64_t GetSystemClockSecondsTime();
+
+        static std::int64_t GetSystemClockNanoTime();
     };
 
 }

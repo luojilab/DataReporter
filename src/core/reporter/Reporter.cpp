@@ -131,7 +131,7 @@ namespace future {
         if (IsSyncWriteFile(data)) {
             WrtiteToFile();
         }
-        std::int64_t now = TimeUtil::GetSecondsTime();
+        std::int64_t now = TimeUtil::GetSystemClockSecondsTime();
         std::string nowStr = Int64ToStr(now);
         m_MemoryStream->Write(data, nowStr);
 
@@ -203,11 +203,11 @@ namespace future {
         }
 
         if (m_UploadImpl != NULL) {
-            int64_t now = TimeUtil::GetNanoTime();
+            int64_t now = TimeUtil::GetSteadyClockNanoTime();
             std::map<int64_t, std::list<std::shared_ptr<CacheItem> > >::iterator reportingIter = m_Reporting.find(
                     now);
             while (reportingIter != m_Reporting.end()) {
-                now = TimeUtil::GetNanoTime();
+                now = TimeUtil::GetSteadyClockNanoTime();
                 reportingIter = m_Reporting.find(now);
             }
 
@@ -373,7 +373,8 @@ namespace future {
     }
 
     std::string Reporter::MakeFileName(const std::string &path) {
-        std::string ret = path + "/" + Int64ToStr(TimeUtil::GetNanoTime()) + DATA_SUFFIX;
+        std::int64_t nanoTime = TimeUtil::GetSystemClockNanoTime();
+        std::string ret = path + "/" + Int64ToStr(nanoTime) + DATA_SUFFIX;
         return ret;
     }
 

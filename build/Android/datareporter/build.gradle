@@ -26,30 +26,23 @@ android {
                     cppFlags "-std=c++14",
                             "-DPIC",
                             "-fPIC",
-                            //"-O3", //gcc use Os
-                            //"-DNDEBUG",
-                            //"-fvisibility=hidden",
-                            "-llog"
-                    //"-lEGL",
-                    //"-lGLESv2",
-                    //"-latomic", //gcc use
+                            "-llog",
+                            "-fsanitize=address -fno-omit-frame-pointer"
 
                     cFlags  "-ffunction-sections",
                             "-fdata-sections",
-                            "-O3",
-//                            "-march=armv7-a",
-//                            "--fix-cortex-a8",
+                            "-llog",
                             "-mfpu=neon",
                             "-mthumb",
                             "-mfloat-abi=softfp",
-                            "-fstack-protector"
-                    //"-fsanitize=address -fno-omit-frame-pointer"
+                            "-fstack-protector",
+                            "-fsanitize=address -fno-omit-frame-pointer"
 
                     abiFilters "armeabi-v7a", "arm64-v8a"
                     arguments '-DANDROID_ARM_NEON=TRUE',
                             '-DANDROID_ARM_MODE=arm',
                             '-DANDROID_PLATFORM=android-17',
-                            '-DANDROID_TOOLCHAIN=clang', '-DANDROID_STL=gnustl_static',
+                            '-DANDROID_TOOLCHAIN=clang', '-DANDROID_STL=c++_static',
                             //'-DANDROID_ABI=armeabi-v7a',"-DCMAKE_BUILD_TYPE=Debug"
                             "-DCMAKE_BUILD_TYPE=Debug"
 
@@ -79,14 +72,12 @@ android {
                             "-DNDEBUG",
                             "-fvisibility=hidden",
                             "-llog"
-                    //"-lEGL",
-                    //"-lGLESv2",
-                    //"-latomic", //gcc use
 
                     cFlags "-fvisibility=hidden",
                             "-ffunction-sections",
                             "-fdata-sections",
                             "-O3",
+                            "-DNDEBUG",
 //                            "-march=armv7-a",
 //                            "--fix-cortex-a8",
                             "-mfpu=neon",
@@ -97,7 +88,7 @@ android {
                     arguments '-DANDROID_ARM_NEON=TRUE',
                             '-DANDROID_ARM_MODE=arm',
                             '-DANDROID_PLATFORM=android-17',
-                            '-DANDROID_TOOLCHAIN=clang', '-DANDROID_STL=gnustl_static',
+                            '-DANDROID_TOOLCHAIN=clang', '-DANDROID_STL=c++_static',
                             "-DCMAKE_BUILD_TYPE=Release"
 
                     //'-DANDROID_STL=c++_static',
