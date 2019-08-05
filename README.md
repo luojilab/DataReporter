@@ -565,7 +565,7 @@ implementation 'com.luojilab.component:datareporter:1.2.8'
 1. 参看 [DataReporter/sample](https://github.com/luojilab/DataReporter/tree/master/sample)；
 2. 阅读 [源码](https://github.com/luojilab/DataReporter/tree/master/src)；
 3. 阅读 [wiki](https://github.com/luojilab/DataReporter/wiki)；
-4. 联系我们。得到客户端技术组
+4. 联系我们。得到客户端技术组 QQ:21314601
 
 ## 致谢：
 感谢腾讯团队开源的MMKV项目。本项目借鉴了部分源码。
