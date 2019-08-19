@@ -38,5 +38,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     //implementation (name:'datareporter-release_1.2.0', ext:'aar')
-    implementation 'com.luojilab.component:datareporter:1.2.3'
+    implementation 'com.luojilab.component:datareporter:1.2.8'
 }
