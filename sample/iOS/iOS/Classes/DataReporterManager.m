@@ -76,17 +76,19 @@ static void *reporterInstanse;
         }
        
 #warning TODO report to server-side
-        DebugLog(@"need report to server-side = %ld",(long)[dataArray count]);
-        if (random() % 3 == 1) {
-            //重要，通知DataReporter，report success，每次回调必须执行成功或者失败
-            [DataReporter UploadSucess:reporterInstanse key:key];
-            DebugLog(@"UploadSucess -> should not upload again = %lld",key);
-        }else{
-            //重要，通知DataReporter，report Failed，每次回调必须执行成功或者失败
-            //失败后，间隔一段时间会重新发送，上层不必多余处理
-            [DataReporter UploadFailed:reporterInstanse key:key];
-            DebugLog(@"UploadFailed -> should upload again = %lld",key);
-        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            DebugLog(@"need report to server-side = %ld",(long)[dataArray count]);
+            if (random() % 3 == 1) {
+                //重要，通知DataReporter，report success，每次回调必须执行成功或者失败
+                [DataReporter UploadSucess:reporterInstanse key:key];
+                DebugLog(@"UploadSucess -> should not upload again = %lld",key);
+            }else{
+                //重要，通知DataReporter，report Failed，每次回调必须执行成功或者失败
+                //失败后，间隔一段时间会重新发送，上层不必多余处理
+                [DataReporter UploadFailed:reporterInstanse key:key];
+                DebugLog(@"UploadFailed -> should upload again = %lld",key);
+            }
+        });
     }];
     //set report max count  设置每次上报最大的数据量 10表示，一次最多10条报一次
     [DataReporter SetReportCount:reporterInstanse count:10];
