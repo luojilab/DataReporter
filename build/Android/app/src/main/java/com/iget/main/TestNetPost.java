@@ -25,7 +25,7 @@ public class TestNetPost implements IReport {
     }
 
     @Override
-    public void upload(final long key, final String[] data) {
+    public void upload(final long key, final byte[][] data) {
 
         //模拟网络上报
         mUiHandler.postDelayed(new Runnable() {
@@ -39,9 +39,10 @@ public class TestNetPost implements IReport {
                     DataReporter.uploadFailed(mNativeReporter, key);
                     StringBuffer stringBuffer = new StringBuffer();
                     for (int i = 0; i < data.length; i++) {
-                        stringBuffer.append(data[i]);
+                        String oneData = new String(data[i]);
+                        //stringBuffer.append(oneData);
+                        Log.d("DataReporter:data_", stringBuffer.toString());
                     }
-                    Log.d("DataReporter:data_", stringBuffer.toString());
                 }
             }
         }, 0);

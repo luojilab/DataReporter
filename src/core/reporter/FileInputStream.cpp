@@ -59,18 +59,18 @@ namespace future {
         m_Offset = 0;
     }
 
-    std::list<std::shared_ptr<CacheItem> >
+    std::shared_ptr<std::list<std::shared_ptr<CacheItem> > >
     FileInputStream::ReadData(std::size_t count, std::int64_t expiredTime) {
-        std::list<std::shared_ptr<CacheItem> > ret;
+        std::shared_ptr<std::list<std::shared_ptr<CacheItem> > > ret = std::make_shared<std::list<std::shared_ptr<CacheItem> > >();
         long fileSize = Count();
         for (int i = 0; i < count;) {
             PBEncodeItem pbEncodeItem;
             if (!MiniPBCoder::DecodeItem(pbEncodeItem, m_Fp, m_Offset)) {
-                return std::move(ret);
+                return ret;
             }
 
             if (!MiniPBCoder::VerifyItem(pbEncodeItem)) {
-                return std::move(ret);
+                return ret;
             }
 
             std::shared_ptr<CacheItem> cacheItem(new CacheItem);
@@ -82,8 +82,8 @@ namespace future {
             std::int64_t dateInItem = StrToInt64(dateStr);
             if (m_Offset >= fileSize) {
                 if (DataProvider::IsExpired(dateInItem, expiredTime)) {
-                    if (!ret.empty()) {
-                        ret.back()->fromPath = m_Path;
+                    if (!ret->empty()) {
+                        ret->back()->fromPath = m_Path;
                     }
                     i++;
                     continue;
@@ -96,8 +96,8 @@ namespace future {
             }
 
             i++;
-            ret.push_back(cacheItem);
+            ret->push_back(cacheItem);
         }
-        return std::move(ret);
+        return ret;
     }
 }

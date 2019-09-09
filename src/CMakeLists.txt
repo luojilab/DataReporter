@@ -5,6 +5,7 @@ project(DataReporter)
 #1.-------Add source directory-------
 set( DATA_REPORTER_INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/core/base
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/crypto
     ${CMAKE_CURRENT_SOURCE_DIR}/core/reporter
     ${CMAKE_CURRENT_SOURCE_DIR}/core/thread)
 
@@ -88,7 +89,7 @@ endif ()
 
 
 #-------6.Configure library-------
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
 if (APPLE)
     add_library(data-reporter
@@ -101,5 +102,6 @@ else ()
                 ${SOURCE_FILES}
                 ${HEADER_FILES})
 endif ()
+#
 #
 target_link_libraries(data-reporter z ${EXTRA_FRAMEWORKS})

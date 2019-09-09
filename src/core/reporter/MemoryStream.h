@@ -20,7 +20,7 @@ namespace future {
 
         ~MemoryStream();
 
-        void Write(const std::string &data, const std::string &date);
+        void Write(void *data, size_t dataLen, int cryptoFlag, const std::string &date);
 
         void MoveToFile(const std::string &path, void *safeBuf);
 

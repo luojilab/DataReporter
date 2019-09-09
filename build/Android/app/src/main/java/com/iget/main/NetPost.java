@@ -11,7 +11,6 @@ import java.util.Random;
 
 public class NetPost implements IReport {
 
-
     private long mNativeReporter;
     private Object lock[] = new Object[0];
     private Handler mUiHandler = new Handler(Looper.getMainLooper());
@@ -26,7 +25,7 @@ public class NetPost implements IReport {
     }
 
     @Override
-    public void upload(final long key, final String[] data) {
+    public void upload(final long key, final byte[][] data) {
 
         //模拟网络上报
         mUiHandler.postDelayed(new Runnable() {
@@ -39,27 +38,29 @@ public class NetPost implements IReport {
                 int num = random.nextInt(max) % (max - min + 1) + min;
 
                 //随机定义一个数值5 来模拟网络失败的情况
-                if (num != 5) {
-                    StringBuffer stringBuffer = new StringBuffer();
-                    for (int i = 0; i < data.length; i++) {
-                        stringBuffer.append(data[i]);
-                    }
-                    Log.d("DataReporter:data_", stringBuffer.toString());
-                    synchronized (lock) {
-                        if (mNativeReporter == 0) {
-                            return;
-                        }
-                        DataReporter.uploadSucess(mNativeReporter, key);
-                    }
-                } else {
-                    synchronized (lock) {
-                        if (mNativeReporter == 0) {
-                            return;
-                        }
-                        DataReporter.uploadFailed(mNativeReporter, key);
-                        //DataReporter.reaWaken(mNativeReporter);
-                    }
+                //if (num != 5) {
+                StringBuffer stringBuffer = new StringBuffer();
+                for (int i = 0; i < data.length; i++) {
+                    String oneData = new String(data[i]);
+                    Log.d("DataReporter:data_", oneData);
+                    //stringBuffer.append(oneData);
                 }
+
+                synchronized (lock) {
+                    if (mNativeReporter == 0) {
+                        return;
+                    }
+                    DataReporter.uploadSucess(mNativeReporter, key);
+                }
+//                } else {
+//                    synchronized (lock) {
+//                        if (mNativeReporter == 0) {
+//                            return;
+//                        }
+//                        DataReporter.uploadFailed(mNativeReporter, key);
+//                        //DataReporter.reaWaken(mNativeReporter);
+//                    }
+//                }
 
 //                StringBuffer stringBuffer = new StringBuffer();
 //                for (int i = 0; i < data.length; i++) {
@@ -70,7 +71,7 @@ public class NetPost implements IReport {
 //                long t = System.currentTimeMillis() / 1000;
 //                Log.d("DataReporter:data_", stringBuffer.toString() + " time:" + t);
             }
-        }, 100);
+        }, 0);
 
     }
 }

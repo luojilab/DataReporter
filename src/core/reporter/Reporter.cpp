@@ -9,6 +9,7 @@
 #include "TimeUtil.h"
 #include "StringUtil.h"
 #include "IoUtil.h"
+#include "xxtea.h"
 
 namespace future {
 
@@ -19,6 +20,7 @@ namespace future {
     const int RETRY_STEP = 1000 * 5;
 
     Reporter::Reporter(const std::string &uuid, const std::string &cachePath,
+                       const std::string &encryptKey,
                        std::function<void(int64_t key,
                                           std::list<std::shared_ptr<CacheItem> > &data)> netImpl)
             : m_CachePath(cachePath), m_MaxFileSize(1024 * 10), m_ItemSize(5), m_UUid(uuid),
@@ -31,7 +33,10 @@ namespace future {
               m_UploadBuf(NULL),
               m_MemoryStream(NULL),
               m_IsStart(false),
-              m_UploadImpl(netImpl) {
+              m_UploadImpl(netImpl),
+              m_EncryptKey(encryptKey),
+              m_EncryptFun(nullptr),
+              m_DecryptFun(nullptr) {
         std::lock_guard<std::mutex> lk(m_Mut);
         m_ThreadId = std::this_thread::get_id();
 
@@ -122,18 +127,37 @@ namespace future {
         m_ReportingInterval = reportingInterval;
     }
 
-    void Reporter::Push(const std::string &data) {
+    void Reporter::Push(const std::vector<unsigned char> &data) {
         std::lock_guard<std::mutex> lk(m_Mut);
         Debug("Push addr:%p", this);
         if (m_ThreadId != std::this_thread::get_id()) {
             return;
         }
-        if (IsSyncWriteFile(data)) {
+
+        unsigned char *inData = (unsigned char *) data.data();
+        std::size_t inLen = data.size();
+        unsigned char *cipherText = nullptr;
+        int cryptoFlag = 0;
+
+        if (m_EncryptFun != nullptr) {
+            std::size_t outLen = 0;
+            cipherText = (unsigned char *) m_EncryptFun((void *) data.data(), data.size(), outLen);
+            inData = cipherText;
+            inLen = outLen;
+            cryptoFlag = 1;
+        }
+
+        if (IsSyncWriteFile(inLen)) {
             WrtiteToFile();
         }
+
         std::int64_t now = TimeUtil::GetSystemClockSecondsTime();
         std::string nowStr = Int64ToStr(now);
-        m_MemoryStream->Write(data, nowStr);
+        m_MemoryStream->Write(inData, inLen, cryptoFlag, nowStr);
+
+        if (cipherText != nullptr) {
+            free(cipherText);
+        }
 
         s_HandlerThread->postMsg([this]() {
             if (m_Reporting.empty()) {
@@ -153,11 +177,11 @@ namespace future {
         }
         m_RetryStep = RETRY_STEP;
         s_HandlerThread->postMsg([this, key]() {
-            std::map<int64_t, std::list<std::shared_ptr<CacheItem> > >::iterator iter = m_Reporting.find(
+            std::map<int64_t, std::shared_ptr<std::list<std::shared_ptr<CacheItem> > > >::iterator iter = m_Reporting.find(
                     key);
             if (iter != m_Reporting.end()) {
-                for (std::list<std::shared_ptr<CacheItem> >::iterator cacheIter = iter->second.begin();
-                     cacheIter != iter->second.end(); cacheIter++) {
+                for (std::list<std::shared_ptr<CacheItem> >::iterator cacheIter = iter->second->begin();
+                     cacheIter != iter->second->end(); cacheIter++) {
                     m_DataProvider->ClearItem(*(*cacheIter));
                 }
             }
@@ -177,10 +201,10 @@ namespace future {
             std::shared_ptr<WTF::TimeTask> delayTask(new WTF::TimeTask(m_RetryStep, 0, NULL));
             std::weak_ptr<WTF::TimeTask> weakDelayTask = delayTask;
             delayTask->setFun([this, key, weakDelayTask]() {
-                std::map<int64_t, std::list<std::shared_ptr<CacheItem> > >::iterator iter = m_Reporting.find(
+                std::map<int64_t, std::shared_ptr<std::list<std::shared_ptr<CacheItem> > > >::iterator iter = m_Reporting.find(
                         key);
                 if (m_UploadImpl != NULL && iter != m_Reporting.end()) {
-                    m_UploadImpl(key, m_Reporting[key]);
+                    m_UploadImpl(key, *(m_Reporting[key]));
                 }
                 m_DelayUploadTasks.erase(weakDelayTask.lock());
             });
@@ -196,23 +220,41 @@ namespace future {
             return;
         }
 
-        std::list<std::shared_ptr<CacheItem> > data = m_DataProvider->ReadData(m_ItemSize,
-                                                                               m_ExpiredTime);
-        if (data.empty()) {
+        std::shared_ptr<std::list<std::shared_ptr<CacheItem> > > data = m_DataProvider->ReadData(
+                m_ItemSize,
+                m_ExpiredTime);
+        if (data->empty()) {
             return;
         }
 
         if (m_UploadImpl != NULL) {
             int64_t now = TimeUtil::GetSteadyClockNanoTime();
-            std::map<int64_t, std::list<std::shared_ptr<CacheItem> > >::iterator reportingIter = m_Reporting.find(
+            std::map<int64_t, std::shared_ptr<std::list<std::shared_ptr<CacheItem> > > >::iterator reportingIter = m_Reporting.find(
                     now);
             while (reportingIter != m_Reporting.end()) {
                 now = TimeUtil::GetSteadyClockNanoTime();
                 reportingIter = m_Reporting.find(now);
             }
 
-            m_Reporting[now] = std::move(data);
-            m_UploadImpl(now, m_Reporting[now]);
+            if (m_DecryptFun != nullptr) {
+                for (std::list<std::shared_ptr<CacheItem> >::iterator iter = data->begin();
+                     iter != data->end(); iter++) {
+                    if ((*iter)->pbEncodeItem.crypto_flag != 0) {
+                        unsigned char *plainText = nullptr;
+                        std::size_t plainTextLen = 0;
+                        plainText = (unsigned char *) m_DecryptFun(
+                                (*iter)->pbEncodeItem.data.GetBegin(),
+                                (*iter)->pbEncodeItem.data.Length(), plainTextLen);
+                        Buffer plainTextBuf(plainText, plainTextLen, BufferCopy);
+                        (*iter)->pbEncodeItem.data = std::move(plainTextBuf);
+                        (*iter)->pbEncodeItem.data_len = plainTextBuf.Length();
+                        free(plainText);
+                    }
+                }
+            }
+
+            m_Reporting[now] = data;
+            m_UploadImpl(now, *(m_Reporting[now]));
         }
     }
 
@@ -271,6 +313,17 @@ namespace future {
 
         m_MemoryStream = std::shared_ptr<MemoryStream>(new MemoryStream(m_DataBuf));
 
+        if (!m_EncryptKey.empty()) {
+            m_EncryptFun = [this](void *in, std::size_t inLen, std::size_t &outLen) -> void * {
+                return xxtea_encrypt(in, inLen, m_EncryptKey.c_str(), &outLen);
+            };
+
+            m_DecryptFun = [this](void *in, std::size_t inLen, std::size_t &outLen) -> void * {
+                return xxtea_decrypt(in, inLen, m_EncryptKey.c_str(), &outLen);
+            };
+        }
+
+
         std::function<std::int64_t(void *, long)> dumpDataFun = std::bind(&Reporter::DumpDataBuf,
                                                                           this,
                                                                           std::placeholders::_1,
@@ -299,7 +352,7 @@ namespace future {
             if (m_Reporting.empty()) {
                 return;
             }
-            m_UploadImpl(m_Reporting.begin()->first, m_Reporting.begin()->second);
+            m_UploadImpl(m_Reporting.begin()->first, *(m_Reporting.begin()->second));
         });
     }
 
@@ -345,15 +398,16 @@ namespace future {
 
         std::size_t bufferSize = buffer.Length();
         std::size_t itemLen = 0;
+        int32_t decode_len = 0;
 
         for (int i = 0; i < bufferSize; i++) {
             unsigned char *pos = (unsigned char *) begin + itemLen;
             Buffer decodeBuffer(pos, bufferSize - itemLen, BufferNoCopy);
-            PBEncodeItem item = MiniPBCoder::DecodeItem(decodeBuffer);
+            PBEncodeItem item = MiniPBCoder::DecodeItem(decodeBuffer, decode_len);
             if (!MiniPBCoder::VerifyItem(item)) {
                 return pos;
             }
-            itemLen += MiniPBCoder::CalculatedSize(item);
+            itemLen += decode_len;
         }
         return buffer.GetEnd();
     }
@@ -367,8 +421,8 @@ namespace future {
         return m_MemoryStream->GetOffset() > m_MemoryStream->Size() / 2;
     }
 
-    bool Reporter::IsSyncWriteFile(const std::string &data) {
-        return (m_MemoryStream->GetOffset() + MiniPBCoder::CalculatedSize(data) >=
+    bool Reporter::IsSyncWriteFile(const std::size_t dataLen) {
+        return (m_MemoryStream->GetOffset() + MiniPBCoder::CalculatedSize(dataLen) >=
                 m_MemoryStream->Size());
     }
 
@@ -384,7 +438,7 @@ namespace future {
         }
         std::shared_ptr<WTF::TimeTask> delayTask(
                 new WTF::TimeTask(m_ReportingInterval, 0, NULL));
-        
+
         std::weak_ptr<WTF::TimeTask> weakDelayTask = delayTask;
         delayTask->setFun([this, weakDelayTask]() {
             if (m_ReportFun != NULL) {

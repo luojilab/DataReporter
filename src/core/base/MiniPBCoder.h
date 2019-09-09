@@ -18,24 +18,24 @@ namespace future {
     class MiniPBCoder {
 
     public:
-        static Buffer EncodeString(const std::string &str, const std::string &date) {
+        static Buffer BuildEncodeData(const Buffer &buffer, int cryptoFlag, const std::string &date) {
             MiniPBCoder pbcoder;
-            return pbcoder.EncodeData(str, date);
+            return pbcoder.EncodeData(buffer, cryptoFlag, date);
         }
 
-        static PBEncodeItem DecodeItem(const Buffer &buffer);
+        static PBEncodeItem DecodeItem(const Buffer &buffer, int32_t &decode_len);
 
         static bool DecodeItem(PBEncodeItem &out, FILE *fp, long &offset);
 
         static std::size_t CalculatedSize(const PBEncodeItem &encodeItem);
 
-        static std::size_t CalculatedSize(const std::string &data);
+        static std::size_t CalculatedSize(const std::size_t dataLen);
 
         static long PBEncodeItemHeadLen();
 
         static bool VerifyItem(const PBEncodeItem &encodeItem);
 
-        PBEncodeItem DecodeData(const Buffer &buffer);
+        PBEncodeItem DecodeData(const Buffer &buffer, int32_t &decode_len);
 
         bool DecodeData(PBEncodeItem &out, FILE *fp, long &offset);
 
@@ -44,9 +44,7 @@ namespace future {
 
         ~MiniPBCoder();
 
-        Buffer EncodeData(const std::string &str, const std::string &date);
-
-        Buffer EncodeData(const Buffer &buffer, const std::string &date);
+        Buffer EncodeData(const Buffer &buffer, int cryptoFlag, const std::string &date);
 
         void WriteItem(Buffer &buffer, const PBEncodeItem &encodeItem);
 

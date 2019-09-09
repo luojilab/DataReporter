@@ -20,6 +20,8 @@ namespace future {
 
         void WriteRawByte(uint8_t value);
 
+        void WriteFixed16(u_int16_t value);
+
         void WriteFixed32(int32_t value);
 
         void WriteRawVarint32(int32_t value);
@@ -43,6 +45,8 @@ namespace future {
         void WriteData(const Buffer &value);
 
     private:
+        void WriteRawLittleEndian16(u_int16_t value);
+
         void WriteRawLittleEndian32(int32_t value);
 
         void WriteRawLittleEndian64(int64_t value);

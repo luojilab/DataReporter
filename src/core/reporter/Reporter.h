@@ -17,7 +17,7 @@
 namespace future {
     class Reporter {
     public:
-        Reporter(const std::string &uuid, const std::string &cachePath,
+        Reporter(const std::string &uuid, const std::string &cachePath, const std::string &encryptKey,
                  std::function<void(int64_t key,
                                     std::list<std::shared_ptr<CacheItem> > &data)> netImpl);
 
@@ -33,7 +33,7 @@ namespace future {
 
         void SetReportingInterval(std::int64_t reportingInterval);
 
-        void Push(const std::string &data);
+        void Push(const std::vector<unsigned char> &data);
 
         void UoloadSuccess(int64_t key);
 
@@ -61,7 +61,7 @@ namespace future {
 
         bool IsAsyncWriteFile();
 
-        bool IsSyncWriteFile(const std::string &data);
+        bool IsSyncWriteFile(const std::size_t dataLen);
 
         std::string MakeFileName(const std::string &path);
 
@@ -98,7 +98,7 @@ namespace future {
         std::shared_ptr<MmapedFile> m_UploadMmapFile;
 
         std::shared_ptr<DataProvider> m_DataProvider;
-        std::map<int64_t, std::list<std::shared_ptr<CacheItem> > > m_Reporting;
+        std::map<int64_t, std::shared_ptr<std::list<std::shared_ptr<CacheItem> > > > m_Reporting;
         std::map<std::shared_ptr<WTF::TimeTask>, int> m_DelayUploadTasks;
         std::map<std::shared_ptr<WTF::TimeTask>, int> m_DelayReportTasks;
 
@@ -107,6 +107,9 @@ namespace future {
         std::function<void(void)> m_WriteFileFun;
         std::atomic_int m_RetryStep;
         std::thread::id m_ThreadId;
+        std::string m_EncryptKey;
+        std::function<void *(void *, std::size_t, std::size_t &)> m_EncryptFun;
+        std::function<void *(void *, std::size_t, std::size_t &)> m_DecryptFun;
 
     };
 }

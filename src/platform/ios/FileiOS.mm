@@ -39,15 +39,15 @@ namespace future {
         }
     }
 
-    std::list<std::string> File::FileList(const std::string &path) {
+    std::shared_ptr<std::list<std::string> > File::FileList(const std::string &path) {
         NSError * error;
         NSArray * directoryContents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[NSString stringWithUTF8String:path.c_str()] error:&error];
-        
-        std::list<std::string> retList;
+
+        std::shared_ptr<std::list<std::string> > retList = std::make_shared<std::list<std::string> >();
         if (!error) {
             for (NSString *path in directoryContents) {
                 std::string str = [path UTF8String];
-                retList.push_back(str);
+                retList->push_back(str);
             }
         }
         

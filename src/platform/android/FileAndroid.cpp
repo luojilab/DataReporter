@@ -54,9 +54,9 @@ namespace future {
         return ret;
     }
 
-    std::list<std::string> File::FileList(const std::string &path) {
+    std::shared_ptr<std::list<std::string> > File::FileList(const std::string &path) {
         JNIEnv *env = AndroidUtil::getEnv();
-        std::list<std::string> retList;
+        std::shared_ptr<std::list<std::string> > retList = std::make_shared<std::list<std::string> >();
         jstring javaPath = AndroidUtil::createJavaString(env, path);
         jobject javaFile = AndroidUtil::Constructor_File->call(javaPath);
         jobjectArray files = AndroidUtil::Method_filelist->call(javaFile);
@@ -70,7 +70,7 @@ namespace future {
         for (int i = 0; i < len; i++) {
             jobject jobj = env->GetObjectArrayElement(files, i);
             std::string tmpStr = AndroidUtil::fromJavaString(env, (jstring) jobj);
-            retList.push_back(tmpStr);
+            retList->push_back(tmpStr);
             env->DeleteLocalRef(jobj);
         }
 
@@ -78,6 +78,6 @@ namespace future {
         env->DeleteLocalRef(javaPath);
         env->DeleteLocalRef(javaFile);
 
-        return std::move(retList);
+        return retList;
     }
 }

@@ -57,17 +57,17 @@ namespace future {
         }
     }
 
-    std::list<std::string>
+    std::shared_ptr<std::list<std::string> >
     File::FilterByFun(const std::list<std::string> &files,
                       std::function<bool(const std::string &fileName)> fun) {
-        std::list<std::string> ret;
+        std::shared_ptr<std::list<std::string> > ret = std::make_shared<std::list<std::string> >();
         for (std::list<std::string>::const_iterator iter = files.begin();
              iter != files.end(); iter++) {
             if (fun(*iter)) {
-                ret.push_back(*iter);
+                ret->push_back(*iter);
             }
         }
-        return std::move(ret);
+        return ret;
     }
 
 }

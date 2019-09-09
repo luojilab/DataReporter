@@ -35,7 +35,7 @@ namespace future {
             return m_Path;
         }
 
-        std::list<std::shared_ptr<CacheItem> > ReadData(std::size_t count, std::int64_t expiredTime);
+        std::shared_ptr<std::list<std::shared_ptr<CacheItem> > > ReadData(std::size_t count, std::int64_t expiredTime);
 
     private:
         FILE *m_Fp;

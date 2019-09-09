@@ -29,7 +29,7 @@ namespace future {
 
         ~DataProvider();
 
-        std::list<std::shared_ptr<CacheItem> > ReadData(std::size_t count, std::int64_t expiredTime);
+        std::shared_ptr<std::list<std::shared_ptr<CacheItem> > > ReadData(std::size_t count, std::int64_t expiredTime);
 
         void ClearItem(CacheItem &item);
 
@@ -38,19 +38,19 @@ namespace future {
         void ClearMem();
 
     private:
-        std::list<std::string> ListFiles();
+        std::shared_ptr<std::list<std::string> > ListFiles();
 
-        std::list<std::shared_ptr<CacheItem> > ReadFromMem(std::size_t count, std::int64_t expiredTime);
+        std::shared_ptr<std::list<std::shared_ptr<CacheItem> > > ReadFromMem(std::size_t count, std::int64_t expiredTime);
 
-        std::list<std::shared_ptr<CacheItem> > ReadFromFile(std::size_t count, std::int64_t expiredTime);
+        std::shared_ptr<std::list<std::shared_ptr<CacheItem> > > ReadFromFile(std::size_t count, std::int64_t expiredTime);
 
     private:
         std::string m_FromPath;
-        std::list<std::string> m_Files;
+        std::shared_ptr<std::list<std::string> > m_Files;
         std::map<std::string, int> m_UploadingFile;
         std::shared_ptr<FileInputStream> m_FileInputStream;
         std::shared_ptr<Buffer> m_FromMem;
-        std::function<std::int64_t(void *, int)> m_UpdateMem;
+        std::function<std::int64_t(void *, int)> m_DumpMem;
         void *m_MemDataEndPos;
         void *m_MemOffset;
         bool m_IsUploadingMem;

@@ -23,6 +23,8 @@ namespace future {
 
         int32_t ReadInt32();
 
+        u_int16_t ReadFixed16();
+
         int32_t ReadFixed32();
 
         std::string ReadString();
@@ -35,6 +37,8 @@ namespace future {
         int8_t ReadRawByte();
 
         int32_t ReadRawVarint32();
+
+        u_int16_t ReadRawLittleEndian16();
 
         int32_t ReadRawLittleEndian32();
 

@@ -8,6 +8,7 @@ JavaClass AndroidUtil::Class_java_lang_Object("java/lang/Object");
 JavaClass AndroidUtil::CLASS_java_File("java/io/File");
 JavaClass AndroidUtil::CLASS_java_String("java/lang/String");
 JavaClass AndroidUtil::CLASS_java_DataReporter("com/iget/datareporter/DataReporter");
+JavaClass AndroidUtil::CLASS_java_ByteArray("[B");
 
 std::shared_ptr<Constructor> AndroidUtil::Constructor_File;
 std::shared_ptr<BooleanMethod> AndroidUtil::Method_mkdir;
@@ -39,6 +40,7 @@ bool AndroidUtil::init(JavaVM *jvm) {
     JAVA_VM = jvm;
     CLASS_java_String.j();
     CLASS_java_DataReporter.j();
+    CLASS_java_ByteArray.j();
 
     Constructor_File = std::shared_ptr<Constructor>(
             new Constructor(AndroidUtil::CLASS_java_File, "(Ljava/lang/String;)V"));
@@ -59,7 +61,7 @@ bool AndroidUtil::init(JavaVM *jvm) {
             new ObjectArrayMethod(AndroidUtil::CLASS_java_File, "list", stringArray, "()"));
     Method_upload = std::shared_ptr<StaticVoidMethod>(
             new StaticVoidMethod(AndroidUtil::CLASS_java_DataReporter, "upload",
-                                 "(J[Ljava/lang/String;Lcom/iget/datareporter/IReport;)"));
+                                 "(J[[BLcom/iget/datareporter/IReport;)"));
     return true;
 }
 

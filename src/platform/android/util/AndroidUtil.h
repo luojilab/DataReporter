@@ -88,6 +88,7 @@ public:
     static JavaClass CLASS_java_File;
     static JavaClass CLASS_java_String;
     static JavaClass CLASS_java_DataReporter;
+    static JavaClass CLASS_java_ByteArray;
 
     static std::shared_ptr<Constructor> Constructor_File;
     static std::shared_ptr<BooleanMethod> Method_mkdir;

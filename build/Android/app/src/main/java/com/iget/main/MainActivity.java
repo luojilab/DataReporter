@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private IntentFilter mIntentFilter;
     private NetworkChangeReceiver mNetworkChangeReceiver;
     private long mNativeReporter = 0;
+    private int mCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,17 +55,21 @@ public class MainActivity extends AppCompatActivity {
 
                 if (mNativeReporter == 0) {
                     final NetPost netPost = new NetPost();
-                    mNativeReporter = DataReporter.makeReporter("test", MainActivity.this.getFilesDir().getPath(), netPost);
+                    mNativeReporter = DataReporter.makeReporter("test", MainActivity.this.getFilesDir().getPath(),"testKey", netPost);
                     netPost.setNativeReporter(mNativeReporter);
                     DataReporter.setReportCount(mNativeReporter, 10);
                     DataReporter.setFileMaxSize(mNativeReporter, 2 * 1024);
                     DataReporter.setExpiredTime(mNativeReporter, 0 * 1000);
-                    DataReporter.setReportingInterval(mNativeReporter, 10 * 1000);
+                    DataReporter.setReportingInterval(mNativeReporter, 1 * 1000);
                     DataReporter.start(mNativeReporter);
                 }
                 long t = System.currentTimeMillis() / 1000;
                 for (int i = 0; i < 5; i++) {
-                    DataReporter.push(mNativeReporter, "ev=s_paid_paid_impression&uid=12005419&scr=1080*2214&t=1547627349367082203&seid=dd86a82b76722c24427b9db1fb462a4d&net=wifi&mac=c6abbef9f4bea0a0&sid=dd86a82b76722c24427b9db1fb462a4d" + " time:" + t);
+                    String data = "ev=s_paid_paid_impression&uid=12005419&scr=1080*2214&t=1547627349367082203&seid=dd86a82b76722c24427b9db1fb462a4d&net=wifi&mac=c6abbef9f4bea0a0&sid=dd86a82b76722c24427b9db1fb462a4d" + " time:" + t + "count:" + mCount;
+
+                    DataReporter.push(mNativeReporter, data.getBytes());
+                    Log.d("DataReporter:push_","time:" + t + " count:" + mCount);
+                    mCount++;
                 }
             }
         });
@@ -78,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 final List<TestNetPost> netPosts = new ArrayList<>(testCount);
                 for (int i = 0; i < testCount; i++) {
                     final TestNetPost netPost = new TestNetPost();
-                    long nativeReporter = DataReporter.makeReporter("testRelease", MainActivity.this.getFilesDir().getPath() + "/test_release" + i, netPost);
+                    long nativeReporter = DataReporter.makeReporter("testRelease", MainActivity.this.getFilesDir().getPath() + "/test_release" + i,"testKey", netPost);
                     reporters.add(nativeReporter);
                     netPosts.add(netPost);
                     netPost.setNativeReporter(nativeReporter);
@@ -88,7 +93,8 @@ public class MainActivity extends AppCompatActivity {
                     DataReporter.setReportingInterval(nativeReporter, 1000 * 10);
                     DataReporter.start(nativeReporter);
                     for (int j = 0; j < 1000; j++) {
-                        DataReporter.push(nativeReporter, " business id:" + i + " test_data: 10040106100401061004010610040106100401061004010610040106100401061004010610040106100401061004010610040106 data id: " + j);
+                        String data = " business id:" + i + " test_data: 10040106100401061004010610040106100401061004010610040106100401061004010610040106100401061004010610040106 data id: " + j;
+                        DataReporter.push(nativeReporter, data.getBytes());
                     }
                 }
 

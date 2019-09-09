@@ -43,6 +43,10 @@ namespace future {
         return this->ReadRawVarint32();
     }
 
+    u_int16_t RawInput::ReadFixed16(){
+        return this->ReadRawLittleEndian16();
+    }
+
     int32_t RawInput::ReadFixed32() {
         return this->ReadRawLittleEndian32();
     }
@@ -73,7 +77,7 @@ namespace future {
         }
 
         if (size <= m_Size - m_Position) {
-            Buffer data(((int8_t *) m_Ptr) + m_Position, size);
+            Buffer data(((int8_t *) m_Ptr) + m_Position, size, BufferCopy);
             m_Position += size;
             return data;
         } else {
@@ -89,7 +93,7 @@ namespace future {
         }
 
         if (count <= m_Size - m_Position) {
-            Buffer data(((int8_t *) m_Ptr) + m_Position, count);
+            Buffer data(((int8_t *) m_Ptr) + m_Position, count, BufferCopy);
             m_Position += count;
             return data;
         } else {
@@ -130,6 +134,12 @@ namespace future {
             }
         }
         return result;
+    }
+
+    u_int16_t RawInput::ReadRawLittleEndian16(){
+        int8_t b1 = this->ReadRawByte();
+        int8_t b2 = this->ReadRawByte();
+        return (((u_int16_t) b1 & 0xff)) | (((u_int16_t) b2 & 0xff) << 8);
     }
 
     int32_t RawInput::ReadRawLittleEndian32() {

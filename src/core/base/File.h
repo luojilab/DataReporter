@@ -25,13 +25,13 @@ namespace future {
         static bool ZeroFillFile(int fd, size_t startPos, size_t size);
 
         //获取文件名列表，非绝对路径
-        static std::list<std::string> FileList(const std::string &path);
+        static std::shared_ptr<std::list<std::string> > FileList(const std::string &path);
 
         static std::string GetFileName(const std::string &path);
 
         static std::string GetFileNameWithExt(const std::string& path);
 
-        static std::list<std::string>
+        static std::shared_ptr<std::list<std::string> >
         FilterByFun(const std::list<std::string> &files, std::function<bool(const std::string &fileName)>fun);
     };
 }

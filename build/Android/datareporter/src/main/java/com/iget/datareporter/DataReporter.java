@@ -5,7 +5,7 @@ public class DataReporter {
         System.loadLibrary("data-reporter");
     }
 
-    private static void upload(long key, String[] data, IReport report) {
+    private static void upload(long key, byte[][] data, IReport report) {
         if (report != null) {
             report.upload(key, data);
         }
@@ -19,7 +19,7 @@ public class DataReporter {
      * @param reportImp 上报实现接口
      * @return
      */
-    public static native long makeReporter(String uuid, String cachePath, IReport reportImp);
+    public static native long makeReporter(String uuid, String cachePath, String encryptKey, IReport reportImp);
 
     /**
      * 设置单次上报的数据条数，在start之前调用
@@ -74,7 +74,7 @@ public class DataReporter {
      * @param nativeReporter 由makeReporter返回的值
      * @param data           需要上报的数据
      */
-    public static native void push(long nativeReporter, String data);
+    public static native void push(long nativeReporter, byte[] data);
 
 
     /**

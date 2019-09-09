@@ -72,6 +72,10 @@ namespace future {
         m_Ptr[m_Position++] = value;
     }
 
+    void RawOutput::WriteFixed16(u_int16_t value){
+        WriteRawLittleEndian16(value);
+    }
+
     void RawOutput::WriteFixed32(int32_t value) {
         WriteRawLittleEndian32(value);
     }
@@ -104,6 +108,11 @@ namespace future {
                 value = LogicalRightShift64(value, 7);
             }
         }
+    }
+
+    void RawOutput::WriteRawLittleEndian16(u_int16_t value){
+        this->WriteRawByte(static_cast<uint8_t>((value) & 0xff));
+        this->WriteRawByte(static_cast<uint8_t>((value >> 8) & 0xff));
     }
 
     void RawOutput::WriteRawLittleEndian32(int32_t value) {
