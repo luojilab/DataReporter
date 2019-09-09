@@ -9,8 +9,9 @@
 
 + (void *)MakeReporter:(NSString *)uuid
              cachePath:(NSString *)cachePath
+            encryptKey:(NSString *)encryptKey
            uploadBlock:(void(^)(int64_t key,
-                                NSArray *dataArray))uploadBlock
+                                NSArray *byteArrays))uploadBlock
 {
     if (uuid == nil || cachePath == nil) {
         return nullptr;
@@ -18,23 +19,22 @@
     
     std::string uuidCStr = [uuid UTF8String];
     std::string cachePathCstr = [cachePath UTF8String];
+    std::string encryptKeyStr = encryptKey ? [encryptKey UTF8String] : "";
     future::Reporter *reporter = new future::Reporter(uuidCStr,
-                                 cachePathCstr,
-                                 [uploadBlock](int64_t key,
-                                               std::list<std::shared_ptr<future::CacheItem> > &data) {
-                                     if (uploadBlock && !data.empty()) {
-                                         NSMutableArray *resultData = [[NSMutableArray alloc] init];
-                                         std::list<std::shared_ptr<future::CacheItem> >::iterator iter = data.begin();
-                                         for (; iter != data.end(); iter++) {
-                                             std::string dataCstr;
-                                             dataCstr.append((const char *) (*iter)->pbEncodeItem.data.GetBegin(),
-                                                             (*iter)->pbEncodeItem.data.Length());
-                                             [resultData addObject:[NSString stringWithUTF8String:dataCstr.c_str()]];
-                                         }
-                                         
-                                         uploadBlock(key, resultData);
-                                     }
-                                 });
+                                                      cachePathCstr,
+                                                      encryptKeyStr,
+                                                      [uploadBlock](int64_t key,
+                                                                    std::list<std::shared_ptr<future::CacheItem> > &data) {
+                                                          if (uploadBlock && !data.empty()) {
+                                                              NSMutableArray *resultData = [[NSMutableArray alloc] init];
+                                                              std::list<std::shared_ptr<future::CacheItem> >::iterator iter = data.begin();
+                                                              for (; iter != data.end(); iter++) {
+                                                                  NSData *byteArray = [NSData dataWithBytes:(const char *) (*iter)->pbEncodeItem.data.GetBegin() length:(*iter)->pbEncodeItem.data.Length()];
+                                                                  [resultData addObject:byteArray];
+                                                              }
+                                                              uploadBlock(key, resultData);
+                                                          }
+                                                      });
     return reporter;
 }
 
@@ -95,14 +95,20 @@
 }
 
 + (void)Push:(void *)nativeReporter
-        data:(NSString *)data
+   byteArray:(NSData *)byteArray
 {
     future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);
-    if (reporter == NULL || data == nil) {
+    if (reporter == NULL || byteArray == nil) {
         return;
     }
-    std::string dataCstr = [data UTF8String];
-    reporter->Push(dataCstr);
+    
+    const unsigned char *array = (unsigned char*)[byteArray bytes];
+    std::vector<unsigned char> resultArray;
+    resultArray.reserve([byteArray length]);
+    for (NSUInteger i = 0; i < [byteArray length]; ++i) {
+        resultArray.push_back(array[i]);
+    }
+    reporter->Push(resultArray);
 }
 
 + (void)UploadSucess:(void *)nativeReporter
