@@ -1,6 +1,6 @@
 ## DataReporter
 
-[![name](https://img.shields.io/badge/relelase-1.2.8-green.svg?style=flat)]()
+[![name](https://img.shields.io/badge/relelase-1.3.0-green.svg?style=flat)]()
 [![license](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)]()
 [![platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS-red.svg?style=flat)]()
 

@@ -40,20 +40,21 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(mNetworkChangeReceiver, mIntentFilter);
 
         final ReportImp reportImp = new ReportImp();
-        mNativeReporter = DataReporter.makeReporter("test", MainActivity.this.getFilesDir().getPath(), reportImp);
+        mNativeReporter = DataReporter.makeReporter("test", MainActivity.this.getFilesDir().getPath(), "testKey", reportImp);
         reportImp.setNativeReporter(mNativeReporter);
         DataReporter.setReportCount(mNativeReporter, 10);
         //0表示数据永久有效
-        DataReporter.setExpiredTime(mNativeReporter,0);
+        DataReporter.setExpiredTime(mNativeReporter, 0);
         //10秒报一次
-        DataReporter.setReportingInterval(mNativeReporter,10);
+        DataReporter.setReportingInterval(mNativeReporter, 10);
         DataReporter.setFileMaxSize(mNativeReporter, 2 * 1024);
         DataReporter.start(mNativeReporter);
         mButtonStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 for (int i = 0; i < 5000; i++) {
-                    DataReporter.push(mNativeReporter, "{\"progress\":\"11.59\",\"action\":\"pause\",\"uid\":\"10040106\",\"time\":\"1542107284.35\",\"alias_id\":\"6soKIdxYbmmHov0yYs8z\"}" + i);
+                    String data = new String("{\"progress\":\"11.59\",\"action\":\"pause\",\"uid\":\"10040106\",\"time\":\"1542107284.35\",\"alias_id\":\"6soKIdxYbmmHov0yYs8z\"}");
+                    DataReporter.push(mNativeReporter, data.getBytes());
                 }
             }
         });
@@ -71,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void upload(final long key, final String[] data) {
+        public void upload(final long key, final byte[][] data) {
 
             //模拟网络上报
             mUiHandler.postDelayed(new Runnable() {

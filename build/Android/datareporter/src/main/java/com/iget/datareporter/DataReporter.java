@@ -17,7 +17,8 @@ public class DataReporter {
      * @param uuid      业务唯一id,由使用者定义一个唯一id
      * @param cachePath 缓存路径，必须全局唯一，不同业务不同路径
      * @param reportImp 上报实现接口
-     * @return
+     * @param encryptKey 缓存加密key
+     * @return 返回实例指针
      */
     public static native long makeReporter(String uuid, String cachePath, String encryptKey, IReport reportImp);
 
