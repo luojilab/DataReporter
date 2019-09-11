@@ -1,0 +1,22 @@
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang 
+Build flags: -miphoneos-version-min=8.0;-fembed-bitcode;-fobjc-abi-version=2;-fobjc-arc;-miphoneos-version-min=8.0;-fembed-bitcode;-fobjc-abi-version=2;-fobjc-arc;
+Id flags:  
+
+The output was:
+1
+ld: building for iOS Simulator simulator, but linking against dylib built for macOS/iOSMac, file '/usr/lib/libobjc.dylib' for architecture x86_64
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ 
+Build flags: -miphoneos-version-min=8.0;-fembed-bitcode;-fvisibility=hidden;-fvisibility-inlines-hidden;-fobjc-abi-version=2;-fobjc-arc;-miphoneos-version-min=8.0;-fembed-bitcode;-fvisibility=hidden;-fvisibility-inlines-hidden;-fobjc-abi-version=2;-fobjc-arc;
+Id flags:  
+
+The output was:
+1
+ld: building for iOS Simulator simulator, but linking against dylib built for macOS/iOSMac, file '/usr/lib/libc++.dylib' for architecture x86_64
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+
+

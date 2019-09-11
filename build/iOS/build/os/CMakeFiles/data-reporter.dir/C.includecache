@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/jsh/dev/data_reporter/DataReporter/src/core/crypto/xxtea.c
+xxtea.h
+/Users/jsh/dev/data_reporter/DataReporter/src/core/crypto/xxtea.h
+string.h
+-
+inttypes.h
+-
+stdint.h
+-
+sys/types.h
+-
+machine/endian.h
+-
+endian.h
+-
+
+/Users/jsh/dev/data_reporter/DataReporter/src/core/crypto/xxtea.h
+stdlib.h
+-
+
