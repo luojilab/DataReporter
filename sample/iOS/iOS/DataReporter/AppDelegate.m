@@ -23,11 +23,11 @@
     [DataReporterManager startMonitorReport];
     
     //big data save and reporter
-    for (NSUInteger i = 0; i < 1000; i++) {
-        [DataReporterManager saveData:[NSString stringWithFormat:@"%ld",(long)i]];
+    for (NSUInteger i = 0; i < 10; i++) {
+        NSString *str = [NSString stringWithFormat:@"%ld",(long)i];
+        NSData *data = [NSData dataWithBytes:[str UTF8String] length:[str length]];
+        [DataReporterManager saveData:data];
     }
-    
-    
     
     return YES;
 }

@@ -9,6 +9,13 @@
 
 + (void *)MakeReporter:(NSString *)uuid
              cachePath:(NSString *)cachePath
+           uploadBlock:(void(^)(int64_t key,
+                                NSArray *byteArray))uploadBlock __deprecated_msg("已废弃，请勿使用。") {
+    return nullptr;
+}
+
++ (void *)MakeReporter:(NSString *)uuid
+             cachePath:(NSString *)cachePath
             encryptKey:(NSString *)encryptKey
            uploadBlock:(void(^)(int64_t key,
                                 NSArray *byteArrays))uploadBlock
@@ -92,6 +99,11 @@
         return;
     }
     reporter->ReaWaken();
+}
+
++ (void)Push:(void *)nativeReporter
+        data:(NSString *)data __deprecated_msg("已废弃，请勿使用。") {
+    
 }
 
 + (void)Push:(void *)nativeReporter

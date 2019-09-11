@@ -4,11 +4,6 @@
 
 DATA_REPORTER_EXPORT @interface DataReporter : NSObject
 
-+ (void *)MakeReporter:(NSString *)uuid
-             cachePath:(NSString *)cachePath
-           uploadBlock:(void(^)(int64_t key,
-                                NSArray *byteArray))uploadBlock __deprecated_msg("已废弃，请勿使用。");
-
 /*
  byteArrays包含NSData数组。
  */
@@ -36,9 +31,6 @@ DATA_REPORTER_EXPORT @interface DataReporter : NSObject
 
 + (void)Push:(void *)nativeReporter
    byteArray:(NSData *)byteArray;
-
-+ (void)Push:(void *)nativeReporter
-        data:(NSString *)data __deprecated_msg("已废弃，请勿使用。");
 
 + (void)UploadSucess:(void *)nativeReporter
                  key:(int64_t)key;

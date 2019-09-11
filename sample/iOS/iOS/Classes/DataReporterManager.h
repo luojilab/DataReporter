@@ -36,7 +36,7 @@ typedef NS_ENUM(NSUInteger, DataReporterType) {
 
  @param data reportData
  */
-+ (void)saveData:(NSString *)data;
++ (void)saveData:(NSData *)data;
 
 
 

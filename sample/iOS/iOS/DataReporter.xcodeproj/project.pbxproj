@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		232069DD2329309200C7728F /* libdata-reporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 232069DC2329309200C7728F /* libdata-reporter.a */; };
 		840DA6C121A65849000458B1 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 840DA6C021A65849000458B1 /* AppDelegate.m */; };
 		840DA6C721A65849000458B1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 840DA6C521A65849000458B1 /* Main.storyboard */; };
 		840DA6C921A65849000458B1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 840DA6C821A65849000458B1 /* Assets.xcassets */; };
@@ -15,8 +16,6 @@
 		840DA6D921A65849000458B1 /* DataReporterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 840DA6D821A65849000458B1 /* DataReporterTests.m */; };
 		840DA6E621A658BC000458B1 /* DataReporterManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 840DA6E421A658BC000458B1 /* DataReporterManager.m */; };
 		840DA6E721A658BC000458B1 /* DataReporterManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 840DA6E421A658BC000458B1 /* DataReporterManager.m */; };
-		840DA6EC21A65926000458B1 /* libdata-reporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 840DA6EB21A65926000458B1 /* libdata-reporter.a */; };
-		840DA6ED21A65926000458B1 /* libdata-reporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 840DA6EB21A65926000458B1 /* libdata-reporter.a */; };
 		848183EC21A65E020043BB06 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 848183EB21A65E020043BB06 /* libc++.tbd */; };
 		848183EE21A65E290043BB06 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 848183ED21A65E290043BB06 /* libz.tbd */; };
 /* End PBXBuildFile section */
@@ -32,6 +31,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		232069DC2329309200C7728F /* libdata-reporter.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libdata-reporter.a"; path = "../../../release/iOS/all/libdata-reporter.a"; sourceTree = "<group>"; };
 		840DA6BC21A65848000458B1 /* DataReporter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DataReporter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		840DA6BF21A65849000458B1 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		840DA6C021A65849000458B1 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -45,8 +45,6 @@
 		840DA6DA21A65849000458B1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		840DA6E421A658BC000458B1 /* DataReporterManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataReporterManager.m; sourceTree = "<group>"; };
 		840DA6E521A658BC000458B1 /* DataReporterManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataReporterManager.h; sourceTree = "<group>"; };
-		840DA6EA21A65926000458B1 /* DataReporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataReporter.h; sourceTree = "<group>"; };
-		840DA6EB21A65926000458B1 /* libdata-reporter.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libdata-reporter.a"; sourceTree = "<group>"; };
 		848183EB21A65E020043BB06 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		848183ED21A65E290043BB06 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -56,9 +54,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				232069DD2329309200C7728F /* libdata-reporter.a in Frameworks */,
 				848183EE21A65E290043BB06 /* libz.tbd in Frameworks */,
 				848183EC21A65E020043BB06 /* libc++.tbd in Frameworks */,
-				840DA6EC21A65926000458B1 /* libdata-reporter.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -66,7 +64,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				840DA6ED21A65926000458B1 /* libdata-reporter.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,7 +127,6 @@
 			isa = PBXGroup;
 			children = (
 				840DA6E921A65926000458B1 /* include */,
-				840DA6EB21A65926000458B1 /* libdata-reporter.a */,
 			);
 			path = Lib;
 			sourceTree = "<group>";
@@ -138,7 +134,6 @@
 		840DA6E921A65926000458B1 /* include */ = {
 			isa = PBXGroup;
 			children = (
-				840DA6EA21A65926000458B1 /* DataReporter.h */,
 			);
 			path = include;
 			sourceTree = "<group>";
@@ -146,6 +141,7 @@
 		848183EA21A65E010043BB06 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				232069DC2329309200C7728F /* libdata-reporter.a */,
 				848183ED21A65E290043BB06 /* libz.tbd */,
 				848183EB21A65E020043BB06 /* libc++.tbd */,
 			);
@@ -413,6 +409,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 897SN97QDY;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../../../release/iOS/all/include";
 				INFOPLIST_FILE = DataReporter/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -420,6 +418,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"$(PROJECT_DIR)/../../../release/iOS/all",
 					"$(PROJECT_DIR)/Lib",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.luojilab.DataReporter;
@@ -434,6 +433,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 897SN97QDY;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../../../release/iOS/all/include";
 				INFOPLIST_FILE = DataReporter/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -441,6 +442,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"$(PROJECT_DIR)/../../../release/iOS/all",
 					"$(PROJECT_DIR)/Lib",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.luojilab.DataReporter;

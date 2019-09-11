@@ -70,14 +70,19 @@ static void *reporterInstanse;
     
     [DataReporterManager stopMonitorReport];
 
-    reporterInstanse = [DataReporter MakeReporter:kReporterIndentify cachePath:self.reporterPath uploadBlock:^(int64_t key, NSArray *dataArray) {
-        if (dataArray == nil || [dataArray count] == 0 || reporterInstanse == nil){
+    reporterInstanse = [DataReporter MakeReporter:kReporterIndentify cachePath:self.reporterPath encryptKey:@"" uploadBlock:^(int64_t key, NSArray *dataArrays) {
+        if (dataArrays== nil || [dataArrays count] == 0 || reporterInstanse == nil){
             return;
         }
        
 #warning TODO report to server-side
         dispatch_async(dispatch_get_main_queue(), ^{
-            DebugLog(@"need report to server-side = %ld",(long)[dataArray count]);
+            for (NSData *byteData in dataArrays) {
+                NSString *str = [NSString stringWithUTF8String:[byteData bytes]];
+                NSLog(@"%lld---%@", key, str);
+            }
+            
+            DebugLog(@"need report to server-side = %ld",(long)[dataArrays count]);
             if (random() % 3 == 1) {
                 //重要，通知DataReporter，report success，每次回调必须执行成功或者失败
                 [DataReporter UploadSucess:reporterInstanse key:key];
@@ -134,7 +139,7 @@ static void *reporterInstanse;
  
  @param data reportData
  */
-+ (void)saveData:(NSString *)data{
++ (void)saveData:(NSData *)data{
 
     if ([data length] == 0){
         return;
@@ -142,7 +147,7 @@ static void *reporterInstanse;
     if (!reporterInstanse) {
         return;
     }
-    [DataReporter Push:reporterInstanse data:data];
+    [DataReporter Push:reporterInstanse byteArray:data];
 }
 
 
