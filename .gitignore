@@ -3,6 +3,7 @@ build/Android/.idea
 build/Android/app/build
 build/Android/datareporter/build
 build/Android/datareporter/build/.externalNativeBuild
+build/Android/local.properties
 build/iOS/build
 sample/Android/.idea
 sample/Android/.gradle
