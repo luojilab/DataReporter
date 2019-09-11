@@ -344,15 +344,13 @@ namespace future {
         }
 
         s_HandlerThread->postMsg([this]() {
-            std::lock_guard<std::mutex> lk(m_Mut);
-            if (m_DelayUploadTasks.empty()) {
-                return;
+            if (!m_DelayUploadTasks.empty()) {
+                ClearDelayUploadTasks();
             }
-            ClearDelayUploadTasks();
+
             if (m_Reporting.empty()) {
-                return;
+                Report();
             }
-            m_UploadImpl(m_Reporting.begin()->first, *(m_Reporting.begin()->second));
         });
     }
 
