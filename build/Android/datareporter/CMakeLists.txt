@@ -2,6 +2,14 @@ cmake_minimum_required(VERSION 3.4.1)
 
 project(DataReporter)
 
+get_filename_component(CMAKE_SOURCE_DIR
+         "../../../src"
+         ABSOLUTE)
+
+get_filename_component(CMAKE_CURRENT_SOURCE_DIR
+         "../../../src"
+         ABSOLUTE)
+
 #1.-------Add source directory-------
 set( DATA_REPORTER_INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/core/base
@@ -9,18 +17,12 @@ set( DATA_REPORTER_INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/core/reporter
     ${CMAKE_CURRENT_SOURCE_DIR}/core/thread)
 
-if (APPLE)
-    list(APPEND
-        DATA_REPORTER_INCLUDE_DIRS
-        ${CMAKE_CURRENT_SOURCE_DIR}/call_interface/ios
-        ${CMAKE_CURRENT_SOURCE_DIR}/platform/ios)
-else ()
-    list(APPEND
-        DATA_REPORTER_INCLUDE_DIRS
-        ${CMAKE_CURRENT_SOURCE_DIR}/call_interface/android
-        ${CMAKE_CURRENT_SOURCE_DIR}/platform/android
-		${CMAKE_CURRENT_SOURCE_DIR}/platform/android/util)
-endif ()
+list(APPEND
+    DATA_REPORTER_INCLUDE_DIRS
+    ${CMAKE_CURRENT_SOURCE_DIR}/call_interface/android
+    ${CMAKE_CURRENT_SOURCE_DIR}/platform/android
+	${CMAKE_CURRENT_SOURCE_DIR}/platform/android/util)
+
 
 
 #2.-------Add include directory-------
@@ -39,11 +41,7 @@ foreach (tempDir ${DATA_REPORTER_INCLUDE_DIRS})
                ""
                SOURCE_GROUP_NAME
                ${tempDir})
-        if (APPLE)
-            source_group(TREE ${tempDir} PREFIX "Header Files/${SOURCE_GROUP_NAME}" FILES ${tempFile} )
-        else ()
-            source_group("${SOURCE_GROUP_NAME}" FILES ${tempFile} )
-        endif ()
+        source_group("${SOURCE_GROUP_NAME}" FILES ${tempFile} )
     endforeach ()
 endforeach ()
 
@@ -56,13 +54,6 @@ foreach (tempDir ${DATA_REPORTER_INCLUDE_DIRS})
               "${tempDir}/*.c"
               "${tempDir}/*.cpp")
 
-    if (APPLE)
-        file(GLOB SUB_SOURCE_FILES
-                  "${tempDir}/*.c"
-                  "${tempDir}/*.cpp"
-                  "${tempDir}/*.m"
-                  "${tempDir}/*.mm")
-    endif ()
     foreach (tempFile ${SUB_SOURCE_FILES})
         list(APPEND SOURCE_FILES ${tempFile})
 
@@ -71,37 +62,21 @@ foreach (tempDir ${DATA_REPORTER_INCLUDE_DIRS})
               ""
               SOURCE_GROUP_NAME
               ${tempDir})
-        if (APPLE)
-            source_group(TREE ${tempDir} PREFIX "Source Files/${SOURCE_GROUP_NAME}" FILES ${tempFile} )
-        else ()
-            source_group("${SOURCE_GROUP_NAME}" FILES ${tempFile} )
-        endif ()
+        source_group("${SOURCE_GROUP_NAME}" FILES ${tempFile} )
     endforeach ()
 endforeach ()
 
 
-#-------5.Add iOS framework-------
-set(EXTRA_FRAMEWORKS "")
-if (APPLE)
-    find_library(IOS_Foundation Foundation)
-    list(APPEND EXTRA_FRAMEWORKS ${IOS_Foundation})
-endif ()
 
 
 #-------6.Configure library-------
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
-if (APPLE)
-    add_library(data-reporter
-                STATIC
-                ${SOURCE_FILES}
-                ${HEADER_FILES})
-else ()
-    add_library(data-reporter 
-                SHARED
-                ${SOURCE_FILES}
-                ${HEADER_FILES})
-endif ()
+add_library(data-reporter 
+            SHARED
+            ${SOURCE_FILES}
+            ${HEADER_FILES})
+
 #
 #
 target_link_libraries(data-reporter z ${EXTRA_FRAMEWORKS})

@@ -107,8 +107,13 @@ android {
 
     externalNativeBuild {
         cmake {
-            path "../../../../DataReporter/src/CMakeLists.txt"
+            path "CMakeLists.txt"
+			version "3.10.2"
         }
+    }
+	
+	sourceSets.main {
+        jni.srcDirs = ['../../../src']
     }
 
     android.libraryVariants.all { variant ->
