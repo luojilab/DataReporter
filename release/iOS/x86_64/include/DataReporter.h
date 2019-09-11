@@ -3,11 +3,15 @@
 #define DATA_REPORTER_EXPORT __attribute__((visibility("default")))
 
 DATA_REPORTER_EXPORT @interface DataReporter : NSObject
-    
+
+/*
+ byteArrays包含NSData数组。
+ */
 + (void *)MakeReporter:(NSString *)uuid
              cachePath:(NSString *)cachePath
+            encryptKey:(NSString *)encryptKey
            uploadBlock:(void(^)(int64_t key,
-                                NSArray *dataArray))uploadBlock;
+                                NSArray *byteArrays))uploadBlock;
     
 + (void)SetReportCount:(void *)nativeReporter
                  count:(NSInteger)count;
@@ -26,7 +30,7 @@ DATA_REPORTER_EXPORT @interface DataReporter : NSObject
 + (void)ReaWaken:(void *)nativeReporter;
 
 + (void)Push:(void *)nativeReporter
-        data:(NSString *)data;
+   byteArray:(NSData *)byteArray;
 
 + (void)UploadSucess:(void *)nativeReporter
                  key:(int64_t)key;

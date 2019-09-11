@@ -1,3 +1,0 @@
-/Users/jsh/dev/data_reporter/DataReporter/build/iOS/build/x86_64/CMakeFiles/rebuild_cache.dir
-/Users/jsh/dev/data_reporter/DataReporter/build/iOS/build/x86_64/CMakeFiles/edit_cache.dir
-/Users/jsh/dev/data_reporter/DataReporter/build/iOS/build/x86_64/CMakeFiles/data-reporter.dir

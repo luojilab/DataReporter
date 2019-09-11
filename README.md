@@ -1,6 +1,6 @@
 ## DataReporter
 
-[![name](https://img.shields.io/badge/relelase-1.3.0-green.svg?style=flat)]()
+[![name](https://img.shields.io/badge/relelase-1.3.1-green.svg?style=flat)]()
 [![license](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)]()
 [![platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS-red.svg?style=flat)]()
 
@@ -28,7 +28,7 @@ repositories {
         jcenter()
     }
 2. Join to the build.gradle where in the project directory
-implementation 'com.luojilab.component:datareporter:1.2.8'
+implementation 'com.luojilab.component:datareporter:1.3.1'
 3. Access according to the call mode of the demo
 
 ## Source Compile
@@ -49,10 +49,11 @@ step:
      * Create a Reporter instance, the instance is native, saved in the returned int value
      * @param uuid      Business unique id, defined by the user as a unique id
      * @param cachePath Cache path, must be globally unique, different paths for different services
+	 * @param encryptKey Cache Encrypt Key
      * @param reportImp Reporting implementation interface
      * @return
      */
-    public static native long makeReporter(String uuid, String cachePath, IReport reportImp);
+    public static native long makeReporter(String uuid, String cachePath, String encryptKey, IReport reportImp);
 	
 	This method is used to create a DataReporter instance. This method is used to create an escalation instance.
 	Different businesses can create different instances without worrying about performance consumption because all instances share a single reporting thread.
@@ -115,7 +116,7 @@ step:
      * @param nativeReporter return by makeReporter
      * @param data           Data to be reported
      */
-    public static native void push(long nativeReporter, String data);
+    public static native void push(long nativeReporter, byte[] data);
 	The method is a call interface for reporting, data is data to be reported, and the data needs to be a string type.
 
     /**
@@ -173,11 +174,13 @@ step:
 *
 * @param uuid      Business unique id, defined by the user as a unique id
 * @param cachePath Cache path, must be globally unique, different paths for different services
+* @param encryptKey Cache Encrypt Key
 * @param reportImp Reporting implementation interface
 * @return
 */
 + (void *)MakeReporter:(NSString *)uuid
              cachePath:(NSString *)cachePath
+			 encryptKey:(NSString *)encryptKey
            uploadBlock:(void(^)(int64_t key,
                                 NSArray *dataArray))uploadBlock;
 This method is used to create a DataReporter instance. This method is used to create an escalation instance.
@@ -245,7 +248,7 @@ After the network is unavailable or other scenarios cause the network to fail, t
 * @param data           Data to be reported
 */
 + (void)Push:(void *)nativeReporter
-        data:(NSString *)data;
+   byteArray:(NSData *)byteArray;
 The method is a call interface that is reported, data is data that needs to be reported, and the data needs to be a string type.   
    
 /**
@@ -306,7 +309,7 @@ repositories {
         jcenter()
     }
 2. 在项目build.gradle中加入
-implementation 'com.luojilab.component:datareporter:1.2.8'
+implementation 'com.luojilab.component:datareporter:1.3.1'
 3. 按照demo的调用方式接入
 
 ## 源码编译
@@ -328,10 +331,11 @@ implementation 'com.luojilab.component:datareporter:1.2.8'
      *
      * @param uuid      业务唯一id,由使用者定义一个唯一id
      * @param cachePath 缓存路径，必须全局唯一，不同业务不同路径
+	 * @param encryptKey 缓存加密key
      * @param reportImp 上报实现接口
      * @return
      */
-    public static native long makeReporter(String uuid, String cachePath, IReport reportImp);
+    public static native long makeReporter(String uuid, String cachePath, String encryptKey, IReport reportImp);
 	
 	该方法是创建DataReporter实例的方法，通过该方法创建上报实例。
 	不同的业务可以创建不同的实例，不必担心性能消耗，因为所有实例共用一个上报线程
@@ -394,7 +398,7 @@ implementation 'com.luojilab.component:datareporter:1.2.8'
      * @param nativeReporter 由makeReporter返回的值
      * @param data           需要上报的数据
      */
-    public static native void push(long nativeReporter, String data);
+    public static native void push(long nativeReporter, byte[] data);
 	该方法为上报的调用接口，data为需要上报的数据，数据需要是字符串类型
 
     /**
@@ -453,11 +457,13 @@ implementation 'com.luojilab.component:datareporter:1.2.8'
 *
 * @param uuid      业务唯一id,由使用者定义一个唯一id
 * @param cachePath 缓存路径，必须全局唯一，不同业务不同路径
+* @param encryptKey 缓存加密key
 * @param reportImp 上报实现接口
 * @return
 */
 + (void *)MakeReporter:(NSString *)uuid
              cachePath:(NSString *)cachePath
+			 encryptKey:(NSString *)encryptKey
            uploadBlock:(void(^)(int64_t key,
                                 NSArray *dataArray))uploadBlock;
 该方法是创建DataReporter实例的方法，通过该方法创建上报实例。
@@ -525,7 +531,7 @@ implementation 'com.luojilab.component:datareporter:1.2.8'
 * @param data           需要上报的数据
 */
 + (void)Push:(void *)nativeReporter
-        data:(NSString *)data;
+   byteArray:(NSData *)byteArray;
 该方法为上报的调用接口，data为需要上报的数据，数据需要是字符串类型
   
 /**
