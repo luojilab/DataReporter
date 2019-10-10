@@ -26,11 +26,8 @@ import java.util.Random;
 import static android.net.ConnectivityManager.TYPE_WIFI;
 import static android.provider.ContactsContract.CommonDataKinds.Email.TYPE_MOBILE;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private Button mButtonStart;
-    private Button mButtonTestRelease;
-    private Button mButtonCheckData;
 
     private IntentFilter mIntentFilter;
     private NetworkChangeReceiver mNetworkChangeReceiver;
@@ -41,18 +38,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mButtonStart = (Button) findViewById(R.id.button_start);
-        mButtonTestRelease = (Button) findViewById(R.id.button_test_release);
-        mButtonCheckData = (Button) findViewById(R.id.button_check_push_data);
+        findViewById(R.id.button_start).setOnClickListener(this);
+        findViewById(R.id.button_test_release).setOnClickListener(this);
+        findViewById(R.id.button_test_reweaken).setOnClickListener(this);
         //监听网络状态
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         mNetworkChangeReceiver = new NetworkChangeReceiver();
         registerReceiver(mNetworkChangeReceiver, mIntentFilter);
-        mButtonStart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.button_start:
                 if (mNativeReporter == 0) {
                     final NetPost netPost = new NetPost();
                     mNativeReporter = DataReporter.makeReporter("test", MainActivity.this.getFilesDir().getPath(),"testKey", netPost);
@@ -71,13 +70,8 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("DataReporter:push_","time:" + t + " count:" + mCount);
                     mCount++;
                 }
-            }
-        });
-
-
-        mButtonTestRelease.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                break;
+            case R.id.button_test_release:
                 int testCount = 100;
                 final List<Long> reporters = new ArrayList<>(testCount);
                 final List<TestNetPost> netPosts = new ArrayList<>(testCount);
@@ -111,17 +105,11 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 }, 100000);
-
-            }
-        });
-
-        mButtonCheckData.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                break;
+            case R.id.button_test_reweaken:
                 DataReporter.reaWaken(mNativeReporter);
-            }
-        });
-
+                break;
+        }
     }
 
     class NetworkChangeReceiver extends BroadcastReceiver {

@@ -39,10 +39,11 @@ public class NetPost implements IReport {
 
                 //随机定义一个数值5 来模拟网络失败的情况
                 if (num != 5) {
+                    StringBuffer stringBuffer = new StringBuffer();
                     for (int i = 0; i < data.length; i++) {
-                        String oneData = new String(data[i]);
-                        Log.d("DataReporter:data_", oneData);
+                        stringBuffer.append(data[i]);
                     }
+                    Log.d("DataReporter:data_", stringBuffer.toString());
 
                     synchronized (lock) {
                         if (mNativeReporter == 0) {
@@ -59,15 +60,6 @@ public class NetPost implements IReport {
                         //DataReporter.reaWaken(mNativeReporter);
                     }
                 }
-
-                StringBuffer stringBuffer = new StringBuffer();
-                for (int i = 0; i < data.length; i++) {
-                    stringBuffer.append(data[i]);
-                }
-
-                DataReporter.uploadSucess(mNativeReporter, key);
-                long t = System.currentTimeMillis() / 1000;
-                Log.d("DataReporter:data_", stringBuffer.toString() + " time:" + t);
             }
         }, 200);
 

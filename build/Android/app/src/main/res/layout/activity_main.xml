@@ -21,13 +21,13 @@
         android:text="TestRelease" />
 
     <Button
-        android:id="@+id/button_check_push_data"
+        android:id="@+id/button_test_reweaken"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/button_test_release"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
-        android:text="CheckData" />
+        android:text="TestReweaken" />
 
 
 </RelativeLayout>

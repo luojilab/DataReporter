@@ -346,11 +346,10 @@ namespace future {
         s_HandlerThread->postMsg([this]() {
             if (!m_DelayUploadTasks.empty()) {
                 ClearDelayUploadTasks();
-            }
-
-            if (m_Reporting.empty()) {
+                m_Reporting.clear();
                 Report();
             }
+            
         });
     }
 

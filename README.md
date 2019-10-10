@@ -1,6 +1,6 @@
 ## DataReporter
 
-[![name](https://img.shields.io/badge/relelase-1.3.2-green.svg?style=flat)]()
+[![name](https://img.shields.io/badge/relelase-1.3.3-green.svg?style=flat)]()
 [![license](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)]()
 [![platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS-red.svg?style=flat)]()
 
@@ -28,7 +28,7 @@ repositories {
         jcenter()
     }
 2. Join to the build.gradle where in the project directory
-implementation 'com.luojilab.component:datareporter:1.3.2'
+implementation 'com.luojilab.component:datareporter:1.3.3'
 3. Access according to the call mode of the demo
 
 ## Source Compile
@@ -309,7 +309,7 @@ repositories {
         jcenter()
     }
 2. 在项目build.gradle中加入
-implementation 'com.luojilab.component:datareporter:1.3.2'
+implementation 'com.luojilab.component:datareporter:1.3.3'
 3. 按照demo的调用方式接入
 
 ## 源码编译
