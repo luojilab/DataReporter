@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     DataReporter.setReportCount(mNativeReporter, 10);
                     DataReporter.setFileMaxSize(mNativeReporter, 2 * 1024);
                     DataReporter.setExpiredTime(mNativeReporter, 0 * 1000);
-                    DataReporter.setReportingInterval(mNativeReporter, 10 * 1000);
+                    DataReporter.setReportingInterval(mNativeReporter, 30 * 1000);
                     DataReporter.start(mNativeReporter);
                 }
                 long t = System.currentTimeMillis() / 1000;

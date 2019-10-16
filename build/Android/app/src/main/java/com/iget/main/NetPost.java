@@ -39,9 +39,9 @@ public class NetPost implements IReport {
 
                 //随机定义一个数值5 来模拟网络失败的情况
                 if (num != 5) {
-                    StringBuffer stringBuffer = new StringBuffer();
+                    StringBuffer stringBuffer = new StringBuffer(data.length);
                     for (int i = 0; i < data.length; i++) {
-                        stringBuffer.append(data[i]);
+                        stringBuffer.append(new String(data[i]));
                     }
                     Log.d("DataReporter:data_", stringBuffer.toString());
 

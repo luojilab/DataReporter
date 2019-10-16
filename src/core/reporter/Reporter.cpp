@@ -348,8 +348,11 @@ namespace future {
                 ClearDelayUploadTasks();
                 m_Reporting.clear();
                 Report();
+            }else if(!m_DelayReportTasks.empty()){
+                ClearDelayReportTasks();
+                m_Reporting.clear();
+                Report();
             }
-            
         });
     }
 
