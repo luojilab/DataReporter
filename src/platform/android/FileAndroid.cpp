@@ -1,6 +1,11 @@
 //
 // Created by bingjian on 2018/11/5.
 //
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <dirent.h>
+#include <set>
 #include "File.h"
 #include "AndroidUtil.h"
 
@@ -8,76 +13,109 @@ namespace future {
 
     bool File::MkPath(const std::string &path) {
 
-        JNIEnv *env = AndroidUtil::getEnv();
-        jstring javaPath = AndroidUtil::createJavaString(env, path);
-        jobject javaFile = AndroidUtil::Constructor_File->call(javaPath);
-        bool ret = AndroidUtil::Method_mkdirs->call(javaFile);
-        env->DeleteLocalRef(javaPath);
-        env->DeleteLocalRef(javaFile);
-        return ret;
+        size_t nPos = 0, nIndex = 0;
+        std::string strPath = path;
+        std::string strSub;
+        int ret = 0;
+        while ((nPos = strPath.find('/', nIndex)) != std::string::npos) {
+            strSub = strPath.substr(0, nPos);
+            if (!strSub.empty() && !IsFileExist(strSub)) {
+                ret = mkdir(strSub.c_str(), S_IRUSR | S_IWUSR);
+                if(ret != 0){
+                    return false;
+                }
+            }
+
+            nIndex = nPos + 1;
+            while (strPath.length() > nIndex && strPath.at(nIndex) == '/') {
+                strPath.replace(nPos, 2, "/");
+            }
+
+            if (strPath.length() <= nIndex) {
+                break;
+            }
+        }
+        if (strSub.compare(strPath) != 0 && !IsFileExist(strSub)){
+            ret = mkdir(strSub.c_str(), S_IRUSR | S_IWUSR);
+            if(ret != 0){
+                return false;
+            }
+        }
+
+        return true;
     }
 
     bool File::IsFileExist(const std::string &path) {
+        struct stat st;
+        int ret = 0;
+        ret = stat(path.c_str(), &st);
+        if (ret != 0) {
+           return false;
+        }
 
-        JNIEnv *env = AndroidUtil::getEnv();
-        jstring javaPath = AndroidUtil::createJavaString(env, path);
-        jobject javaFile = AndroidUtil::Constructor_File->call(javaPath);
-        bool ret = AndroidUtil::Method_exists->call(javaFile);
-        env->DeleteLocalRef(javaPath);
-        env->DeleteLocalRef(javaFile);
-        return ret;
+        return true;
     }
 
     bool File::ReName(const std::string &oldPath, const std::string &newPath) {
 
-        JNIEnv *env = AndroidUtil::getEnv();
-        jstring javaOldPath = AndroidUtil::createJavaString(env, oldPath);
-        jobject javaOldFile = AndroidUtil::Constructor_File->call(javaOldPath);
-        jstring javaNewPath = AndroidUtil::createJavaString(env, newPath);
-        jobject javaNewFile = AndroidUtil::Constructor_File->call(javaNewPath);
-        bool ret = AndroidUtil::Method_rename->call(javaOldFile, javaNewFile);
-        env->DeleteLocalRef(javaOldPath);
-        env->DeleteLocalRef(javaOldFile);
-        env->DeleteLocalRef(javaNewPath);
-        env->DeleteLocalRef(javaNewFile);
-        return ret;
+        int ret = 0;
+        ret = rename(oldPath.c_str(),newPath.c_str());
+        if(ret != 0){
+            return false;
+        }
+        return true;
     }
 
     bool File::RemoveFile(const std::string &path) {
 
-        JNIEnv *env = AndroidUtil::getEnv();
-        jstring javaPath = AndroidUtil::createJavaString(env, path);
-        jobject javaFile = AndroidUtil::Constructor_File->call(javaPath);
-        bool ret = AndroidUtil::Method_delete->call(javaFile);
-        env->DeleteLocalRef(javaPath);
-        env->DeleteLocalRef(javaFile);
-        return ret;
+        struct stat st;
+        int ret = 0;
+        ret = stat(path.c_str(), &st);
+        if (ret != 0) {
+            return false;
+        }
+
+        if (S_ISDIR(st.st_mode) == 0) {
+            ret = rmdir(path.c_str());
+            if (ret == 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        if (S_ISREG(st.st_mode) == 0) {
+            ret = remove(path.c_str());
+            if (ret == 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
     }
 
     std::shared_ptr<std::list<std::string> > File::FileList(const std::string &path) {
-        JNIEnv *env = AndroidUtil::getEnv();
         std::shared_ptr<std::list<std::string> > retList = std::make_shared<std::list<std::string> >();
-        jstring javaPath = AndroidUtil::createJavaString(env, path);
-        jobject javaFile = AndroidUtil::Constructor_File->call(javaPath);
-        jobjectArray files = AndroidUtil::Method_filelist->call(javaFile);
-        if (files == NULL) {
-            env->DeleteLocalRef(javaPath);
-            env->DeleteLocalRef(javaFile);
+        DIR *dir = opendir(path.c_str());
+        if (NULL == dir) {
             return retList;
         }
-        jsize len = env->GetArrayLength(files);
 
-        for (int i = 0; i < len; i++) {
-            jobject jobj = env->GetObjectArrayElement(files, i);
-            std::string tmpStr = AndroidUtil::fromJavaString(env, (jstring) jobj);
-            retList->push_back(tmpStr);
-            env->DeleteLocalRef(jobj);
+        std::string pathTmp;
+        struct dirent *file;
+        while ((file = readdir(dir)) != NULL) {
+            if (strcmp(file->d_name, ".") == 0 || strcmp(file->d_name, "..") == 0) {
+                continue;
+            }
+            pathTmp.clear();
+            pathTmp.append(path.c_str());
+            pathTmp.append("/");
+            pathTmp.append(file->d_name);
+            retList->push_back(pathTmp);
         }
 
-        env->DeleteLocalRef(files);
-        env->DeleteLocalRef(javaPath);
-        env->DeleteLocalRef(javaFile);
-
+        closedir(dir);
         return retList;
     }
 }
