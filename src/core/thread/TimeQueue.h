@@ -8,7 +8,7 @@
 #include <queue>
 #include <functional>
 #include <condition_variable>
-#include <map>
+#include <set>
 
 namespace WTF {
     class TimeTask {
@@ -112,7 +112,7 @@ namespace WTF {
                 return T();
             }
 
-            T ret = m_data.begin()->first;;
+            T ret = *m_data.begin();
             m_data.erase(m_data.begin());
             return ret;
         }
@@ -129,7 +129,7 @@ namespace WTF {
 
         void push(const T &task) {
             std::lock_guard<std::mutex> lk(mut);
-            m_data[task] = 0;
+            m_data.insert(task);
         }
 
         void remove(const T &task) {
@@ -151,7 +151,7 @@ namespace WTF {
 
 
     private:
-        std::map<T, int> m_data;
+        std::set<T> m_data;
         std::mutex mut;
 
     };
