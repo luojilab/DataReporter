@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         //0表示数据永久有效
         DataReporter.setExpiredTime(mNativeReporter, 0);
         //10秒报一次
-        DataReporter.setReportingInterval(mNativeReporter, 10);
+        DataReporter.setReportingInterval(mNativeReporter, 10*1000);
         DataReporter.setFileMaxSize(mNativeReporter, 2 * 1024);
         DataReporter.start(mNativeReporter);
         mButtonStart.setOnClickListener(new View.OnClickListener() {
