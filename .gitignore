@@ -9,4 +9,5 @@ sample/Android/.idea
 sample/Android/.gradle
 sample/Android/app/build
 sample/Android/build
+*.DS_Store
 
