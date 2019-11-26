@@ -15,7 +15,8 @@ namespace WTF {
 
     public:
         inline TimeTask() : m_period(0), m_fun(nullptr),
-                            m_next_execution_time(std::chrono::steady_clock::now()) {
+                            m_next_execution_time(std::chrono::steady_clock::now()),
+                            m_task_id(std::chrono::steady_clock::now()) {
 
         }
 
@@ -25,6 +26,7 @@ namespace WTF {
             m_period = period;
             m_fun = fun;
             auto now = std::chrono::steady_clock::now();
+            m_task_id = now;
             m_next_execution_time = now + std::chrono::milliseconds(next_execution_time);
         }
 
@@ -32,12 +34,14 @@ namespace WTF {
             this->m_fun = other.m_fun;
             this->m_period = other.m_period;
             this->m_next_execution_time = other.m_next_execution_time;
+            this->m_task_id = other.m_task_id;
         }
 
         inline TimeTask &operator=(const TimeTask &other) {
             this->m_fun = other.m_fun;
             this->m_period = other.m_period;
             this->m_next_execution_time = other.m_next_execution_time;
+            this->m_task_id = other.m_task_id;
             return *this;
         }
 
@@ -47,17 +51,19 @@ namespace WTF {
             this->m_period = other.m_period;
             other.m_period = 0;
             this->m_next_execution_time = std::move(other.m_next_execution_time);
+            this->m_task_id = std::move(other.m_task_id);
         }
 
         inline TimeTask &operator=(TimeTask &&other) {
             std::swap(m_fun, other.m_fun);
             std::swap(m_period, other.m_period);
             std::swap(m_next_execution_time, other.m_next_execution_time);
+            std::swap(m_task_id, other.m_task_id);
             return *this;
         }
 
         inline bool operator==(const TimeTask &other) const {
-            return this->m_next_execution_time == other.m_next_execution_time;
+            return this->m_task_id == other.m_task_id;
         }
 
         inline bool operator<(const TimeTask &other) const {
@@ -97,11 +103,16 @@ namespace WTF {
         std::chrono::steady_clock::time_point m_next_execution_time;
         std::mutex mut;
 
+    private:
+        std::chrono::steady_clock::time_point m_task_id;
+
     };
 
     template<typename T>
     class TimeQueue {
     public:
+        typedef typename std::set<T>::iterator Iter;
+
         TimeQueue() {
 
         }
@@ -134,8 +145,13 @@ namespace WTF {
 
         void remove(const T &task) {
             std::lock_guard<std::mutex> lk(mut);
-            if (!m_data.empty()) {
-                m_data.erase(task);
+            Iter iter = m_data.begin();
+            for (; iter != m_data.end();) {
+                if (*iter == task) {
+                    iter = m_data.erase(iter);
+                } else {
+                    iter++;
+                }
             }
         }
 
