@@ -54,12 +54,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.button_start:
                 if (mNativeReporter == 0) {
                     final NetPost netPost = new NetPost();
-                    mNativeReporter = DataReporter.makeReporter("test", MainActivity.this.getFilesDir().getPath(),"testKey", netPost);
+                    mNativeReporter = DataReporter.makeReporter("test", MainActivity.this.getFilesDir().getPath() + "/data","testKey", netPost);
                     netPost.setNativeReporter(mNativeReporter);
                     DataReporter.setReportCount(mNativeReporter, 10);
                     DataReporter.setFileMaxSize(mNativeReporter, 2 * 1024);
                     DataReporter.setExpiredTime(mNativeReporter, 0 * 1000);
-                    DataReporter.setReportingInterval(mNativeReporter, 30 * 1000);
+                    DataReporter.setReportingInterval(mNativeReporter, 1 * 1000);
                     DataReporter.start(mNativeReporter);
                 }
                 long t = System.currentTimeMillis() / 1000;

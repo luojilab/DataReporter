@@ -52,7 +52,7 @@
     if (reporter == NULL) {
         return;
     }
-    reporter->SetUploadItemSize((int) count);
+    reporter->SetUploadItemCount((size_t) count);
 }
 
 + (void)SetFileMaxSize:(void *)nativeReporter

@@ -25,7 +25,7 @@ namespace future {
 
         static void *GetValidMem(Buffer &buffer);
 
-        void SetUploadItemSize(std::size_t itemSize);
+        void SetUploadItemCount(std::size_t itemSize);
 
         void SetFileMaxSize(std::size_t fileMaxSize);
 

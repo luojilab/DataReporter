@@ -20,7 +20,7 @@ namespace future {
         while ((nPos = strPath.find('/', nIndex)) != std::string::npos) {
             strSub = strPath.substr(0, nPos);
             if (!strSub.empty() && !IsFileExist(strSub)) {
-                ret = mkdir(strSub.c_str(), S_IRUSR | S_IWUSR);
+                ret = mkdir(strSub.c_str(), ALLPERMS);
                 if(ret != 0){
                     return false;
                 }
@@ -35,8 +35,8 @@ namespace future {
                 break;
             }
         }
-        if (strSub.compare(strPath) != 0 && !IsFileExist(strSub)){
-            ret = mkdir(strSub.c_str(), S_IRUSR | S_IWUSR);
+        if (strSub.compare(strPath) != 0 && !IsFileExist(strPath)){
+            ret = mkdir(strPath.c_str(), ALLPERMS);
             if(ret != 0){
                 return false;
             }
@@ -75,7 +75,7 @@ namespace future {
             return false;
         }
 
-        if (S_ISDIR(st.st_mode) == 0) {
+        if (S_ISDIR(st.st_mode)) {
             ret = rmdir(path.c_str());
             if (ret == 0) {
                 return true;
@@ -84,7 +84,7 @@ namespace future {
             }
         }
 
-        if (S_ISREG(st.st_mode) == 0) {
+        if (S_ISREG(st.st_mode)) {
             ret = remove(path.c_str());
             if (ret == 0) {
                 return true;
@@ -109,8 +109,6 @@ namespace future {
                 continue;
             }
             pathTmp.clear();
-            pathTmp.append(path.c_str());
-            pathTmp.append("/");
             pathTmp.append(file->d_name);
             retList->push_back(pathTmp);
         }

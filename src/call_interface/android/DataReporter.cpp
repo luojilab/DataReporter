@@ -46,7 +46,7 @@ static void SetReportCount(JNIEnv *env, jobject obj, jlong nativeReporter, jint 
     if (reporter == NULL) {
         return;
     }
-    reporter->SetUploadItemSize((int) count);
+    reporter->SetUploadItemCount((size_t) count);
 }
 
 static void SetFileMaxSize(JNIEnv *env, jobject obj, jlong nativeReporter, jint fileMaxSize) {

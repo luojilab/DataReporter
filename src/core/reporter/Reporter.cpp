@@ -99,7 +99,7 @@ namespace future {
         }
     }
 
-    void Reporter::SetUploadItemSize(std::size_t itemSize) {
+    void Reporter::SetUploadItemCount(std::size_t itemSize) {
         if (m_ThreadId != std::this_thread::get_id()) {
             return;
         }
