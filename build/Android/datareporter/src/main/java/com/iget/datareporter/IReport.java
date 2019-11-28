@@ -1,7 +1,5 @@
 package com.iget.datareporter;
 
-import java.util.List;
-
 public interface IReport {
     /**
      * @param key 返回唯一标识符
