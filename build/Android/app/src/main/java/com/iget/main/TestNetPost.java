@@ -11,16 +11,16 @@ import java.util.Random;
 
 public class TestNetPost implements IReport {
 
-    private long mNativeReporter;
+    private DataReporter mDataReporter;
     private Object lock[] = new Object[0];
     private Handler mUiHandler = new Handler(Looper.getMainLooper());
 
     public TestNetPost() {
     }
 
-    public void setNativeReporter(long nativeReporter) {
+    public void setDataReporter(DataReporter dataReporter) {
         synchronized (lock) {
-            mNativeReporter = nativeReporter;
+            mDataReporter = dataReporter;
         }
     }
 
@@ -32,11 +32,11 @@ public class TestNetPost implements IReport {
             @Override
             public void run() {
                 synchronized (lock) {
-                    if (mNativeReporter == 0) {
+                    if (mDataReporter == null) {
                         return;
                     }
                     //Log.d("DataReporter_java", "uploadFailed" + this);
-                    DataReporter.uploadFailed(mNativeReporter, key);
+                    mDataReporter.uploadFailed(key);
                     StringBuffer stringBuffer = new StringBuffer();
                     for (int i = 0; i < data.length; i++) {
                         String oneData = new String(data[i]);

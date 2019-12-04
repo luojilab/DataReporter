@@ -11,16 +11,16 @@ import java.util.Random;
 
 public class NetPost implements IReport {
 
-    private long mNativeReporter;
+    private DataReporter mDataReporter;
     private Object lock[] = new Object[0];
     private Handler mUiHandler = new Handler(Looper.getMainLooper());
 
     public NetPost() {
     }
 
-    public void setNativeReporter(long nativeReporter) {
+    public void setDataReporter(DataReporter dataReporter) {
         synchronized (lock) {
-            mNativeReporter = nativeReporter;
+            mDataReporter = dataReporter;
         }
     }
 
@@ -46,18 +46,18 @@ public class NetPost implements IReport {
                     Log.d("DataReporter:data_", stringBuffer.toString());
 
                     synchronized (lock) {
-                        if (mNativeReporter == 0) {
+                        if (mDataReporter == null) {
                             return;
                         }
-                        DataReporter.uploadSucess(mNativeReporter, key);
+                        mDataReporter.uploadSucess(key);
                     }
                 } else {
                     synchronized (lock) {
-                        if (mNativeReporter == 0) {
+                        if (mDataReporter == null) {
                             return;
                         }
-                        DataReporter.uploadFailed(mNativeReporter, key);
-                        //DataReporter.reaWaken(mNativeReporter);
+                        mDataReporter.uploadFailed(key);
+                        //mDataReporter.reaWaken();
                     }
                 }
             }

@@ -22,12 +22,17 @@ MakeReporter(JNIEnv *env, jobject obj, jstring uuid, jstring cachePath, jstring 
                                                           int i = 0;
                                                           for (std::list<std::shared_ptr<future::CacheItem> >::iterator iter = data.begin();
                                                                iter != data.end(); iter++) {
-                                                              if((*iter)->pbEncodeItem.data.Length() == 0){
+                                                              if ((*iter)->pbEncodeItem.data.Length() ==
+                                                                  0) {
                                                                   continue;
                                                               }
 
-                                                              jbyteArray itemByteArray = env->NewByteArray((*iter)->pbEncodeItem.data.Length());
-                                                              env->SetByteArrayRegion(itemByteArray, 0, (*iter)->pbEncodeItem.data.Length(), (jbyte *)(*iter)->pbEncodeItem.data.GetBegin());
+                                                              jbyteArray itemByteArray = env->NewByteArray(
+                                                                      (*iter)->pbEncodeItem.data.Length());
+                                                              env->SetByteArrayRegion(itemByteArray,
+                                                                                      0,
+                                                                                      (*iter)->pbEncodeItem.data.Length(),
+                                                                                      (jbyte *) (*iter)->pbEncodeItem.data.GetBegin());
                                                               env->SetObjectArrayElement(
                                                                       javaData, i, itemByteArray);
                                                               i++;
@@ -132,6 +137,14 @@ static void ReleaseReporter(JNIEnv *env, jobject obj, jlong nativeReporter) {
     future::Reporter::Destroy(reporter);
 }
 
+static int GetVersion(JNIEnv *env, jobject obj) {
+#ifdef VERSION_CODE
+    return VERSION_CODE;
+#else
+    return 0;
+#endif
+}
+
 static JNINativeMethod gJavaDataReporterMethods[] = {
         {"makeReporter",         "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/iget/datareporter/IReport;)J", (void *) MakeReporter},
         {"setReportCount",       "(JI)V",                                                                                    (void *) SetReportCount},
@@ -144,6 +157,7 @@ static JNINativeMethod gJavaDataReporterMethods[] = {
         {"uploadSucess",         "(JJ)V",                                                                                    (void *) UploadSucess},
         {"uploadFailed",         "(JJ)V",                                                                                    (void *) UploadFailed},
         {"releaseReporter",      "(J)V",                                                                                     (void *) ReleaseReporter},
+        {"getVersion",           "()I",                                                                                      (void *) GetVersion},
 };
 
 int registerDataReporter(JNIEnv *env) {

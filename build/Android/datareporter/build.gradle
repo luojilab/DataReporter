@@ -26,6 +26,7 @@ android {
                     cppFlags "-std=c++14",
                             "-DPIC",
                             "-fPIC",
+                            "-DVERSION_CODE=${defaultConfig.versionCode}",
                             "-llog",
                             "-fsanitize=address -fno-omit-frame-pointer"
 
@@ -70,6 +71,7 @@ android {
                             "-fPIC",
                             "-O3", //gcc use Os
                             "-DNDEBUG",
+                            "-DVERSION_CODE=${defaultConfig.versionCode}",
                             "-fvisibility=hidden",
                             "-llog"
 
