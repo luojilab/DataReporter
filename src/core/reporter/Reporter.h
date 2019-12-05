@@ -98,8 +98,8 @@ namespace future {
 
         std::shared_ptr<DataProvider> m_DataProvider;
         std::map<int64_t, std::shared_ptr<std::list<std::shared_ptr<CacheItem> > > > m_Reporting;
-        std::set<std::shared_ptr<WTF::TimeTask> > m_DelayUploadTasks;
-        std::set<std::shared_ptr<WTF::TimeTask> > m_DelayReportTasks;
+        std::set<WTF::TimeTask > m_DelayUploadTasks;
+        std::set<WTF::TimeTask > m_DelayReportTasks;
 
         std::function<void(int64_t key, std::list<std::shared_ptr<CacheItem> > &data)> m_UploadImpl;
         std::function<void(void)> m_ReportFun;

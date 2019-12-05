@@ -6,7 +6,7 @@
 #define DATA_REPORTER_CACHEMANAGER_H
 
 #include <list>
-#include <map>
+#include <set>
 #include <cstddef>
 #include <string>
 #include <memory>
@@ -47,7 +47,7 @@ namespace future {
     private:
         std::string m_FromPath;
         std::shared_ptr<std::list<std::string> > m_Files;
-        std::map<std::string, int> m_UploadingFile;
+        std::set<std::string> m_UploadingFile;
         std::shared_ptr<FileInputStream> m_FileInputStream;
         std::shared_ptr<Buffer> m_FromMem;
         std::function<std::int64_t(void *, int)> m_DumpMem;

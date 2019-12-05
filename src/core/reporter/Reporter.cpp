@@ -172,19 +172,18 @@ namespace future {
         Debug("UploadFailed addr:%p", this);
         s_HandlerThread->postMsg([this, key]() {
             m_RetryStep += RETRY_STEP;
-            std::shared_ptr<WTF::TimeTask> delayTask(new WTF::TimeTask(m_RetryStep, 0, NULL));
-            std::weak_ptr<WTF::TimeTask> weakDelayTask = delayTask;
-            delayTask->setFun([this, key, weakDelayTask]() {
+            WTF::TimeTask delayTask(m_RetryStep, 0, NULL);
+            delayTask.setFun([this, key, delayTask]() {
                 std::map<int64_t, std::shared_ptr<std::list<std::shared_ptr<CacheItem> > > >::iterator iter = m_Reporting.find(
                         key);
                 if (m_UploadImpl != NULL && iter != m_Reporting.end()) {
                     m_UploadImpl(key, *(m_Reporting[key]));
                 }
-                m_DelayUploadTasks.erase(weakDelayTask.lock());
+                m_DelayUploadTasks.erase(delayTask);
             });
 
             m_DelayUploadTasks.insert(delayTask);
-            s_HandlerThread->postPeriodTask(*delayTask);
+            s_HandlerThread->postPeriodTask(delayTask);
         });
     }
 
@@ -193,7 +192,6 @@ namespace future {
         if (!m_Reporting.empty()) {
             return;
         }
-
         std::shared_ptr<std::list<std::shared_ptr<CacheItem> > > data = m_DataProvider->ReadData(
                 m_ItemSize,
                 m_ExpiredTime);
@@ -312,14 +310,18 @@ namespace future {
         std::lock_guard<std::mutex> lk(m_Mut);
         s_HandlerThread->postMsg([this]() {
             if (!m_DelayUploadTasks.empty()) {
-                ClearDelayUploadTasks();
-                m_Reporting.clear();
-                Report();
+                std::set<WTF::TimeTask>::iterator iter = m_DelayUploadTasks.begin();
+                s_HandlerThread->cancelPeriodTask(*iter);
+                WTF::TimeTask task = *iter;
+                task.fun()();
+                return;
             } else if (!m_DelayReportTasks.empty()) {
-                ClearDelayReportTasks();
-                m_Reporting.clear();
-                Report();
+                std::set<WTF::TimeTask>::iterator iter = m_DelayReportTasks.begin();
+                s_HandlerThread->cancelPeriodTask(*iter);
+                WTF::TimeTask task = *iter;
+                task.fun()();
             }
+
         });
     }
 
@@ -399,33 +401,30 @@ namespace future {
         if (!m_DelayReportTasks.empty()) {
             return;
         }
-        std::shared_ptr<WTF::TimeTask> delayTask(
-                new WTF::TimeTask(m_ReportingInterval, 0, NULL));
-
-        std::weak_ptr<WTF::TimeTask> weakDelayTask = delayTask;
-        delayTask->setFun([this, weakDelayTask]() {
+        WTF::TimeTask delayTask(m_ReportingInterval, 0, NULL);
+        delayTask.setFun([this, delayTask]() {
             if (m_ReportFun != NULL) {
                 m_ReportFun();
             }
-            m_DelayReportTasks.erase(weakDelayTask.lock());
+            m_DelayReportTasks.erase(delayTask);
         });
 
         m_DelayReportTasks.insert(delayTask);
-        s_HandlerThread->postPeriodTask(*delayTask);
+        s_HandlerThread->postPeriodTask(delayTask);
     }
 
     void Reporter::ClearDelayUploadTasks() {
-        for (std::set<std::shared_ptr<WTF::TimeTask> >::iterator iter = m_DelayUploadTasks.begin();
+        for (std::set<WTF::TimeTask>::iterator iter = m_DelayUploadTasks.begin();
              iter != m_DelayUploadTasks.end(); iter++) {
-            s_HandlerThread->cancelPeriodTask(**iter);
+            s_HandlerThread->cancelPeriodTask(*iter);
         }
         m_DelayUploadTasks.clear();
     }
 
     void Reporter::ClearDelayReportTasks() {
-        for (std::set<std::shared_ptr<WTF::TimeTask> >::iterator iter = m_DelayReportTasks.begin();
+        for (std::set<WTF::TimeTask>::iterator iter = m_DelayReportTasks.begin();
              iter != m_DelayReportTasks.end(); iter++) {
-            s_HandlerThread->cancelPeriodTask(**iter);
+            s_HandlerThread->cancelPeriodTask(*iter);
         }
         m_DelayReportTasks.clear();
     }

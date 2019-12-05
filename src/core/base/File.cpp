@@ -58,12 +58,12 @@ namespace future {
     }
 
     std::shared_ptr<std::list<std::string> >
-    File::FilterByFun(const std::list<std::string> &files,
-                      std::function<bool(const std::string &fileName)> fun) {
+    File::Filter(const std::list<std::string> &files,
+                 std::function<bool(const std::string &fileName)> filter) {
         std::shared_ptr<std::list<std::string> > ret = std::make_shared<std::list<std::string> >();
         for (std::list<std::string>::const_iterator iter = files.begin();
              iter != files.end(); iter++) {
-            if (fun(*iter)) {
+            if (filter(*iter)) {
                 ret->push_back(*iter);
             }
         }

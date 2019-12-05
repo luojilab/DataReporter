@@ -32,7 +32,8 @@ namespace future {
         static std::string GetFileNameWithExt(const std::string& path);
 
         static std::shared_ptr<std::list<std::string> >
-        FilterByFun(const std::list<std::string> &files, std::function<bool(const std::string &fileName)>fun);
+        Filter(const std::list<std::string> &files,
+               std::function<bool(const std::string &fileName)> filter);
     };
 }
 
