@@ -1,6 +1,21 @@
+# For more information about using CMake with Android Studio, read the
+# documentation: https://d.android.com/studio/projects/add-native-code.html
+
+# Sets the minimum version of CMake required to build the native library.
+
 cmake_minimum_required(VERSION 3.4.1)
 
-project(DataReporter)
+# Creates and names a library, sets it as either STATIC
+# or SHARED, and provides the relative paths to its source code.
+# You can define multiple libraries, and CMake builds them for you.
+# Gradle automatically packages shared libraries with your APK.
+#
+
+
+#if (CMAKE_BUILD_TYPE MATCHES "Debug")
+#option(MEMORY_CHECK         "Set to switch to build use SSE"  ON)
+#add_definitions(-D MEMORY_CHECK)
+#endif()
 
 get_filename_component(CMAKE_SOURCE_DIR
          "../../src"
@@ -13,78 +28,75 @@ get_filename_component(CMAKE_CURRENT_SOURCE_DIR
 MESSAGE( STATUS "src_dir = ${CMAKE_SOURCE_DIR}.")
 MESSAGE( STATUS "current_src_dir = ${CMAKE_CURRENT_SOURCE_DIR}.")
 
-#1.-------Add source directory-------
-set( DATA_REPORTER_INCLUDE_DIRS
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/base
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/crypto
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/reporter
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/thread)
 
-list(APPEND
-    DATA_REPORTER_INCLUDE_DIRS
-    ${CMAKE_CURRENT_SOURCE_DIR}/call_interface/ios
-    ${CMAKE_CURRENT_SOURCE_DIR}/platform/ios)
+file(GLOB_RECURSE HEAD_FILES ${CMAKE_SOURCE_DIR}/*.h ${CMAKE_SOURCE_DIR}/*.hpp)
+foreach(PATH  IN LISTS HEAD_FILES)
+		string (FIND ${PATH} "/android/" _index_android)
+		string (FIND ${PATH} "/libleaktracer/" _index_libleaktracer)
 
-#2.-------Add include directory-------
-include_directories( BEFORE
-    ${DATA_REPORTER_INCLUDE_DIRS})
+		if (${_index_android} EQUAL -1
+				)
+
+			if(NOT MEMORY_CHECK)
+				if(${_index_libleaktracer} GREATER 0)
+					continue()
+					endif()
+				endif()
+			#包含路径
+			get_filename_component(HEAD_DIR ${PATH} DIRECTORY)
+			message(STATUS "include_dir:${HEAD_DIR}\n")
+			include_directories(${HEAD_DIR})
+		endif()
+endforeach()
+
+include_directories(${CMAKE_SOURCE_DIR}/typesetting/engine/render/html/core/third-party/skia/android)
+
+file(GLOB_RECURSE SOURCES ${CMAKE_SOURCE_DIR}/*.cpp ${CMAKE_SOURCE_DIR}/*.c ${CMAKE_SOURCE_DIR}/*.cc)
+foreach(file IN LISTS SOURCES)
+    	string (FIND ${file} "/android/" _index_android)
+		string (FIND ${file} "/libleaktracer/" _index_libleaktracer)
+
+		#message(STATUS "file_is:${file}\n")
+
+    	if (${_index_android} EQUAL -1
+				)
+
+			if(NOT MEMORY_CHECK)
+				if(${_index_libleaktracer} GREATER 0)
+					continue()
+				endif()
+			endif()
+				list(APPEND SOURCE_FILES "${file};")
+				message(STATUS "src_files:${SOURCE_FILES}\n")
+        endif()
+endforeach()
+
+add_definitions(-DHAVE_EXPAT_CONFIG_H )
+
+add_library( # Sets the name of the library.
+             data-reporter
+             # Sets the library as a shared library.
+             STATIC
+             ${SOURCE_FILES} )
+
+# Searches for a specified prebuilt library and stores the path as a
+# variable. Because CMake includes system libraries in the search path by
+# default, you only need to specify the name of the public NDK library
+# you want to add. CMake verifies that the library exists before
+# completing its build.
+
+#find_library( # Sets the name of the path variable.
+#              log-lib
+              # Specifies the name of the NDK library that
+              # you want CMake to locate.
+#              log )
+
+# Specifies libraries CMake should link to your target library. You
+# can link multiple libraries, such as libraries you define in this
+# build script, prebuilt third-party libraries, or system libraries.
 
 
-#3.-------Add header files-------
-set(HEADER_FILES "")
-foreach (tempDir ${DATA_REPORTER_INCLUDE_DIRS})
-    file(GLOB_RECURSE SUB_HEADER_FILES "${tempDir}/*.h")
-    foreach (tempFile ${SUB_HEADER_FILES})
-        list(APPEND HEADER_FILES ${tempFile})
-        string(REPLACE
-               ${CMAKE_CURRENT_SOURCE_DIR}
-               ""
-               SOURCE_GROUP_NAME
-               ${tempDir})
-        source_group(TREE ${tempDir} PREFIX "Header Files/${SOURCE_GROUP_NAME}" FILES ${tempFile} )
-    endforeach ()
-endforeach ()
-
-
-#4.-------Add source files-------
-set(SOURCE_FILES "")
-foreach (tempDir ${DATA_REPORTER_INCLUDE_DIRS})
-    set(SUB_SOURCE_FILES "")
-    file(GLOB_RECURSE SUB_SOURCE_FILES
-              "${tempDir}/*.c"
-              "${tempDir}/*.cpp")
-
-    file(GLOB SUB_SOURCE_FILES
-                  "${tempDir}/*.c"
-                  "${tempDir}/*.cpp"
-                  "${tempDir}/*.m"
-                  "${tempDir}/*.mm")
-
-    foreach (tempFile ${SUB_SOURCE_FILES})
-        list(APPEND SOURCE_FILES ${tempFile})
-
-        string(REPLACE
-              ${CMAKE_CURRENT_SOURCE_DIR}
-              ""
-              SOURCE_GROUP_NAME
-              ${tempDir})
-        source_group(TREE ${tempDir} PREFIX "Source Files/${SOURCE_GROUP_NAME}" FILES ${tempFile} )
-    endforeach ()
-endforeach ()
-
-
-#-------5.Add iOS framework-------
-set(EXTRA_FRAMEWORKS "")
-find_library(IOS_Foundation Foundation)
-list(APPEND EXTRA_FRAMEWORKS ${IOS_Foundation})
-
-
-#-------6.Configure library-------
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
-add_library(data-reporter
-                STATIC
-                ${SOURCE_FILES}
-                ${HEADER_FILES})
-#
-#
-target_link_libraries(data-reporter z ${EXTRA_FRAMEWORKS})
+target_link_libraries( # Specifies the target library.
+                       data-reporter
+                       #${log-lib}
+		)
