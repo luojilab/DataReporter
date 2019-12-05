@@ -111,7 +111,6 @@ namespace WTF {
     }
 
     void HandlerThread::cancelPeriodTask(const TimeTask &task) {
-        std::unique_lock<std::mutex> lck(mut);
         m_MsgQueue.remove(task);
     }
 }

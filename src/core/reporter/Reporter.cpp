@@ -38,7 +38,6 @@ namespace future {
               m_EncryptFun(nullptr),
               m_DecryptFun(nullptr) {
         std::lock_guard<std::mutex> lk(m_Mut);
-        m_ThreadId = std::this_thread::get_id();
 
         if (!File::IsFileExist(cachePath)) {
             File::MkPath(cachePath);
@@ -54,9 +53,6 @@ namespace future {
     }
 
     void Reporter::Destroy(Reporter *reporter) {
-        if (reporter->GetThreadId() != std::this_thread::get_id()) {
-            return;
-        }
         Debug("Destroy addr:%p", reporter);
         s_HandlerThread->postMsg([reporter]() {
             delete reporter;
@@ -100,39 +96,24 @@ namespace future {
     }
 
     void Reporter::SetUploadItemCount(std::size_t itemSize) {
-        if (m_ThreadId != std::this_thread::get_id()) {
-            return;
-        }
         m_ItemSize = itemSize;
     }
 
     void Reporter::SetFileMaxSize(std::size_t fileMaxSize) {
-        if (m_ThreadId != std::this_thread::get_id()) {
-            return;
-        }
         m_MaxFileSize = fileMaxSize;
     }
 
     void Reporter::SetExpiredTime(std::int64_t expiredTime) {
-        if (m_ThreadId != std::this_thread::get_id()) {
-            return;
-        }
         m_ExpiredTime = expiredTime;
     }
 
     void Reporter::SetReportingInterval(std::int64_t reportingInterval) {
-        if (m_ThreadId != std::this_thread::get_id()) {
-            return;
-        }
         m_ReportingInterval = reportingInterval;
     }
 
     void Reporter::Push(const std::vector<unsigned char> &data) {
         std::lock_guard<std::mutex> lk(m_Mut);
         Debug("Push addr:%p", this);
-        if (m_ThreadId != std::this_thread::get_id()) {
-            return;
-        }
 
         unsigned char *inData = (unsigned char *) data.data();
         std::size_t inLen = data.size();
@@ -159,22 +140,19 @@ namespace future {
             free(cipherText);
         }
 
+        if (IsAsyncWriteFile()) {
+            s_HandlerThread->postMsg(m_WriteFileFun);
+        }
+
         s_HandlerThread->postMsg([this]() {
             if (m_Reporting.empty()) {
                 DelayReport();
             }
         });
-
-        if (IsAsyncWriteFile()) {
-            s_HandlerThread->postMsg(m_WriteFileFun);
-        }
     }
 
     void Reporter::UoloadSuccess(int64_t key) {
         Debug("UoloadSuccess addr:%p", this);
-        if (m_ThreadId != std::this_thread::get_id()) {
-            return;
-        }
         m_RetryStep = RETRY_STEP;
         s_HandlerThread->postMsg([this, key]() {
             std::map<int64_t, std::shared_ptr<std::list<std::shared_ptr<CacheItem> > > >::iterator iter = m_Reporting.find(
@@ -192,10 +170,6 @@ namespace future {
 
     void Reporter::UploadFailed(int64_t key) {
         Debug("UploadFailed addr:%p", this);
-        if (m_ThreadId != std::this_thread::get_id()) {
-            return;
-        }
-
         s_HandlerThread->postMsg([this, key]() {
             m_RetryStep += RETRY_STEP;
             std::shared_ptr<WTF::TimeTask> delayTask(new WTF::TimeTask(m_RetryStep, 0, NULL));
@@ -209,7 +183,7 @@ namespace future {
                 m_DelayUploadTasks.erase(weakDelayTask.lock());
             });
 
-            m_DelayUploadTasks[delayTask] = 0;
+            m_DelayUploadTasks.insert(delayTask);
             s_HandlerThread->postPeriodTask(*delayTask);
         });
     }
@@ -260,9 +234,6 @@ namespace future {
 
     void Reporter::Start() {
         std::lock_guard<std::mutex> lk(m_Mut);
-        if (m_ThreadId != std::this_thread::get_id()) {
-            return;
-        }
         if (m_IsStart) {
             return;
         }
@@ -339,25 +310,17 @@ namespace future {
 
     void Reporter::ReaWaken() {
         std::lock_guard<std::mutex> lk(m_Mut);
-        if (m_ThreadId != std::this_thread::get_id()) {
-            return;
-        }
-
         s_HandlerThread->postMsg([this]() {
             if (!m_DelayUploadTasks.empty()) {
                 ClearDelayUploadTasks();
                 m_Reporting.clear();
                 Report();
-            }else if(!m_DelayReportTasks.empty()){
+            } else if (!m_DelayReportTasks.empty()) {
                 ClearDelayReportTasks();
                 m_Reporting.clear();
                 Report();
             }
         });
-    }
-
-    std::thread::id &Reporter::GetThreadId() {
-        return m_ThreadId;
     }
 
     void Reporter::WrtiteToFile() {
@@ -447,22 +410,22 @@ namespace future {
             m_DelayReportTasks.erase(weakDelayTask.lock());
         });
 
-        m_DelayReportTasks[delayTask] = 0;
+        m_DelayReportTasks.insert(delayTask);
         s_HandlerThread->postPeriodTask(*delayTask);
     }
 
     void Reporter::ClearDelayUploadTasks() {
-        for (std::map<std::shared_ptr<WTF::TimeTask>, int>::iterator iter = m_DelayUploadTasks.begin();
+        for (std::set<std::shared_ptr<WTF::TimeTask> >::iterator iter = m_DelayUploadTasks.begin();
              iter != m_DelayUploadTasks.end(); iter++) {
-            s_HandlerThread->cancelPeriodTask(*iter->first);
+            s_HandlerThread->cancelPeriodTask(**iter);
         }
         m_DelayUploadTasks.clear();
     }
 
     void Reporter::ClearDelayReportTasks() {
-        for (std::map<std::shared_ptr<WTF::TimeTask>, int>::iterator iter = m_DelayReportTasks.begin();
+        for (std::set<std::shared_ptr<WTF::TimeTask> >::iterator iter = m_DelayReportTasks.begin();
              iter != m_DelayReportTasks.end(); iter++) {
-            s_HandlerThread->cancelPeriodTask(*iter->first);
+            s_HandlerThread->cancelPeriodTask(**iter);
         }
         m_DelayReportTasks.clear();
     }
