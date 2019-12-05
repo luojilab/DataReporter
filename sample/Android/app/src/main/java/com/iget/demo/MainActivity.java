@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private Button mButtonStart;
     private IntentFilter mIntentFilter;
     private NetworkChangeReceiver mNetworkChangeReceiver;
-    private long mNativeReporter = 0;
+    private DataReporter mDataReporter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,35 +40,35 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(mNetworkChangeReceiver, mIntentFilter);
 
         final ReportImp reportImp = new ReportImp();
-        mNativeReporter = DataReporter.makeReporter("test", MainActivity.this.getFilesDir().getPath(), "testKey", reportImp);
-        reportImp.setNativeReporter(mNativeReporter);
-        DataReporter.setReportCount(mNativeReporter, 10);
+        mDataReporter = DataReporter.makeDataReporter("test", MainActivity.this.getFilesDir().getPath(), "testKey", reportImp);
+        reportImp.setDataReporter(mDataReporter);
+        mDataReporter.setReportCount(10);
         //0表示数据永久有效
-        DataReporter.setExpiredTime(mNativeReporter, 0);
+        mDataReporter.setExpiredTime(0);
         //10秒报一次
-        DataReporter.setReportingInterval(mNativeReporter, 10*1000);
-        DataReporter.setFileMaxSize(mNativeReporter, 2 * 1024);
-        DataReporter.start(mNativeReporter);
+        mDataReporter.setReportingInterval(10 * 1000);
+        mDataReporter.setFileMaxSize(2 * 1024);
+        mDataReporter.start();
         mButtonStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 for (int i = 0; i < 5000; i++) {
                     String data = new String("{\"progress\":\"11.59\",\"action\":\"pause\",\"uid\":\"10040106\",\"time\":\"1542107284.35\",\"alias_id\":\"6soKIdxYbmmHov0yYs8z\"}");
-                    DataReporter.push(mNativeReporter, data.getBytes());
+                    mDataReporter.push(data.getBytes());
                 }
             }
         });
     }
 
     static class ReportImp implements IReport {
-        private long mNativeReporter;
+        private DataReporter mDataReporter;
         private Handler mUiHandler = new Handler(Looper.getMainLooper());
 
         public ReportImp() {
         }
 
-        public void setNativeReporter(long nativeReporter) {
-            mNativeReporter = nativeReporter;
+        public void setDataReporter(DataReporter dataReporter) {
+            mDataReporter = dataReporter;
         }
 
         @Override
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
             mUiHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (mNativeReporter == 0) {
+                    if (mDataReporter == null) {
                         return;
                     }
 
@@ -94,9 +94,9 @@ public class MainActivity extends AppCompatActivity {
                             stringBuffer.append(data[i]);
                         }
                         Log.d("DataReporter:data_", stringBuffer.toString());
-                        DataReporter.uploadSucess(mNativeReporter, key);
+                        mDataReporter.uploadSucess(key);
                     } else {
-                        DataReporter.uploadFailed(mNativeReporter, key);
+                        mDataReporter.uploadFailed(key);
                         //DataReporter.reaWaken(mNativeReporter);
                     }
 
@@ -112,10 +112,10 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             if (checkNet(context)) {
                 //网络状态好时 重新唤起下DataReporter
-                if (mNativeReporter == 0) {
+                if (mDataReporter == null) {
                     return;
                 }
-                DataReporter.reaWaken(mNativeReporter);
+                mDataReporter.reaWaken();
             }
         }
     }
@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         unregisterReceiver(mNetworkChangeReceiver);
         //取消数据上报，并且把上报对象置空，防止释放之后再次被调用出现crash
-        DataReporter.releaseReporter(mNativeReporter);
-        mNativeReporter = 0;
+        DataReporter.releaseDataReporter(mDataReporter);
+        mDataReporter = null;
     }
 }
