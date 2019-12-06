@@ -27,8 +27,8 @@ android {
                             "-DPIC",
                             "-fPIC",
                             "-DVERSION_CODE=${defaultConfig.versionCode}",
-                            "-llog",
-                            "-fsanitize=address -fno-omit-frame-pointer"
+                            "-llog"
+                            //"-fsanitize=address -fno-omit-frame-pointer"
 
                     cFlags  "-ffunction-sections",
                             "-fdata-sections",
@@ -36,8 +36,8 @@ android {
                             "-mfpu=neon",
                             "-mthumb",
                             "-mfloat-abi=softfp",
-                            "-fstack-protector",
-                            "-fsanitize=address -fno-omit-frame-pointer"
+                            "-fstack-protector"
+                            //"-fsanitize=address -fno-omit-frame-pointer"
 
                     abiFilters "armeabi-v7a", "arm64-v8a"
                     arguments '-DANDROID_ARM_NEON=TRUE',
