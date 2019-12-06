@@ -24,6 +24,8 @@ get_filename_component(CMAKE_SOURCE_DIR
 get_filename_component(CMAKE_CURRENT_SOURCE_DIR
          "../../src"
          ABSOLUTE)
+		 
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
 MESSAGE( STATUS "src_dir = ${CMAKE_SOURCE_DIR}.")
 MESSAGE( STATUS "current_src_dir = ${CMAKE_CURRENT_SOURCE_DIR}.")
