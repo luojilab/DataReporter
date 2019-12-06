@@ -1,4 +1,5 @@
 #!/bin/bash
+rm -rf build/x86_64
 mkdir -p build/x86_64
 mkdir -p libs/x86_64
 cd build/x86_64

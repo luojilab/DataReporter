@@ -1,4 +1,5 @@
 #!/bin/bash
+rm -rf build
 ./build_i386.sh
 ./build_x86_64.sh
 ./build_arm.sh
