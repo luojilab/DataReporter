@@ -9,6 +9,19 @@
 #include "File.h"
 #include "AndroidUtil.h"
 
+#ifndef ACCESSPERMS
+/* Permission macros provided by glibc for compatibility with BSDs. */
+#define ACCESSPERMS (S_IRWXU | S_IRWXG | S_IRWXO) /* 0777 */
+#endif
+
+#ifndef ACCESSPERMS
+#define ALLPERMS    (S_ISUID | S_ISGID | S_ISVTX | S_IRWXU | S_IRWXG | S_IRWXO) /* 07777 */
+#endif
+
+#ifndef ACCESSPERMS
+#define DEFFILEMODE (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH) /* 0666 */
+#endif
+
 namespace future {
 
     bool File::MkPath(const std::string &path) {
