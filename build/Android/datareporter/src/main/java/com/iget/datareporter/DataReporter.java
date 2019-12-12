@@ -33,7 +33,7 @@ public class DataReporter {
         mSoloadImp = soLoadImp;
     }
 
-    public static DataReporter makeDataReporter(String uuid, String cachePath, String encryptKey, IReport reportImp) {
+    public synchronized static DataReporter makeDataReporter(String uuid, String cachePath, String encryptKey, IReport reportImp) {
         return new DataReporter(uuid, cachePath, encryptKey, reportImp);
     }
 
