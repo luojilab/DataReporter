@@ -210,21 +210,30 @@ namespace future {
 
             if (m_DecryptFun != nullptr) {
                 for (std::list<std::shared_ptr<CacheItem> >::iterator iter = data->begin();
-                     iter != data->end(); iter++) {
+                     iter != data->end();) {
                     if ((*iter)->pbEncodeItem.crypto_flag != 0) {
                         unsigned char *plainText = nullptr;
                         std::size_t plainTextLen = 0;
                         plainText = (unsigned char *) m_DecryptFun(
                                 (*iter)->pbEncodeItem.data.GetBegin(),
                                 (*iter)->pbEncodeItem.data.Length(), plainTextLen);
-                        Buffer plainTextBuf(plainText, plainTextLen, BufferCopy);
-                        (*iter)->pbEncodeItem.data = std::move(plainTextBuf);
-                        (*iter)->pbEncodeItem.data_len = plainTextBuf.Length();
-                        free(plainText);
+                        if (plainText == nullptr) {
+                            m_DataProvider->ClearItem(*(*iter));
+                            data->erase(iter++);
+                        } else {
+                            Buffer plainTextBuf(plainText, plainTextLen, BufferCopy);
+                            (*iter)->pbEncodeItem.data = std::move(plainTextBuf);
+                            (*iter)->pbEncodeItem.data_len = plainTextBuf.Length();
+                            free(plainText);
+                            iter++;
+                        }
                     }
                 }
             }
-
+            if (data->empty()) {
+                s_HandlerThread->postMsg(m_ReportFun);
+                return;
+            }
             m_Reporting[now] = data;
             m_UploadImpl(now, *(m_Reporting[now]));
         }
