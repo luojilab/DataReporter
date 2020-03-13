@@ -78,5 +78,4 @@ add_library(data-reporter
             ${HEADER_FILES})
 
 #
-#
 target_link_libraries(data-reporter z ${EXTRA_FRAMEWORKS})

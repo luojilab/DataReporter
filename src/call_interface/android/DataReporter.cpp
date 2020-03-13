@@ -104,11 +104,12 @@ static void Push(JNIEnv *env, jobject obj, jlong nativeReporter, jbyteArray data
     std::size_t dataLen = env->GetArrayLength(data);
     std::vector<unsigned char> cData(dataLen);
 
-    jbyte *dataJava = env->GetByteArrayElements(data, JNI_FALSE);
+    jboolean isCopy = JNI_FALSE;
+    jbyte *dataJava = env->GetByteArrayElements(data, &isCopy);
     for (int i = 0; i < dataLen; i++) {
         cData[i] = dataJava[i];
     }
-    env->ReleaseByteArrayElements(data, dataJava, JNI_FALSE);
+    env->ReleaseByteArrayElements(data, dataJava, isCopy);
 
     reporter->Push(cData);
 }
