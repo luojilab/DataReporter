@@ -61,7 +61,48 @@ static void *reporterInstanse;
     });
 }
 
+/**
+上报数据到服务器
+*/
+- (void)uploadData:(int64_t)key dataArrays:(NSArray *)dataArrays {
+    
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        
+        bool successed = false;
+        
+        #warning TODO report to server-side
+        
+        if (random() % 3 == 1) {
+            successed = true;
+        } else {
+            successed = false;
+        }
+        
+        if (successed) {
+            [self uploadSuccessed:key];
+        } else {
+            [self uploadFailed:key];
+        }
+    });
+}
 
+- (void)uploadSuccessed:(int64_t)key {
+    //重要，通知DataReporter，report success，每次回调必须执行成功或者失败
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [DataReporter UploadSucess:reporterInstanse key:key];
+        DebugLog(@"UploadSucess -> should not upload again = %lld",key);
+    });
+}
+
+- (void)uploadFailed:(int64_t)key {
+    //重要，通知DataReporter，report Failed，每次回调必须执行成功或者失败
+    //失败后，间隔一段时间会重新发送，上层不必多余处理
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [DataReporter UploadFailed:reporterInstanse key:key];
+        DebugLog(@"UploadFailed -> should upload again = %lld",key);
+    });
+}
 
 /**
  初始化实例
@@ -75,24 +116,8 @@ static void *reporterInstanse;
             return;
         }
        
-#warning TODO report to server-side
         dispatch_async(dispatch_get_main_queue(), ^{
-            for (NSData *byteData in dataArrays) {
-                NSString *str = [NSString stringWithUTF8String:[byteData bytes]];
-                NSLog(@"%lld---%@", key, str);
-            }
-            
-            DebugLog(@"need report to server-side = %ld",(long)[dataArrays count]);
-            if (random() % 3 == 1) {
-                //重要，通知DataReporter，report success，每次回调必须执行成功或者失败
-                [DataReporter UploadSucess:reporterInstanse key:key];
-                DebugLog(@"UploadSucess -> should not upload again = %lld",key);
-            }else{
-                //重要，通知DataReporter，report Failed，每次回调必须执行成功或者失败
-                //失败后，间隔一段时间会重新发送，上层不必多余处理
-                [DataReporter UploadFailed:reporterInstanse key:key];
-                DebugLog(@"UploadFailed -> should upload again = %lld",key);
-            }
+            [self uploadData:key dataArrays:dataArrays];
         });
     }];
     //set report max count  设置每次上报最大的数据量 10表示，一次最多10条报一次
@@ -102,11 +127,12 @@ static void *reporterInstanse;
     [DataReporter SetExpiredTime:reporterInstanse expiredTime:0];
 	
 	//set report reporterInstanse 上报间隔 单位i秒  10 表示每隔10秒上报一次，0表示有数据立即上报
-    [DataReporter SetReportingInterval:reporterInstanse reportingInterval:10];
+    [DataReporter SetReportingInterval:reporterInstanse reportingInterval:0];
 	
     //set save file size 设置缓存文件大小， 大小一定要比单条push进来的数据大
     [DataReporter SetFileMaxSize:reporterInstanse fileMaxSize:kMaxFileSize];
 }
+                               
 
 
 /**
@@ -139,7 +165,7 @@ static void *reporterInstanse;
  
  @param data reportData
  */
-+ (void)saveData:(NSData *)data{
++ (void)pushData:(NSData *)data{
 
     if ([data length] == 0){
         return;
