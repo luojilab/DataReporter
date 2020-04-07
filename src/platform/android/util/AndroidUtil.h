@@ -85,19 +85,10 @@ private:
 
 public:
     static JavaClass Class_java_lang_Object;
-    static JavaClass CLASS_java_File;
     static JavaClass CLASS_java_String;
     static JavaClass CLASS_java_DataReporter;
     static JavaClass CLASS_java_ByteArray;
 
-    static std::shared_ptr<Constructor> Constructor_File;
-    static std::shared_ptr<BooleanMethod> Method_mkdir;
-    static std::shared_ptr<BooleanMethod> Method_mkdirs;
-    static std::shared_ptr<BooleanMethod> Method_isDirectory;
-    static std::shared_ptr<BooleanMethod> Method_exists;
-    static std::shared_ptr<BooleanMethod> Method_delete;
-    static std::shared_ptr<BooleanMethod> Method_rename;
-    static std::shared_ptr<ObjectArrayMethod> Method_filelist;
     static std::shared_ptr<StaticVoidMethod> Method_upload;
 
 

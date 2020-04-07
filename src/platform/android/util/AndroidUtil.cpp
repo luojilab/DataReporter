@@ -5,19 +5,10 @@
 JavaVM *AndroidUtil::JAVA_VM = NULL;
 
 JavaClass AndroidUtil::Class_java_lang_Object("java/lang/Object");
-JavaClass AndroidUtil::CLASS_java_File("java/io/File");
 JavaClass AndroidUtil::CLASS_java_String("java/lang/String");
 JavaClass AndroidUtil::CLASS_java_DataReporter("com/iget/datareporter/DataReporter");
 JavaClass AndroidUtil::CLASS_java_ByteArray("[B");
 
-std::shared_ptr<Constructor> AndroidUtil::Constructor_File;
-std::shared_ptr<BooleanMethod> AndroidUtil::Method_mkdir;
-std::shared_ptr<BooleanMethod> AndroidUtil::Method_mkdirs;
-std::shared_ptr<BooleanMethod> AndroidUtil::Method_isDirectory;
-std::shared_ptr<BooleanMethod> AndroidUtil::Method_exists;
-std::shared_ptr<BooleanMethod> AndroidUtil::Method_delete;
-std::shared_ptr<BooleanMethod> AndroidUtil::Method_rename;
-std::shared_ptr<ObjectArrayMethod> AndroidUtil::Method_filelist;
 std::shared_ptr<StaticVoidMethod> AndroidUtil::Method_upload;
 
 JNIEnv *AndroidUtil::getEnv() {
@@ -41,24 +32,6 @@ bool AndroidUtil::init(JavaVM *jvm) {
     CLASS_java_String.j();
     CLASS_java_DataReporter.j();
     CLASS_java_ByteArray.j();
-
-    Constructor_File = std::shared_ptr<Constructor>(
-            new Constructor(AndroidUtil::CLASS_java_File, "(Ljava/lang/String;)V"));
-    Method_mkdir = std::shared_ptr<BooleanMethod>(
-            new BooleanMethod(AndroidUtil::CLASS_java_File, "mkdir", "()"));
-    Method_mkdirs = std::shared_ptr<BooleanMethod>(
-            new BooleanMethod(AndroidUtil::CLASS_java_File, "mkdirs", "()"));
-    Method_isDirectory = std::shared_ptr<BooleanMethod>(
-            new BooleanMethod(AndroidUtil::CLASS_java_File, "isDirectory", "()"));
-    Method_exists = std::shared_ptr<BooleanMethod>(
-            new BooleanMethod(AndroidUtil::CLASS_java_File, "exists", "()"));
-    Method_delete = std::shared_ptr<BooleanMethod>(
-            new BooleanMethod(AndroidUtil::CLASS_java_File, "delete", "()"));
-    Method_rename = std::shared_ptr<BooleanMethod>(
-            new BooleanMethod(AndroidUtil::CLASS_java_File, "renameTo", "(Ljava/io/File;)"));
-    JavaArray stringArray(CLASS_java_String);
-    Method_filelist = std::shared_ptr<ObjectArrayMethod>(
-            new ObjectArrayMethod(AndroidUtil::CLASS_java_File, "list", stringArray, "()"));
     Method_upload = std::shared_ptr<StaticVoidMethod>(
             new StaticVoidMethod(AndroidUtil::CLASS_java_DataReporter, "upload",
                                  "(J[[BLcom/iget/datareporter/IReport;)"));
