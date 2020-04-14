@@ -53,7 +53,7 @@ endforeach()
 
 include_directories(${CMAKE_SOURCE_DIR}/typesetting/engine/render/html/core/third-party/skia/android)
 
-file(GLOB_RECURSE SOURCES ${CMAKE_SOURCE_DIR}/*.cpp ${CMAKE_SOURCE_DIR}/*.c ${CMAKE_SOURCE_DIR}/*.cc ${CMAKE_SOURCE_DIR}/*.mm)
+file(GLOB_RECURSE SOURCES ${CMAKE_SOURCE_DIR}/*.cpp ${CMAKE_SOURCE_DIR}/*.c ${CMAKE_SOURCE_DIR}/*.cc ${CMAKE_SOURCE_DIR}/*.mm ${CMAKE_SOURCE_DIR}/*.h ${CMAKE_SOURCE_DIR}/*.hpp)
 foreach(file IN LISTS SOURCES)
     	string (FIND ${file} "/android/" _index_android)
 		string (FIND ${file} "/libleaktracer/" _index_libleaktracer)
