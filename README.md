@@ -1,8 +1,8 @@
 ## DataReporter
 
-[![name](https://img.shields.io/badge/relelase-1.3.8-green]()
-[![license](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)]()
-[![platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS-red.svg?style=flat)]()
+[![name](https://img.shields.io/badge/relelase-1.3.8-green?style=flat)]()
+[![license](https://img.shields.io/badge/license-MIT-brightgreen?style=flat)]()
+[![platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS-red?style=flat)]()
 
 (中文版本请参看[这里](#data_reporter_cn))
 
