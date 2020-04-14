@@ -3,6 +3,8 @@ apply plugin: 'maven'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
+
+version = VERSION_NAME
 android {
     compileSdkVersion 28
 
