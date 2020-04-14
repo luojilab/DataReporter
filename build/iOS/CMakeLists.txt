@@ -73,6 +73,8 @@ foreach(file IN LISTS SOURCES)
         endif()
 endforeach()
 
+source_group(TREE ${CMAKE_SOURCE_DIR} FILES  ${SOURCE_FILES} )
+
 add_definitions(-DHAVE_EXPAT_CONFIG_H )
 
 add_library( # Sets the name of the library.
