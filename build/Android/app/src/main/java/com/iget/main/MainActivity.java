@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.d("DataReporter:push_", "time:" + t + " count:" + mCount);
                     mCount++;
                 }
-                int version = DataReporter.getVersion();
+                int version = DataReporter.getVersionCode();
                 Toast.makeText(this, "" + version, Toast.LENGTH_LONG).show();
                 break;
             case R.id.button_test_release:
