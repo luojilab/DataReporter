@@ -43,7 +43,7 @@ android {
                     arguments '-DANDROID_ARM_NEON=TRUE',
                             '-DANDROID_ARM_MODE=arm',
                             '-DANDROID_PLATFORM=android-17',
-                            '-DANDROID_TOOLCHAIN=clang', '-DANDROID_STL=c++_static',
+                            '-DANDROID_TOOLCHAIN=clang', '-DANDROID_STL=c++_shared',
                             //'-DANDROID_ABI=armeabi-v7a',"-DCMAKE_BUILD_TYPE=Debug"
                             "-DCMAKE_BUILD_TYPE=Debug"
 
@@ -90,7 +90,7 @@ android {
                     arguments '-DANDROID_ARM_NEON=TRUE',
                             '-DANDROID_ARM_MODE=arm',
                             '-DANDROID_PLATFORM=android-17',
-                            '-DANDROID_TOOLCHAIN=clang', '-DANDROID_STL=c++_static',
+                            '-DANDROID_TOOLCHAIN=clang', '-DANDROID_STL=c++_shared',
                             "-DCMAKE_BUILD_TYPE=Release"
 
                     //'-DANDROID_STL=c++_static',
