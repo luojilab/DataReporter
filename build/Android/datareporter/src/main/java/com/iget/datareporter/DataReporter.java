@@ -12,22 +12,17 @@ public class DataReporter {
     private static void loadLibary() {
         synchronized (DataReporter.class) {
             if (!sIsLoad) {
-                boolean isLoadSuccess = false;
                 if (mSoloadImp != null) {
                     try {
-                        System.loadLibrary("c++_shared");
-                        isLoadSuccess = mSoloadImp.loadlibrary("data-reporter");
-                        if (!isLoadSuccess) {
-                            Log.d("soload:", "net-dispatcher load error!");
-                        }
-                    } catch (UnsatisfiedLinkError e) {
+                        mSoloadImp.loadLibrary("c++_shared");
+                        mSoloadImp.loadLibrary("data-reporter");
+                        Log.d("soload:", "net-dispatcher load error!");
+                        sIsLoad = true;
+                        return;
+
+                    } catch (Exception e) {
                         Log.d("soload:", e.getMessage());
                     }
-                }
-
-                if (isLoadSuccess) {
-                    sIsLoad = true;
-                    return;
                 }
 
                 try {
