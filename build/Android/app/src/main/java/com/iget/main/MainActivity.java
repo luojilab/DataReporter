@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.iget.data_reporter.R;
 import com.iget.datareporter.DataReporter;
@@ -70,6 +71,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.d("DataReporter:push_", "time:" + t + " count:" + mCount);
                     mCount++;
                 }
+                int version = DataReporter.getVersion();
+                Toast.makeText(this, "" + version, Toast.LENGTH_LONG).show();
                 break;
             case R.id.button_test_release:
                 int testCount = 100;
