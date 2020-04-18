@@ -20,7 +20,7 @@ public class DataReporter {
                         sIsLoad = true;
                         return;
 
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         Log.d("soload:", e.getMessage());
                     }
                 }
@@ -28,7 +28,7 @@ public class DataReporter {
                 try {
                     System.loadLibrary("c++_shared");
                     System.loadLibrary("data-reporter");
-                } catch (UnsatisfiedLinkError e) {
+                } catch (Throwable e) {
                     Log.d("soload:", e.getMessage());
                 }
                 sIsLoad = true;
