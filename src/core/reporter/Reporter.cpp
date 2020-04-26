@@ -18,6 +18,7 @@ namespace future {
 
     const std::string Reporter::DATA_SUFFIX = ".data";
     const int RETRY_STEP = 1000 * 5;
+    const int MAX_RETRY_STEP = 1000 * 60 * 60;
 
     Reporter::Reporter(const std::string &uuid, const std::string &cachePath,
                        const std::string &encryptKey,
@@ -111,6 +112,10 @@ namespace future {
         m_ReportingInterval = reportingInterval;
     }
 
+    void Reporter::SetRetryInterval(std::int64_t reportingInterval) {
+        m_RetryStep = reportingInterval;
+    }
+
     void Reporter::Push(const std::vector<unsigned char> &data) {
         std::lock_guard<std::mutex> lk(m_Mut);
         Debug("Push addr:%p", this);
@@ -171,7 +176,10 @@ namespace future {
     void Reporter::UploadFailed(int64_t key) {
         Debug("UploadFailed addr:%p", this);
         s_HandlerThread->postMsg([this, key]() {
-            m_RetryStep += RETRY_STEP;
+            if (m_RetryStep < MAX_RETRY_STEP) {
+                m_RetryStep += RETRY_STEP;
+            }
+
             WTF::TimeTask delayTask(m_RetryStep, 0, NULL);
             delayTask.setFun([this, key, delayTask]() {
                 std::map<int64_t, std::shared_ptr<std::list<std::shared_ptr<CacheItem> > > >::iterator iter = m_Reporting.find(

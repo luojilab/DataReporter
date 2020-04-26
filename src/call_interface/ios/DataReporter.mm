@@ -84,6 +84,16 @@
     }
     reporter->SetReportingInterval(reportingInterval);
 }
+
++ (void)SetRetryInterval:(void *)nativeReporter
+           retryInterval:(int64_t)retryInterval {
+    
+    future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);
+    if (reporter == NULL) {
+        return;
+    }
+    reporter->SetRetryInterval(retryInterval);
+}
     
 + (void)Start:(void *)nativeReporter {
     future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);

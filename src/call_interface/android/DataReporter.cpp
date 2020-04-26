@@ -79,6 +79,15 @@ SetReportingInterval(JNIEnv *env, jobject obj, jlong nativeReporter, jlong repor
     reporter->SetReportingInterval((std::int64_t) reportingInterval);
 }
 
+static void
+SetRetryInterval(JNIEnv *env, jobject obj, jlong nativeReporter, jlong retryInterval) {
+    future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);
+    if (reporter == NULL) {
+        return;
+    }
+    reporter->SetRetryInterval((std::int64_t) retryInterval);
+}
+
 static void Start(JNIEnv *env, jobject obj, jlong nativeReporter) {
     future::Reporter *reporter = reinterpret_cast<future::Reporter *>(nativeReporter);
     if (reporter == NULL) {
@@ -151,6 +160,7 @@ static JNINativeMethod gJavaDataReporterMethods[] = {
         {"setFileMaxSize",       "(JI)V",                                                                                    (void *) SetFileMaxSize},
         {"setExpiredTime",       "(JJ)V",                                                                                    (void *) SetExpiredTime},
         {"setReportingInterval", "(JJ)V",                                                                                    (void *) SetReportingInterval},
+        {"setRetryInterval",     "(JJ)V",                                                                                    (void *) SetRetryInterval},
         {"start",                "(J)V",                                                                                     (void *) Start},
         {"reaWaken",             "(J)V",                                                                                     (void *) ReaWaken},
         {"push",                 "(J[B)V",                                                                                   (void *) Push},

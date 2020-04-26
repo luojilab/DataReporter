@@ -64,6 +64,10 @@ public class DataReporter {
         setReportingInterval(mNativeReporter, reportingInterval);
     }
 
+    public void setRetryInterval(long retryInterval) {
+        setRetryInterval(mNativeReporter, retryInterval);
+    }
+
     public void start() {
         start(mNativeReporter);
     }
@@ -146,6 +150,14 @@ public class DataReporter {
      * @param reportingInterval 上报间隔
      */
     private static native void setReportingInterval(long nativeReporter, long reportingInterval);
+
+    /**
+     * 设置上报出错后重试间隔
+     *
+     * @param nativeReporter 由makeReporter返回的值
+     * @param retryInterval  上报重试间隔
+     */
+    private static native void setRetryInterval(long nativeReporter, long retryInterval);
 
     /**
      * 开始上报线程 设置完相关参数之后，执行一次。

@@ -42,12 +42,17 @@ public class MainActivity extends AppCompatActivity {
         final ReportImp reportImp = new ReportImp();
         mDataReporter = DataReporter.makeDataReporter("test", MainActivity.this.getFilesDir().getPath(), "testKey", reportImp);
         reportImp.setDataReporter(mDataReporter);
+        //设置单次上报最大条数
         mDataReporter.setReportCount(10);
-        //0表示数据永久有效
+        //设置过期时间，0为不过期，多久的数据都上报，单位为秒
         mDataReporter.setExpiredTime(0);
-        //10秒报一次
+        //设置上报间隔，1000表示 1秒报一次，单位毫秒
         mDataReporter.setReportingInterval(10 * 1000);
-        mDataReporter.setFileMaxSize(2 * 1024);
+        //设置最大缓存大小 20k
+        mDataReporter.setFileMaxSize(20 * 1024);
+        //设置上报出错重试间隔，5代表上报出错后5秒后重试，如果再次上报失败，重试时间加5秒，也就是10秒。以此类推。单位秒。
+        //如果设置为0，表示出错后立即上报，容易导致上报风暴，服务器打垮
+        mDataReporter.setRetryInterval(5);
         mDataReporter.start();
         mButtonStart.setOnClickListener(new View.OnClickListener() {
             @Override

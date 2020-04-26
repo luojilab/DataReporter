@@ -34,6 +34,8 @@ namespace future {
 
         void SetReportingInterval(std::int64_t reportingInterval);
 
+        void SetRetryInterval(std::int64_t reportingInterval);
+
         void Push(const std::vector<unsigned char> &data);
 
         void UoloadSuccess(int64_t key);

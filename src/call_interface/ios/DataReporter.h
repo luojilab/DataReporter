@@ -30,6 +30,9 @@ DATA_REPORTER_EXPORT @interface DataReporter : NSObject
 + (void)SetReportingInterval:(void *)nativeReporter
            reportingInterval:(int64_t)reportingInterval;
 		   
++ (void)SetRetryInterval:(void *)nativeReporter
+           retryInterval:(int64_t)retryInterval;
+		   
 + (void)Start:(void *)nativeReporter;
 
 + (void)ReaWaken:(void *)nativeReporter;
