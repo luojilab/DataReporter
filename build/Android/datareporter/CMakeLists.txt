@@ -28,55 +28,56 @@ get_filename_component(CMAKE_CURRENT_SOURCE_DIR
 MESSAGE( STATUS "src_dir = ${CMAKE_SOURCE_DIR}.")
 MESSAGE( STATUS "current_src_dir = ${CMAKE_CURRENT_SOURCE_DIR}.")
 
+function(extract_dirs root_dir out_arg)
+    if (IS_DIRECTORY ${root_dir})               # 当前路径是一个目录吗，是的话就加入到包含目录
+        get_filename_component(DIR_NAME ${root_dir} NAME)
+        list(APPEND new_source_list ${root_dir})
+    endif()
 
-file(GLOB_RECURSE HEAD_FILES ${CMAKE_SOURCE_DIR}/*.h ${CMAKE_SOURCE_DIR}/*.hpp)
-foreach(PATH  IN LISTS HEAD_FILES)
-    string (FIND ${PATH} "/ios/" _index_ios)
-    string (FIND ${PATH} "/cocoa/" _index_cocoa)
-    string (FIND ${PATH} "/CMakeFiles/" _index_cmake)
-    string (FIND ${PATH} "/libleaktracer/" _index_libleaktracer)
+    file(GLOB all_sub RELATIVE ${root_dir} ${root_dir}/*) # 获得当前目录下的所有文件，让如ALL_SUB列表中
+    foreach(sub ${all_sub})
+        if (IS_DIRECTORY ${root_dir}/${sub})
+            extract_dirs(${root_dir}/${sub} new_source_list) # 对子目录递归调用，包含
+        endif()
+    endforeach()
+    set(${out_arg} ${new_source_list} PARENT_SCOPE)
+endfunction()
 
-    if (${_index_ios} EQUAL -1
-            AND ${_index_cocoa} EQUAL -1
-            AND ${_index_cmake} EQUAL -1
-            )
+function(extract_android_include include_list out_arg)
+    set (new_source_list)
+    foreach (source_name ${${include_list}})
+        if (NOT source_name MATCHES "(/ios/|/cocoa/|/CMakeFiles/)")
+            #message(STATUS "source_name =${source_name}")
+			if(NOT MEMORY_CHECK AND source_name MATCHES "(/libleaktracer/)")
+				continue()
+            endif()
+            list(APPEND new_source_list ${source_name})
+        endif()
+    endforeach()
+    set(${out_arg} ${new_source_list} PARENT_SCOPE)
+endfunction()
 
-        if(NOT MEMORY_CHECK)
-            if(${_index_libleaktracer} GREATER 0)
+function(extract_android_source source_list out_arg)
+    set (new_source_list)
+    foreach (source_name ${${source_list}})
+        if (NOT source_name MATCHES "(/ios/|/cocoa/|/CMakeFiles/)")
+            #message(STATUS "source_name =${source_name}")
+            if(NOT MEMORY_CHECK AND source_name MATCHES "(/libleaktracer/)")
                 continue()
             endif()
+            list(APPEND new_source_list ${source_name})
         endif()
-        #包含路径
-        get_filename_component(HEAD_DIR ${PATH} DIRECTORY)
-        message(STATUS "include_dir:${HEAD_DIR}\n")
-        include_directories(${HEAD_DIR})
-    endif()
-endforeach()
+    endforeach()
+    set(${out_arg} ${new_source_list} PARENT_SCOPE)
+endfunction()
+
+extract_dirs(${CMAKE_SOURCE_DIR} ebk_engine_header_files)
+extract_android_include(ebk_engine_header_files ebk_engine_android_header_files)
+include_directories(${ebk_engine_android_header_files})
 
 
 file(GLOB_RECURSE SOURCES ${CMAKE_SOURCE_DIR}/*.cpp ${CMAKE_SOURCE_DIR}/*.c ${CMAKE_SOURCE_DIR}/*.cc)
-foreach(file IN LISTS SOURCES)
-    string (FIND ${file} "/ios/" _index_ios)
-    string (FIND ${file} "/cocoa/" _index_cocoa)
-    string (FIND ${file} "/CMakeFiles/" _index_cmake)
-    string (FIND ${file} "/libleaktracer/" _index_libleaktracer)
-
-    #message(STATUS "file_is:${file}\n")
-
-    if (${_index_ios} EQUAL -1
-            AND ${_index_cocoa} EQUAL -1
-            AND ${_index_cmake} EQUAL -1
-            )
-
-        if(NOT MEMORY_CHECK)
-            if(${_index_libleaktracer} GREATER 0)
-                continue()
-            endif()
-        endif()
-        list(APPEND SOURCE_FILES "${file};")
-        message(STATUS "src_files:${SOURCE_FILES}\n")
-    endif()
-endforeach()
+extract_android_source(SOURCES SOURCE_FILES)
 
 add_definitions(-DHAVE_EXPAT_CONFIG_H )
 
