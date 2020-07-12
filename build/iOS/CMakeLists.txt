@@ -74,9 +74,9 @@ function(extract_ios_source source_list out_arg)
     set(${out_arg} ${new_source_list} PARENT_SCOPE)
 endfunction()
 
-extract_dirs(${CMAKE_SOURCE_DIR} ebk_engine_header_files)
-extract_ios_include(ebk_engine_header_files ebk_engine_ios_header_files)
-include_directories(${ebk_engine_ios_header_files})
+extract_dirs(${CMAKE_SOURCE_DIR} data_reporter_header_files)
+extract_ios_include(data_reporter_header_files data_reporter_ios_header_files)
+include_directories(${data_reporter_ios_header_files})
 
 include_directories(${CMAKE_SOURCE_DIR}/typesetting/engine/render/html/core/third-party/skia/android)
 

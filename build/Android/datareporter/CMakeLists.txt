@@ -71,9 +71,9 @@ function(extract_android_source source_list out_arg)
     set(${out_arg} ${new_source_list} PARENT_SCOPE)
 endfunction()
 
-extract_dirs(${CMAKE_SOURCE_DIR} ebk_engine_header_files)
-extract_android_include(ebk_engine_header_files ebk_engine_android_header_files)
-include_directories(${ebk_engine_android_header_files})
+extract_dirs(${CMAKE_SOURCE_DIR} data_reporter_header_files)
+extract_android_include(data_reporter_header_files data_reporter_android_header_files)
+include_directories(${data_reporter_android_header_files})
 
 
 file(GLOB_RECURSE SOURCES ${CMAKE_SOURCE_DIR}/*.cpp ${CMAKE_SOURCE_DIR}/*.c ${CMAKE_SOURCE_DIR}/*.cc)
