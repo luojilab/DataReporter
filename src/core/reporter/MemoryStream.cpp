@@ -26,6 +26,7 @@ namespace future {
     void MemoryStream::Write(void *data, size_t dataLen, int cryptoFlag, const std::string &date) {
         std::lock_guard<std::mutex> lk(m_Mut);
 
+        Info("Reporter Write! ptr:%p\n",m_Buffer.get());
         Buffer inData((void *)data, dataLen, BufferCopyFlag::BufferNoCopy);
         Buffer outData = MiniPBCoder::BuildEncodeData(inData, cryptoFlag, date);
         RawOutput rawOutput(m_PosPtr, (unsigned char *) m_Buffer->GetEnd() - m_PosPtr);
