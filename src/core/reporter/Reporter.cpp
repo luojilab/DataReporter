@@ -45,7 +45,7 @@ namespace future {
         }
 
         if (s_ReporterCount == 0) {
-            Debug("Reporter addr:%p new WTF::HandlerThread()", this);
+            Debug("Reporter addr:%p new WTF::HandlerThread()\n", this);
             s_HandlerThread = new WTF::HandlerThread();
         }
         s_ReporterCount++;
@@ -54,7 +54,7 @@ namespace future {
     }
 
     void Reporter::Destroy(Reporter *reporter) {
-        Debug("Destroy addr:%p", reporter);
+        Debug("Destroy addr:%p\n", reporter);
         s_HandlerThread->postMsg([reporter]() {
             delete reporter;
         });
@@ -62,7 +62,7 @@ namespace future {
 
     Reporter::~Reporter() {
         std::lock_guard<std::mutex> lk(m_Mut);
-        Debug("~Reporter addr:%p", this);
+        Debug("~Reporter addr:%p\n", this);
 
         if (m_DataMmapFile != NULL) {
             if (m_DataMmapFile->IsOpened()) {
@@ -118,8 +118,7 @@ namespace future {
 
     void Reporter::Push(const std::vector<unsigned char> &data) {
         std::lock_guard<std::mutex> lk(m_Mut);
-        Debug("Push addr:%p", this);
-        Info("Push addr:%p", this);
+        Debug("Push addr:%p\n", this);
         unsigned char *inData = (unsigned char *) data.data();
         std::size_t inLen = data.size();
         unsigned char *cipherText = nullptr;
@@ -157,7 +156,7 @@ namespace future {
     }
 
     void Reporter::UoloadSuccess(int64_t key) {
-        Debug("UoloadSuccess addr:%p", this);
+        Debug("UoloadSuccess addr:%p\n", this);
         m_RetryStep = RETRY_STEP;
         s_HandlerThread->postMsg([this, key]() {
             std::map<int64_t, std::shared_ptr<std::list<std::shared_ptr<CacheItem> > > >::iterator iter = m_Reporting.find(
@@ -174,7 +173,7 @@ namespace future {
     }
 
     void Reporter::UploadFailed(int64_t key) {
-        Debug("UploadFailed addr:%p", this);
+        Debug("UploadFailed addr:%p\n", this);
         s_HandlerThread->postMsg([this, key]() {
             if (m_RetryStep < MAX_RETRY_STEP) {
                 m_RetryStep += RETRY_STEP;
@@ -196,7 +195,7 @@ namespace future {
     }
 
     void Reporter::Report() {
-        Debug("Report addr:%p", this);
+        Debug("Report addr:%p\n", this);
         if (!m_Reporting.empty()) {
             return;
         }
@@ -262,7 +261,7 @@ namespace future {
                     new Buffer(m_DataMmapFile->GetMemBegin(), m_DataMmapFile->GetMaxSize(),
                                BufferNoCopy));
         } else {
-            Info("mmap failed!");
+            Info("mmap failed!\n");
             m_DataBuf = std::shared_ptr<Buffer>(
                     new Buffer(m_DataMmapFile->GetMaxSize()));
             File::RemoveFile(m_DataMmapFile->GetPath());
@@ -280,7 +279,7 @@ namespace future {
                     new Buffer(m_UploadMmapFile->GetMemBegin(), m_UploadMmapFile->GetMaxSize(),
                                BufferNoCopy));
         } else {
-            Info("mmap failed!");
+            Info("mmap failed!\n");
             m_UploadBuf = std::shared_ptr<Buffer>(
                     new Buffer(m_UploadMmapFile->GetMaxSize()));
             File::RemoveFile(m_UploadMmapFile->GetPath());
@@ -293,7 +292,7 @@ namespace future {
                                m_WriteFileMmapFile->GetMaxSize(),
                                BufferNoCopy));
         } else {
-            Info("mmap failed!");
+            Info("mmap failed!\n");
             m_WriteFileBuf = std::shared_ptr<Buffer>(
                     new Buffer(m_WriteFileMmapFile->GetMaxSize()));
             File::RemoveFile(m_WriteFileMmapFile->GetPath());

@@ -223,7 +223,7 @@ namespace future {
     std::shared_ptr<std::list<std::string> > DataProvider::ListFiles() {
         std::shared_ptr<std::list<std::string> > files = File::FileList(m_FromPath);
         files = File::Filter(*files, [this](const std::string &fileName) {
-            Debug("fileName:%s", fileName.c_str());
+            Debug("fileName:%s\n", fileName.c_str());
             if (EndsWith(fileName, Reporter::DATA_SUFFIX)) {
                 if (m_UploadingFile.find(fileName) == m_UploadingFile.end()) {
                     return true;
