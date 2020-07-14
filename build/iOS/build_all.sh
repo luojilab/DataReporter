@@ -5,4 +5,4 @@ rm -rf build
 ./build_arm.sh
 mkdir -p libs/all/data-reporter.framework
 lipo -create libs/arm/data-reporter.framework/data-reporter libs/i386/data-reporter.framework/data-reporter libs/x86_64/data-reporter.framework/data-reporter -output libs/all/data-reporter.framework/data-reporter
-cp -f libs/arm/data-reporter.framework/*.h libs/all/data-reporter.framework/
+cp -rf libs/arm/data-reporter.framework/Headers libs/all/data-reporter.framework
