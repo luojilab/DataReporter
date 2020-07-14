@@ -41,6 +41,7 @@ namespace future {
         std::lock_guard<std::mutex> lk(m_Mut);
 
         if (!File::IsFileExist(cachePath)) {
+            Info("Reporter cachePath is not exist! path:%s\n", cachePath.c_str());
             File::MkPath(cachePath);
         }
 
@@ -139,6 +140,7 @@ namespace future {
         std::int64_t now = TimeUtil::GetSystemClockSecondsTime();
         std::string nowStr = Int64ToStr(now);
         m_MemoryStream->Write(inData, inLen, cryptoFlag, nowStr);
+        Info("Reporter Push data finish!\n");
 
         if (cipherText != nullptr) {
             free(cipherText);
@@ -261,7 +263,7 @@ namespace future {
                     new Buffer(m_DataMmapFile->GetMemBegin(), m_DataMmapFile->GetMaxSize(),
                                BufferNoCopy));
         } else {
-            Info("mmap failed!\n");
+            Info("Reporter mmap failed!\n");
             m_DataBuf = std::shared_ptr<Buffer>(
                     new Buffer(m_DataMmapFile->GetMaxSize()));
             File::RemoveFile(m_DataMmapFile->GetPath());
@@ -279,7 +281,7 @@ namespace future {
                     new Buffer(m_UploadMmapFile->GetMemBegin(), m_UploadMmapFile->GetMaxSize(),
                                BufferNoCopy));
         } else {
-            Info("mmap failed!\n");
+            Info("Reporter mmap failed!\n");
             m_UploadBuf = std::shared_ptr<Buffer>(
                     new Buffer(m_UploadMmapFile->GetMaxSize()));
             File::RemoveFile(m_UploadMmapFile->GetPath());
@@ -292,7 +294,7 @@ namespace future {
                                m_WriteFileMmapFile->GetMaxSize(),
                                BufferNoCopy));
         } else {
-            Info("mmap failed!\n");
+            Info("Reporter mmap failed!\n");
             m_WriteFileBuf = std::shared_ptr<Buffer>(
                     new Buffer(m_WriteFileMmapFile->GetMaxSize()));
             File::RemoveFile(m_WriteFileMmapFile->GetPath());

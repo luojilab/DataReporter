@@ -28,13 +28,13 @@ namespace future {
     bool MmapedFile::Open() {
         m_Fd = open(m_Path.c_str(), O_RDWR | O_CREAT, S_IRWXU);
         if (m_Fd == -1) {
-            Error("fail to open:%s, %s", m_Path.c_str(), strerror(errno));
+            Error("MmapedFile fail to open:%s, %s", m_Path.c_str(), strerror(errno));
             return false;
         }
 
         int is_success = ftruncate(m_Fd, m_SegmentSize);
         if (is_success != 0) {
-            Error("fail to open:%s, %s", m_Path.c_str(), "ftruncate failed");
+            Error("MmapedFile fail to open:%s, %s", m_Path.c_str(), "ftruncate failed");
             close(m_Fd);
             m_Fd = -1;
             File::RemoveFile(m_Path);
@@ -50,7 +50,7 @@ namespace future {
             m_SegmentSize = static_cast<size_t>(DEFAULT_MMAP_SIZE);
             if (ftruncate(m_Fd, m_SegmentSize) != 0 ||
                 !File::ZeroFillFile(m_Fd, 0, m_SegmentSize)) {
-                Error("fail to truncate [%s] to m_Size %zu, %s", m_Path.c_str(),
+                Error("MmapedFile fail to truncate [%s] to m_Size %zu, %s", m_Path.c_str(),
                       m_SegmentSize, strerror(errno));
                 close(m_Fd);
                 m_Fd = -1;
@@ -63,7 +63,7 @@ namespace future {
                                      m_Fd,
                                      0);
         if (m_SegmentPtr == MAP_FAILED) {
-            Error("fail to mmap [%s], %s", m_Path.c_str(), strerror(errno));
+            Error("MmapedFile fail to mmap [%s], %s", m_Path.c_str(), strerror(errno));
             close(m_Fd);
             m_Fd = -1;
             m_SegmentPtr = nullptr;
@@ -89,7 +89,7 @@ namespace future {
     void MmapedFile::Sycn() {
         if (m_SegmentPtr != NULL) {
             if (msync(m_SegmentPtr, m_SegmentSize, MS_SYNC) == -1) {
-                Error("fail Sync");
+                Error("MmapedFile fail Sync");
             }
         }
     }
