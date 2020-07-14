@@ -15,30 +15,44 @@
 namespace future {
 #if PLATFORM(ANDROID)
 // enable logging
-#define ENABLE_LOG
+  #define ENABLE_LOG
 
-#ifdef ENABLE_LOG
+    #ifdef ENABLE_LOG
 
-#define APPNAME "DataReporter"
+    #define APPNAME "DataReporter"
 
-#define Error(format, ...)                                                                     \
+    #define Error(format, ...)                                                                     \
     __android_log_print(ANDROID_LOG_ERROR, APPNAME, format, ##__VA_ARGS__)
-#define Warning(format, ...)                                                                   \
+    #define Warning(format, ...)                                                                   \
     __android_log_print(ANDROID_LOG_WARN, APPNAME, format, ##__VA_ARGS__)
-#define Info(format, ...) __android_log_print(ANDROID_LOG_INFO, APPNAME, format, ##__VA_ARGS__)
+    #define Info(format, ...) __android_log_print(ANDROID_LOG_INFO, APPNAME, format, ##__VA_ARGS__)
 
-#ifndef NDEBUG
-#define Debug(format, ...)                                                                     \
-    __android_log_print(ANDROID_LOG_DEBUG, APPNAME, format, ##__VA_ARGS__)
-#else
-#define Debug(format, ...)                                                                     \
+      #ifndef NDEBUG
+      #define Debug(format, ...)                                                                     \
+      __android_log_print(ANDROID_LOG_DEBUG, APPNAME, format, ##__VA_ARGS__)
+      #else
+      #define Debug(format, ...)                                                                     \
       {}
-#endif
+      #endif
 
-#else
+     #else
 
-#endif
+     #endif
 
+#elif PLATFORM(IOS)
+    #define Error(format, ...)                                                                     \
+    printf(format, ##VA_ARGS)
+    #define Warning(format, ...)                                                                   \
+    printf(format, ##VA_ARGS)
+    #define Info(format, ...)                                                                      \
+    printf(format, ##VA_ARGS)
+      #ifndef NDEBUG
+        #define Debug(format, ...)                                                                     \
+        printf(format, ##VA_ARGS)
+      #else
+        #define Debug(format, ...)                                                                     \
+        {}
+      #endif
 #else
 #define Error(format, ...)                                                                     \
     {}

@@ -119,7 +119,7 @@ namespace future {
     void Reporter::Push(const std::vector<unsigned char> &data) {
         std::lock_guard<std::mutex> lk(m_Mut);
         Debug("Push addr:%p", this);
-
+        Info("Push addr:%p", this);
         unsigned char *inData = (unsigned char *) data.data();
         std::size_t inLen = data.size();
         unsigned char *cipherText = nullptr;
@@ -262,6 +262,7 @@ namespace future {
                     new Buffer(m_DataMmapFile->GetMemBegin(), m_DataMmapFile->GetMaxSize(),
                                BufferNoCopy));
         } else {
+            Info("mmap failed!");
             m_DataBuf = std::shared_ptr<Buffer>(
                     new Buffer(m_DataMmapFile->GetMaxSize()));
             File::RemoveFile(m_DataMmapFile->GetPath());
@@ -279,6 +280,7 @@ namespace future {
                     new Buffer(m_UploadMmapFile->GetMemBegin(), m_UploadMmapFile->GetMaxSize(),
                                BufferNoCopy));
         } else {
+            Info("mmap failed!");
             m_UploadBuf = std::shared_ptr<Buffer>(
                     new Buffer(m_UploadMmapFile->GetMaxSize()));
             File::RemoveFile(m_UploadMmapFile->GetPath());
@@ -291,6 +293,7 @@ namespace future {
                                m_WriteFileMmapFile->GetMaxSize(),
                                BufferNoCopy));
         } else {
+            Info("mmap failed!");
             m_WriteFileBuf = std::shared_ptr<Buffer>(
                     new Buffer(m_WriteFileMmapFile->GetMaxSize()));
             File::RemoveFile(m_WriteFileMmapFile->GetPath());
