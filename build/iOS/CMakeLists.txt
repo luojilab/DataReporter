@@ -114,3 +114,15 @@ target_link_libraries( # Specifies the target library.
                        data-reporter
                        #${log-lib}
 		)
+		
+set_target_properties(data-reporter PROPERTIES
+    FRAMEWORK TRUE
+    MACOSX_FRAMEWORK_IDENTIFIER com.igetget.data-reporter
+    MACOSX_FRAMEWORK_INFO_PLIST Info.plist
+    VERSION 1.0.0
+    SOVERSION 1.0.0
+    PUBLIC_HEADER ${CMAKE_SOURCE_DIR}/call_interface/ios/DataReporter.h
+    XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET "10.0"
+    XCODE_ATTRIBUTE_CLANG_ENABLE_OBJC_ARC YES
+    XCODE_ATTRIBUTE_ENABLE_BITCODE "NO"
+)
