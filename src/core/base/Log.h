@@ -41,14 +41,14 @@ namespace future {
 
 #elif PLATFORM(IOS)
     #define Error(format, ...)                                                                     \
-    printf(format, ##VA_ARGS)
+    printf(format, ##__VA_ARGS__)
     #define Warning(format, ...)                                                                   \
-    printf(format, ##VA_ARGS)
+    printf(format, ##__VA_ARGS__)
     #define Info(format, ...)                                                                      \
-    printf(format, ##VA_ARGS)
+    printf(format, ##__VA_ARGS__)
       #ifndef NDEBUG
         #define Debug(format, ...)                                                                     \
-        printf(format, ##VA_ARGS)
+        printf(format, ##__VA_ARGS__)
       #else
         #define Debug(format, ...)                                                                     \
         {}
