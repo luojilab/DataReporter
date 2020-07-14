@@ -140,7 +140,6 @@ namespace future {
         std::int64_t now = TimeUtil::GetSystemClockSecondsTime();
         std::string nowStr = Int64ToStr(now);
         m_MemoryStream->Write(inData, inLen, cryptoFlag, nowStr);
-        Info("Reporter Push data finish! datalen:%d\n", inLen);
 
         if (cipherText != nullptr) {
             free(cipherText);
@@ -267,7 +266,7 @@ namespace future {
                     new Buffer(m_DataMmapFile->GetMaxSize()));
             File::RemoveFile(m_DataMmapFile->GetPath());
             m_DataMmapFile = NULL;
-            Info("Reporter mmap failed! ptr:%p\n",m_DataBuf.get());
+            Info("Reporter mmap failed!\n",m_DataBuf.get());
         }
 
         m_WriteFileMmapFile = std::shared_ptr<MmapedFile>(
