@@ -25,6 +25,10 @@ get_filename_component(CMAKE_CURRENT_SOURCE_DIR
          "../../src"
          ABSOLUTE)
 		 
+get_filename_component(CMAKE_CURRENT_DIR
+         "./"
+         ABSOLUTE)
+		 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
 MESSAGE( STATUS "src_dir = ${CMAKE_SOURCE_DIR}.")
@@ -118,7 +122,7 @@ target_link_libraries( # Specifies the target library.
 set_target_properties(data-reporter PROPERTIES
     FRAMEWORK TRUE
     MACOSX_FRAMEWORK_IDENTIFIER com.igetget.data-reporter
-    MACOSX_FRAMEWORK_INFO_PLIST Info.plist
+    MACOSX_FRAMEWORK_INFO_PLIST ${CMAKE_CURRENT_DIR}/Info.plist
     VERSION 1.0.0
     SOVERSION 1.0.0
     PUBLIC_HEADER ${CMAKE_SOURCE_DIR}/call_interface/ios/DataReporter.h
