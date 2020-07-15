@@ -204,6 +204,7 @@ namespace future {
                 m_ItemSize,
                 m_ExpiredTime);
         if (data->empty()) {
+            Debug("Report data is empty addr:%p\n", this);
             return;
         }
 
@@ -399,8 +400,8 @@ namespace future {
     }
 
     std::int64_t Reporter::DumpDataBuf(void *addr, long maxSize) {
-        Debug("Report DumpDataBuf\n");
         std::int64_t ret = m_MemoryStream->MoveToMem(addr, maxSize);
+        Debug("Report DumpDataBuf addr:%p  size:%d\n", this, ret);
         return ret;
     }
 
