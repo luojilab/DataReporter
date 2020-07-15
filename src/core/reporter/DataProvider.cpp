@@ -57,7 +57,7 @@ namespace future {
             return memData;
         }
 
-        Debug("Report upload mem is empty\n");
+        Debug("Reporter upload mem is empty\n");
 
         std::shared_ptr<std::list<std::shared_ptr<CacheItem> > > fileData = ReadFromFile(count,
                                                                                          expiredTime);

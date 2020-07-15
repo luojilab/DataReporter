@@ -55,7 +55,7 @@ namespace future {
     }
 
     void Reporter::Destroy(Reporter *reporter) {
-        Debug("Destroy addr:%p\n", reporter);
+        Debug("Reporter Destroy addr:%p\n", reporter);
         s_HandlerThread->postMsg([reporter]() {
             delete reporter;
         });
@@ -119,7 +119,7 @@ namespace future {
 
     void Reporter::Push(const std::vector<unsigned char> &data) {
         std::lock_guard<std::mutex> lk(m_Mut);
-        Debug("Push addr:%p\n", this);
+        Debug("Reporter Push addr:%p\n", this);
         unsigned char *inData = (unsigned char *) data.data();
         std::size_t inLen = data.size();
         unsigned char *cipherText = nullptr;
@@ -156,7 +156,7 @@ namespace future {
     }
 
     void Reporter::UoloadSuccess(int64_t key) {
-        Debug("UoloadSuccess addr:%p\n", this);
+        Debug("Reporter UoloadSuccess addr:%p\n", this);
         m_RetryStep = RETRY_STEP;
         s_HandlerThread->postMsg([this, key]() {
             std::map<int64_t, std::shared_ptr<std::list<std::shared_ptr<CacheItem> > > >::iterator iter = m_Reporting.find(
@@ -173,7 +173,7 @@ namespace future {
     }
 
     void Reporter::UploadFailed(int64_t key) {
-        Debug("UploadFailed addr:%p\n", this);
+        Debug("Reporter UploadFailed addr:%p\n", this);
         s_HandlerThread->postMsg([this, key]() {
             if (m_RetryStep < MAX_RETRY_STEP) {
                 m_RetryStep += RETRY_STEP;
@@ -195,7 +195,7 @@ namespace future {
     }
 
     void Reporter::Report() {
-        Debug("Report addr:%p\n", this);
+        Debug("Reporter addr:%p\n", this);
         if (!m_Reporting.empty()) {
             return;
         }
@@ -204,7 +204,7 @@ namespace future {
                 m_ItemSize,
                 m_ExpiredTime);
         if (data->empty()) {
-            Debug("Report data is empty addr:%p\n", this);
+            Debug("Reporter data is empty addr:%p\n", this);
             return;
         }
 
@@ -401,7 +401,7 @@ namespace future {
 
     std::int64_t Reporter::DumpDataBuf(void *addr, long maxSize) {
         std::int64_t ret = m_MemoryStream->MoveToMem(addr, maxSize);
-        Debug("Report DumpDataBuf addr:%p  size:%d\n", this, ret);
+        Debug("Reporter DumpDataBuf addr:%p  size:%d\n", this, ret);
         return ret;
     }
 
