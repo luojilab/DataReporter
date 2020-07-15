@@ -28,7 +28,7 @@ namespace future {
     DataProvider::DataProvider(const std::string &fromPath, std::shared_ptr<Buffer> &fromMem,
                                std::function<std::int64_t(void *, long)> updateMem)
             : m_FromPath(fromPath), m_FromMem(fromMem), m_DumpMem(updateMem),
-              m_MemDataEndPos(NULL), m_MemOffset(NULL), m_IsUploadingMem(false),
+              m_MemDataEndPos(NULL), m_MemOffset(NULL), m_IsMemLock(false),
               m_FileInputStream(NULL), m_Files(nullptr) {
         m_MemOffset = fromMem->GetBegin();
         m_MemDataEndPos = Reporter::GetValidMem(*fromMem);
@@ -47,24 +47,25 @@ namespace future {
     std::shared_ptr<std::list<std::shared_ptr<CacheItem> > >
     DataProvider::ReadData(std::size_t count, std::int64_t expiredTime) {
         std::shared_ptr<std::list<std::shared_ptr<CacheItem> > > ret = std::make_shared<std::list<std::shared_ptr<CacheItem> > >();
+        if(m_IsMemLock){
+            return ret;
+        }
         std::shared_ptr<std::list<std::shared_ptr<CacheItem> > > memData = ReadFromMem(count,
                                                                                        expiredTime);
         if (!memData->empty()) {
-            m_IsUploadingMem = true;
+            m_IsMemLock = true;
             return memData;
         }
 
-        long readCount = count - ret->size();
-        std::shared_ptr<std::list<std::shared_ptr<CacheItem> > > fileData = ReadFromFile(readCount,
+        std::shared_ptr<std::list<std::shared_ptr<CacheItem> > > fileData = ReadFromFile(count,
                                                                                          expiredTime);
-        if (fileData->size() == readCount) {
-            ret->insert(ret->end(), fileData->begin(), fileData->end());
+        ret->insert(ret->end(), fileData->begin(), fileData->end());
+        if (fileData->size() == count) {
             return ret;
         }
-        ret->insert(ret->end(), fileData->begin(), fileData->end());
 
-        readCount = count - ret->size();
-        if (m_DumpMem != NULL && !m_IsUploadingMem) {
+        long readCount = count - ret->size();
+        if (m_DumpMem != NULL && !m_IsMemLock) {
             std::int64_t dumpSize = m_DumpMem(m_FromMem->GetBegin(),
                                               m_FromMem->Length());
             m_MemDataEndPos = (unsigned char *) m_FromMem->GetBegin() + dumpSize;
@@ -75,7 +76,10 @@ namespace future {
                 std::shared_ptr<std::list<std::shared_ptr<CacheItem> > > memData = ReadFromMem(
                         readCount,
                         expiredTime);
-                ret->insert(ret->end(), memData->begin(), memData->end());
+                if (!memData->empty()) {
+                    m_IsMemLock = true;
+                    ret->insert(ret->end(), memData->begin(), memData->end());
+                }
             }
         }
         return ret;
@@ -217,13 +221,12 @@ namespace future {
         m_FromMem->Clear();
         m_MemOffset = m_FromMem->GetBegin();
         m_MemDataEndPos = m_MemOffset;
-        m_IsUploadingMem = false;
+        m_IsMemLock = false;
     }
 
     std::shared_ptr<std::list<std::string> > DataProvider::ListFiles() {
         std::shared_ptr<std::list<std::string> > files = File::FileList(m_FromPath);
         files = File::Filter(*files, [this](const std::string &fileName) {
-            Debug("fileName:%s\n", fileName.c_str());
             if (EndsWith(fileName, Reporter::DATA_SUFFIX)) {
                 if (m_UploadingFile.find(fileName) == m_UploadingFile.end()) {
                     return true;

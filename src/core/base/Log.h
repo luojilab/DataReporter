@@ -19,17 +19,17 @@ namespace future {
 
     #ifdef ENABLE_LOG
 
-    #define APPNAME "DataReporter"
+    #define LOG_TAG "DataReporter"
 
     #define Error(format, ...)                                                                     \
-    __android_log_print(ANDROID_LOG_ERROR, APPNAME, format, ##__VA_ARGS__)
+    __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, format, ##__VA_ARGS__)
     #define Warning(format, ...)                                                                   \
-    __android_log_print(ANDROID_LOG_WARN, APPNAME, format, ##__VA_ARGS__)
-    #define Info(format, ...) __android_log_print(ANDROID_LOG_INFO, APPNAME, format, ##__VA_ARGS__)
+    __android_log_print(ANDROID_LOG_WARN, LOG_TAG, format, ##__VA_ARGS__)
+    #define Info(format, ...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, format, ##__VA_ARGS__)
 
       #ifndef NDEBUG
       #define Debug(format, ...)                                                                     \
-      __android_log_print(ANDROID_LOG_DEBUG, APPNAME, format, ##__VA_ARGS__)
+      __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, format, ##__VA_ARGS__)
       #else
       #define Debug(format, ...)                                                                     \
       {}
@@ -69,10 +69,60 @@ namespace future {
         int i;
         for (i = 0; i < len; i++) {
             Debug("%02X", buf[i]);
-            if (15 == i % 16)
+            if (15 == i % 16){
                 Debug("\n");
+            }
         }
         Debug("\n");
+    }
+
+    inline void byte_to_hex_str(const unsigned char* in, int inLen, char* out )
+    {
+        short i;
+        unsigned char highByte, lowByte;
+
+        for (i = 0; i < inLen; i++)
+        {
+            highByte = in[i] >> 4;
+            lowByte = in[i] & 0x0f ;
+
+            highByte += 0x30;
+
+            if (highByte > 0x39){
+                out[i * 2] = highByte + 0x07;
+            }else{
+                out[i * 2] = highByte;
+            }
+            lowByte += 0x30;
+            if (lowByte > 0x39){
+                out[i * 2 + 1] = lowByte + 0x07;
+            }else{
+                out[i * 2 + 1] = lowByte;
+            }
+        }
+        return ;
+    }
+
+    inline void print_matrix(unsigned char *buf, uint64_t len) { // 打印16列的矩阵
+        int i;
+        int j = 0;
+        unsigned char inBuf[16];
+        char hexBuf[32 + 1];
+        for (i = 0; i < len; i++) {
+            inBuf[j++] = buf[i];
+            if (15 == i % 16){
+                j = 0;
+                byte_to_hex_str(inBuf, sizeof(inBuf),hexBuf);
+                hexBuf[32] = 0;
+                Debug("%s\n",hexBuf);
+            }
+        }
+
+        if(j != 0){
+            byte_to_hex_str(inBuf, j, hexBuf);
+            hexBuf[j + 1] = 0;
+            Debug("%s\n",hexBuf);
+        }
     }
 
 }

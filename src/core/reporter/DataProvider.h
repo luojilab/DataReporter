@@ -53,7 +53,7 @@ namespace future {
         std::function<std::int64_t(void *, int)> m_DumpMem;
         void *m_MemDataEndPos;
         void *m_MemOffset;
-        bool m_IsUploadingMem;
+        bool m_IsMemLock;
 
     };
 

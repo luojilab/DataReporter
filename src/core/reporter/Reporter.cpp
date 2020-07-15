@@ -200,6 +200,7 @@ namespace future {
         if (!m_Reporting.empty()) {
             return;
         }
+
         std::shared_ptr<std::list<std::shared_ptr<CacheItem> > > data = m_DataProvider->ReadData(
                 m_ItemSize,
                 m_ExpiredTime);
