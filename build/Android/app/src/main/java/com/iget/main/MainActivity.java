@@ -40,8 +40,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         findViewById(R.id.button_start).setOnClickListener(this);
+        findViewById(R.id.button_push).setOnClickListener(this);
         findViewById(R.id.button_test_release).setOnClickListener(this);
         findViewById(R.id.button_test_reweaken).setOnClickListener(this);
+
         //监听网络状态
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
@@ -55,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.button_start:
                 if (mDataReporter == null) {
                     final NetPost netPost = new NetPost();
-                    mDataReporter = DataReporter.makeDataReporter("test", MainActivity.this.getFilesDir().getPath() + "/data", "testKey", netPost);
+                    mDataReporter = DataReporter.makeDataReporter("test", MainActivity.this.getFilesDir().getPath() + "/data", "", netPost);
                     netPost.setDataReporter(mDataReporter);
                     //设置单次上报最大条数
                     mDataReporter.setReportCount(10);
@@ -70,16 +72,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     mDataReporter.setRetryInterval(5);
                     mDataReporter.start();
                 }
-                long t = System.currentTimeMillis() / 1000;
-                for (int i = 0; i < 2; i++) {
-                    String data = "ev=s_paid_paid_impression&uid=12005419&scr=1080*2214&t=1547627349367082203&seid=dd86a82b76722c24427b9db1fb462a4d&net=wifi&mac=c6abbef9f4bea0a0&sid=dd86a82b76722c24427b9db1fb462a4d" + " time:" + t + "count:" + mCount;
+                break;
+            case R.id.button_push:
+                if (mDataReporter != null) {
+                    long t = System.currentTimeMillis() / 1000;
+                    for (int i = 0; i < 2; i++) {
+                        String data = "ev=s_paid_paid_impression&uid=12005419&scr=1080*2214&t=1547627349367082203&seid=dd86a82b76722c24427b9db1fb462a4d&net=wifi&mac=c6abbef9f4bea0a0&sid=dd86a82b76722c24427b9db1fb462a4d" + " time:" + t + "count:" + mCount;
 
-                    mDataReporter.push(data.getBytes());
-                    Log.d("DataReporter:push_", "time:" + t + " count:" + mCount);
-                    mCount++;
+                        mDataReporter.push(data.getBytes());
+                        Log.d("DataReporter:push_", "time:" + t + " count:" + mCount);
+                        mCount++;
+                    }
                 }
-                int version = DataReporter.getVersionCode();
-                Toast.makeText(this, "" + version, Toast.LENGTH_LONG).show();
                 break;
             case R.id.button_test_release:
                 int testCount = 100;
@@ -160,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onDestroy();
         unregisterReceiver(mNetworkChangeReceiver);
         //取消数据上报，并且把上报对象置空，防止释放之后再次被调用出现crash
-        DataReporter.releaseDataReporter(mDataReporter);
+        //DataReporter.releaseDataReporter(mDataReporter);
         mDataReporter = null;
     }
 }

@@ -140,7 +140,6 @@ namespace future {
         std::int64_t now = TimeUtil::GetSystemClockSecondsTime();
         std::string nowStr = Int64ToStr(now);
         m_MemoryStream->Write(inData, inLen, cryptoFlag, nowStr);
-
         if (cipherText != nullptr) {
             free(cipherText);
         }
@@ -227,8 +226,9 @@ namespace future {
                                 (*iter)->pbEncodeItem.data.GetBegin(),
                                 (*iter)->pbEncodeItem.data.Length(), plainTextLen);
                         if (plainText == nullptr) {
+                            Debug("Report ClearItem\n");
                             m_DataProvider->ClearItem(*(*iter));
-                            data->erase(iter++);
+                            iter = data->erase(iter);
                         } else {
                             Buffer plainTextBuf(plainText, plainTextLen, BufferCopy);
                             (*iter)->pbEncodeItem.data = std::move(plainTextBuf);
@@ -399,6 +399,7 @@ namespace future {
     }
 
     std::int64_t Reporter::DumpDataBuf(void *addr, long maxSize) {
+        Debug("Report DumpDataBuf\n");
         std::int64_t ret = m_MemoryStream->MoveToMem(addr, maxSize);
         return ret;
     }
