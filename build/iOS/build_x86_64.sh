@@ -5,4 +5,4 @@ mkdir -p libs/x86_64
 cd build/x86_64
 cmake -DDEBUG=OFF -DCMAKE_TOOLCHAIN_FILE=../../ios.toolchain.cmake -DENABLE_ARC=1 -DIOS_PLATFORM=SIMULATOR64 ../../
 make
-mv -f data-reporter.framework ../../libs/x86_64/
+mv -f DataReporter.framework ../../libs/x86_64/

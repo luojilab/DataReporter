@@ -92,7 +92,7 @@ source_group(TREE ${CMAKE_SOURCE_DIR} FILES  ${SOURCE_FILES} )
 add_definitions(-DHAVE_EXPAT_CONFIG_H )
 
 add_library( # Sets the name of the library.
-             data-reporter
+             DataReporter
              # Sets the library as a shared library.
              STATIC
              ${SOURCE_FILES} )
@@ -115,11 +115,11 @@ add_library( # Sets the name of the library.
 
 
 target_link_libraries( # Specifies the target library.
-                       data-reporter
+                       DataReporter
                        #${log-lib}
 		)
 		
-set_target_properties(data-reporter PROPERTIES
+set_target_properties(DataReporter PROPERTIES
     FRAMEWORK TRUE
     MACOSX_FRAMEWORK_IDENTIFIER com.igetget.data-reporter
     MACOSX_FRAMEWORK_INFO_PLIST ${CMAKE_CURRENT_DIR}/Info.plist

@@ -5,4 +5,4 @@ mkdir -p libs/arm
 cd build/arm
 cmake -DDEBUG=OFF -DCMAKE_TOOLCHAIN_FILE=../../ios.toolchain.cmake -DENABLE_ARC=1 -DIOS_PLATFORM=OS ../../
 make
-mv -f data-reporter.framework ../../libs/arm/
+mv -f DataReporter.framework ../../libs/arm/
