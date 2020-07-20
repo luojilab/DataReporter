@@ -34,6 +34,10 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 MESSAGE( STATUS "src_dir = ${CMAKE_SOURCE_DIR}.")
 MESSAGE( STATUS "current_src_dir = ${CMAKE_CURRENT_SOURCE_DIR}.")
 
+if(DEFINED NDEBUG)
+  add_definitions(-DNDEBUG)
+endif()
+
 
 function(extract_dirs root_dir out_arg)
     if (IS_DIRECTORY ${root_dir})               # 当前路径是一个目录吗，是的话就加入到包含目录
