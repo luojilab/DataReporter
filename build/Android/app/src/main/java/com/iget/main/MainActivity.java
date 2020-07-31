@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.button_push:
                 if (mDataReporter != null) {
                     long t = System.currentTimeMillis() / 1000;
-                    for (int i = 0; i < 2; i++) {
+                    for (int i = 0; i < 1000; i++) {
                         String data = "ev=s_paid_paid_impression&uid=12005419&scr=1080*2214&t=1547627349367082203&seid=dd86a82b76722c24427b9db1fb462a4d&net=wifi&mac=c6abbef9f4bea0a0&sid=dd86a82b76722c24427b9db1fb462a4d" + " time:" + t + "count:" + mCount;
 
                         mDataReporter.push(data.getBytes());

@@ -47,9 +47,6 @@ namespace future {
     std::shared_ptr<std::list<std::shared_ptr<CacheItem> > >
     DataProvider::ReadData(std::size_t count, std::int64_t expiredTime) {
         std::shared_ptr<std::list<std::shared_ptr<CacheItem> > > ret = std::make_shared<std::list<std::shared_ptr<CacheItem> > >();
-        if(m_IsMemLock){
-            return ret;
-        }
         std::shared_ptr<std::list<std::shared_ptr<CacheItem> > > memData = ReadFromMem(count,
                                                                                        expiredTime);
         if (!memData->empty()) {
