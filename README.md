@@ -170,7 +170,7 @@ step:
   \*  @param reportImp Reporting implementation interface
 
   \*  @return
-  */
+  \*/
 
 (void *)MakeReporter:(NSString *)uuid
     cachePath:(NSString *)cachePath
@@ -178,7 +178,7 @@ step:
   uploadBlock:(void(^)(int64_t key,
                        NSArray *dataArray))uploadBlock;
 
-
+  
 
 /**
 
@@ -188,12 +188,12 @@ step:
  \*  @param nativeReporter The value returned by makeReporter
 
  \*  @param count          Number of data reported at one time
- */	
+ \*/	
 
 (void)SetReportCount:(void *)nativeReporter
     count:(NSInteger)count;
 
-
+  
 
 
 /**
@@ -204,12 +204,12 @@ step:
 \*  @param nativeReporter The value returned by makeReporter
 
 \*  @param fileMaxSize    Cache file maximum size
-*/				 
+\*/				 
 
 (void)SetFileMaxSize:(void *)nativeReporter
     fileMaxSize:(NSUInteger)fileMaxSize;
 
-
+  
 
 
 /**
@@ -220,10 +220,12 @@ step:
 \*  @param nativeReporter The value returned by makeReporter
 
 \*  @param expiredTime    Validity period is the unit
-*/
+\*/
 
 (void)SetExpiredTime:(void *)nativeReporter
     expiredTime:(int64_t)expiredTime;
+
+  
 
 /**
 
@@ -233,12 +235,12 @@ step:
 \*  @param nativeReporter The value returned by makeReporter
 
 \*  @param reportingInterval    Report interval, in seconds
-*/
+\*/
 
 (void)SetReportingInterval:(void *)nativeReporter
     reportingInterval:(int64_t)reportingInterval;
 
-
+  
 
 /**
 
@@ -246,11 +248,11 @@ step:
 *
 
 \*  @param nativeReporter The value returned by makeReporter
-*/
+\*/
 
 (void)Start:(void *)nativeReporter;
 
-
+  
 
 
 /**
@@ -259,11 +261,11 @@ step:
 *
 
 \*  @param nativeReporter The value returned by makeReporter
-*/		   
+\*/		   
 
 (void)ReaWaken:(void *)nativeReporter;
 
-
+  
 
 /**
 
@@ -273,12 +275,12 @@ step:
 \*  @param nativeReporter The value returned by makeReporter
 
 \*  @param data           Data to be reported
-*/
+\*/
 
 (void)Push:(void *)nativeReporter
 byteArray:(NSData *)byteArray;
 
-
+  
 
 /**
 
@@ -288,12 +290,12 @@ byteArray:(NSData *)byteArray;
 \*  @param nativeReporter The value returned by makeReporter
 
 \*  @param key            The value returned by the escalation implementation interface
-*/
+\*/
 
 (void)UploadSucess:(void *)nativeReporter
     key:(NSInteger)key;
 
-
+  
 
 /**
 
@@ -303,12 +305,12 @@ byteArray:(NSData *)byteArray;
 \*  @param nativeReporter The value returned by makeReporter
 
 \*  @param key            The value returned by the escalation implementation interface
-*/
+\*/
 
 (void)UploadFailed:(void *)nativeReporter
     key:(NSInteger)key;
 
-
+  
 
 
 /**
@@ -317,7 +319,7 @@ byteArray:(NSData *)byteArray;
 *
 
 \*  @param nativeReporter The value returned by makeReporter
-*/
+\*/
 
 (void)ReleaseReporter:(void *)nativeReporter;
 
@@ -496,7 +498,7 @@ implementation 'com.luojilab.component:datareporter:1.3.9'
 \*  @param reportImp 上报实现接口
 
 \*  @return
-*/
+\*/
 
 (void *)MakeReporter:(NSString *)uuid
     cachePath:(NSString *)cachePath
@@ -504,7 +506,7 @@ implementation 'com.luojilab.component:datareporter:1.3.9'
   uploadBlock:(void(^)(int64_t key,
                        NSArray *dataArray))uploadBlock;	
 
-
+  
 
 /**
 
@@ -514,12 +516,12 @@ implementation 'com.luojilab.component:datareporter:1.3.9'
 \*  @param nativeReporter 由makeReporter返回的值
 
 \*  @param count          一次上报的数据条数
-*/	
+\*/	
 
 (void)SetReportCount:(void *)nativeReporter
     count:(NSInteger)count;
 
-
+  
 
 /**
 
@@ -529,12 +531,12 @@ implementation 'com.luojilab.component:datareporter:1.3.9'
 \*  @param nativeReporter 由makeReporter返回的值
 
 \*  @param fileMaxSize    缓存文件最大大小
-*/				 
+\*/				 
 
 (void)SetFileMaxSize:(void *)nativeReporter
     fileMaxSize:(NSUInteger)fileMaxSize;
 
-
+  
 
 /**
 
@@ -544,12 +546,12 @@ implementation 'com.luojilab.component:datareporter:1.3.9'
 \*  @param nativeReporter 由makeReporter返回的值
 
 \*  @param expiredTime    有效期 秒为单位
-*/
+\*/
 
 (void)SetExpiredTime:(void *)nativeReporter
     expiredTime:(int64_t)expiredTime;
 
-
+  
 
 /**
 
@@ -559,12 +561,12 @@ implementation 'com.luojilab.component:datareporter:1.3.9'
 \*  @param nativeReporter 由makeReporter返回的值
 
 \*  @param reportingInterval    上报间隔，秒为单位
-*/
+\*/
 
 (void)SetReportingInterval:(void *)nativeReporter
     reportingInterval:(int64_t)reportingInterval;
 
-​	   
+   
 
 /**
 
@@ -572,11 +574,11 @@ implementation 'com.luojilab.component:datareporter:1.3.9'
 *
 
 \*  @param nativeReporter 由makeReporter返回的值
-*/
+\*/
 
 (void)Start:(void *)nativeReporter;
 
-
+  
 
 /**
 
@@ -584,11 +586,11 @@ implementation 'com.luojilab.component:datareporter:1.3.9'
 *
 
 \*  @param nativeReporter 由makeReporter返回的值
-*/		   
+\*/		   
 
 (void)ReaWaken:(void *)nativeReporter;
 
-
+  
 
 /**
 
@@ -598,10 +600,12 @@ implementation 'com.luojilab.component:datareporter:1.3.9'
 \*  @param nativeReporter 由makeReporter返回的值
 
 \*  @param data           需要上报的数据
-*/
+\*/
 
-\*  (void)Push:(void *)nativeReporter
+(void)Push:(void *)nativeReporter
 byteArray:(NSData *)byteArray;
+
+  
 
 
 /**
@@ -612,12 +616,12 @@ byteArray:(NSData *)byteArray;
 \*  @param nativeReporter 由makeReporter返回的值
 
 \*  @param key            由上报实现接口返回的值
-*/
+\*/
 
 (void)UploadSucess:(void *)nativeReporter
     key:(NSInteger)key;
 
-
+  
 
 /**
 
@@ -627,12 +631,12 @@ byteArray:(NSData *)byteArray;
 \*  @param nativeReporter 由makeReporter返回的值
 
 \*  @param key            由上报实现接口返回的值
-*/
+\*/
 
 (void)UploadFailed:(void *)nativeReporter
     key:(NSInteger)key;
 
-
+  
 
 
 /**
@@ -641,7 +645,8 @@ byteArray:(NSData *)byteArray;
 *
 
 \*  @param nativeReporter 由makeReporter返回的值
-*/
+
+\*/
 
 (void)ReleaseReporter:(void *)nativeReporter;
 
