@@ -49,15 +49,12 @@ step:
      * Create a Reporter instance, the instance is native, saved in the returned int value
      * @param uuid      Business unique id, defined by the user as a unique id
      * @param cachePath Cache path, must be globally unique, different paths for different services
-	 * @param encryptKey Cache Encrypt Key
+     * @param encryptKey Cache Encrypt Key
      * @param reportImp Reporting implementation interface
      * @return
      */
     public static native long makeReporter(String uuid, String cachePath, String encryptKey, IReport reportImp);
-	
-	This method is used to create a DataReporter instance. This method is used to create an escalation instance.
-	Different businesses can create different instances without worrying about performance consumption because all instances share a single reporting thread.
-	
+    
     /**
      * Set the number of data to be reported in a single time, and call it before start
      *
@@ -65,9 +62,7 @@ step:
      * @param count          Number of data reported at one time
      */
     public static native void setReportCount(long nativeReporter, int count);
-    The method is to set the amount of data reported once, for example, set to 5, which is that the data sent by the reporting interface is spit out every 5 times.
-	This method can not be called, the default value is 5
-	
+    
     /**
      * Set the maximum size limit of the cache file single file, the default value is 10k
      *
@@ -75,39 +70,36 @@ step:
      * @param fileMaxSize    Cache file maximum size
      */
     public static native void setFileMaxSize(long nativeReporter, int fileMaxSize);
-	This method is to set the cache file single file size limit, can not be called, the default value is 10k
-
-	/**
+    
+    /**
      * Set the cache file validity period
      *
      * @param nativeReporter return by makeReporter
      * @param expiredTime    Data validity period
      */
     public static native void setExpiredTime(long nativeReporter, long expiredTime);
-	
-	 /**
+    
+     /**
      * Set the reporting interval
      *
      * @param nativeReporter return by makeReporter
      * @param reportingInterval   Reporting interval
      */
     public static native void setReportingInterval(long nativeReporter, long reportingInterval);
-	
+    
     /**
      * Start reporting thread After setting the relevant parameters, execute it once.
      *
      * @param nativeReporter return by makeReporter
      */
     public static native void start(long nativeReporter);
-	The method is to start reporting threads. After creating the instance, set the corresponding parameters and call
-
+    
     /**
      * Wake up the report, call when the network status is good or other wake up scene call
      *
      * @param nativeReporter return by makeReporter
      */
     public static native void reaWaken(long nativeReporter);
-	After the network is unavailable or other scenarios cause the network to fail, the method is called after the network is restored, and the logic is triggered again.
 
 
     /**
@@ -117,8 +109,7 @@ step:
      * @param data           Data to be reported
      */
     public static native void push(long nativeReporter, byte[] data);
-	The method is a call interface for reporting, data is data to be reported, and the data needs to be a string type.
-
+    
     /**
      * Call this method after the report is successful
      *
@@ -126,8 +117,7 @@ step:
      * @param key            The value returned by the escalation implementation interface
      */
     public static native void uploadSucess(long nativeReporter, long key);
-	The method is a method that is called after the report is successful, and the method is called after the data is successfully reported by the network. Notify Reporter that the data report is completed.
-
+    
     /**
      * Call this method after the report fails
      *
@@ -135,7 +125,6 @@ step:
      * @param key            The value returned by the escalation implementation interface
      */
     public static native void uploadFailed(long nativeReporter, long key);
-	The method is called after the report fails, and the method is called after the data fails to be reported through the network. Notify Reporter data report failure
 
 
     /**
@@ -144,12 +133,10 @@ step:
      * @param nativeReporter return by makeReporter
      */
     public static native void releaseReporter(long nativeReporter);
-	
-	The method is to release the report instance method. When the report function is no longer used, the method is called to release the report instance.
 ## Note: After calling this method, you can not call any of the above methods. Because the instance has been released
-	
+
 ## Confused configuration
--keep class com.iget.datareporter.**{*;}
+-keep class com.iget.datareporter.\*\*{\*;}
 
 ### <a name="apple">[iOS]()</a>
 
@@ -183,9 +170,9 @@ step:
 			 encryptKey:(NSString *)encryptKey
            uploadBlock:(void(^)(int64_t key,
                                 NSArray *dataArray))uploadBlock;
-This method is used to create a DataReporter instance. This method is used to create an escalation instance.
-Different businesses can create different instances without worrying about performance consumption because all instances share a single reporting thread.	
-    
+
+
+
 /**
 * Set the number of data to be reported in a single time, and call it before start
 *
@@ -194,8 +181,7 @@ Different businesses can create different instances without worrying about perfo
 */	
 + (void)SetReportCount:(void *)nativeReporter
                  count:(NSInteger)count;
-The method is to set the amount of data reported once, for example, set to 5, which is that the data sent by the reporting interface is spit out every 5 times.
-This method can not be called, the default value is 5
+
 
 /**
 * Set the maximum size limit of the cache file single file, the default value is 10k
@@ -205,7 +191,7 @@ This method can not be called, the default value is 5
 */				 
 + (void)SetFileMaxSize:(void *)nativeReporter
            fileMaxSize:(NSUInteger)fileMaxSize;
-This method is to set the cache file single file size limit, can not be called, the default value is 10k
+
 
 /**
 * Set the cache effective time in seconds
@@ -231,7 +217,7 @@ This method is to set the cache file single file size limit, can not be called, 
 * @param nativeReporter The value returned by makeReporter
 */
 + (void)Start:(void *)nativeReporter;
-The method is to start reporting threads. After creating the instance, set the corresponding parameters and call
+
 
 /**
 * Wake up the report, call when the network status is good or other wake up scene call
@@ -239,8 +225,9 @@ The method is to start reporting threads. After creating the instance, set the c
 * @param nativeReporter The value returned by makeReporter
 */		   
 + (void)ReaWaken:(void *)nativeReporter;
-After the network is unavailable or other scenarios cause the network to fail, the method is called after the network is restored, and the logic is triggered again.
-   
+
+  
+
 /**
 * Data reporting call interface
 *
@@ -249,8 +236,9 @@ After the network is unavailable or other scenarios cause the network to fail, t
 */
 + (void)Push:(void *)nativeReporter
    byteArray:(NSData *)byteArray;
-The method is a call interface that is reported, data is data that needs to be reported, and the data needs to be a string type.   
+ 
    
+
 /**
 * Call this method after the report is successful
 *
@@ -259,9 +247,9 @@ The method is a call interface that is reported, data is data that needs to be r
 */
 + (void)UploadSucess:(void *)nativeReporter
                  key:(NSInteger)key;
-The method is a method that is called after the report is successful, and the method is called after the data is successfully reported by the network. Notify Reporter that the data report is completed.
- 
- 
+
+
+
 /**
 * Call this method after the report fails
 *
@@ -270,15 +258,14 @@ The method is a method that is called after the report is successful, and the me
 */
 + (void)UploadFailed:(void *)nativeReporter
                  key:(NSInteger)key;
-The method is called after the report fails, and the method is called after the data fails to be reported through the network. Notify Reporter data report failure   
-   
+
+
 /**
 * Release the report instance, other methods can not be called after release
 *
 * @param nativeReporter The value returned by makeReporter
 */
 + (void)ReleaseReporter:(void *)nativeReporter;
-The method is to release the report instance method. When the report function is no longer used, the method is called to release the report instance.
 ## Note: After calling this method, you can no longer call any of the above methods. Because the instance has been released
 
 ## <a name="data_reporter_cn">DataReporter</a>
@@ -331,15 +318,12 @@ implementation 'com.luojilab.component:datareporter:1.3.9'
      *
      * @param uuid      业务唯一id,由使用者定义一个唯一id
      * @param cachePath 缓存路径，必须全局唯一，不同业务不同路径
-	 * @param encryptKey 缓存加密key
+     * @param encryptKey 缓存加密key
      * @param reportImp 上报实现接口
      * @return
      */
     public static native long makeReporter(String uuid, String cachePath, String encryptKey, IReport reportImp);
-	
-	该方法是创建DataReporter实例的方法，通过该方法创建上报实例。
-	不同的业务可以创建不同的实例，不必担心性能消耗，因为所有实例共用一个上报线程
-	
+    
     /**
      * 设置单次上报的数据条数，在start之前调用
      *
@@ -347,9 +331,7 @@ implementation 'com.luojilab.component:datareporter:1.3.9'
      * @param count          一次上报的数据条数
      */
     public static native void setReportCount(long nativeReporter, int count);
-    该方法是设置一次上报的数据数量，例如设置为5，这是上报接口吐出的数据就是按5条每次吐出。
-	该方法可以不调用，默认值为5
-	
+    
     /**
      * 设置缓存文件单文件最大大小限制，默认值为10k
      *
@@ -357,39 +339,36 @@ implementation 'com.luojilab.component:datareporter:1.3.9'
      * @param fileMaxSize    缓存文件最大大小
      */
     public static native void setFileMaxSize(long nativeReporter, int fileMaxSize);
-	该方法为设置缓存文件单文件大小限制，可不调用，默认值为10k
-
-	/**
+    
+    /**
      * 设置缓存文件有效期
      *
      * @param nativeReporter 由makeReporter返回的值
      * @param expiredTime    数据有效期
      */
     public static native void setExpiredTime(long nativeReporter, long expiredTime);
-	
-	 /**
+    
+     /**
      * 设置上报间隔
      *
      * @param nativeReporter 由makeReporter返回的值
      * @param reportingInterval   上报间隔
      */
     public static native void setReportingInterval(long nativeReporter, long reportingInterval);
-	
+    
     /**
      * 开始上报线程 设置完相关参数之后，执行一次。
      *
      * @param nativeReporter 由makeReporter返回的值
      */
     public static native void start(long nativeReporter);
-	该方法是开始上报线程。在创建实例后，设置好相应参数后调用
-
+    
     /**
      * 唤醒上报，在网络状态转好时调用或者其他想唤醒场景调用
      *
      * @param nativeReporter 由makeReporter返回的值
      */
     public static native void reaWaken(long nativeReporter);
-	在无网络后或者其他场景导致网络不通情况，网络恢复后调用该方法，触发再次上报逻辑
 
 
     /**
@@ -399,8 +378,7 @@ implementation 'com.luojilab.component:datareporter:1.3.9'
      * @param data           需要上报的数据
      */
     public static native void push(long nativeReporter, byte[] data);
-	该方法为上报的调用接口，data为需要上报的数据，数据需要是字符串类型
-
+    
     /**
      * 上报成功后调用该方法
      *
@@ -408,8 +386,7 @@ implementation 'com.luojilab.component:datareporter:1.3.9'
      * @param key            由上报实现接口返回的值
      */
     public static native void uploadSucess(long nativeReporter, long key);
-	该方法为上报成功后调用的方法，数据通过网络上报成功后调用该方法。通知Reporter数据上报完成
-
+    
     /**
      * 上报失败后调用该方法
      *
@@ -417,7 +394,6 @@ implementation 'com.luojilab.component:datareporter:1.3.9'
      * @param key            由上报实现接口返回的值
      */
     public static native void uploadFailed(long nativeReporter, long key);
-	该方法为上报失败后调用该方法，数据通过网络上报失败后调用该方法。通知Reporter数据上报失败
 
 
     /**
@@ -426,11 +402,10 @@ implementation 'com.luojilab.component:datareporter:1.3.9'
      * @param nativeReporter 由makeReporter返回的值
      */
     public static native void releaseReporter(long nativeReporter);
-	该方法为释放上报实例方法，当上报功能不再使用，调用该方法，释放上报实例。
 ## 注意：调用该方法后，不可以再调用以上任何方法。因为实例已经释放
-	
+
 ## 混淆配置
--keep class com.iget.datareporter.**{*;}
+-keep class com.iget.datareporter.\*\*{\*;}
 
 
 ### <a name="apple_cn">[iOS]()</a>
@@ -465,10 +440,8 @@ implementation 'com.luojilab.component:datareporter:1.3.9'
              cachePath:(NSString *)cachePath
 			 encryptKey:(NSString *)encryptKey
            uploadBlock:(void(^)(int64_t key,
-                                NSArray *dataArray))uploadBlock;
-该方法是创建DataReporter实例的方法，通过该方法创建上报实例。
-不同的业务可以创建不同的实例，不必担心性能消耗，因为所有实例共用一个上报线程	
-    
+                                NSArray *dataArray))uploadBlock;	
+
 /**
 * 设置单次上报的数据条数，在start之前调用
 *
@@ -477,9 +450,7 @@ implementation 'com.luojilab.component:datareporter:1.3.9'
 */	
 + (void)SetReportCount:(void *)nativeReporter
                  count:(NSInteger)count;
-该方法是设置一次上报的数据数量，例如设置为5，这是上报接口吐出的数据就是按5条每次吐出。
-该方法可以不调用，默认值为5
-    
+
 /**
 * 设置缓存文件单文件最大大小限制，默认值为10k
 *
@@ -488,7 +459,6 @@ implementation 'com.luojilab.component:datareporter:1.3.9'
 */				 
 + (void)SetFileMaxSize:(void *)nativeReporter
            fileMaxSize:(NSUInteger)fileMaxSize;
-该方法为设置缓存文件单文件大小限制，可不调用，默认值为10k
 
 /**
 * 设置缓存有效时间，秒为单位
@@ -508,13 +478,15 @@ implementation 'com.luojilab.component:datareporter:1.3.9'
 + (void)SetReportingInterval:(void *)nativeReporter
            reportingInterval:(int64_t)reportingInterval;
 		   
+
 /**
 * 开始上报线程 设置完相关参数之后，执行一次。
 *
 * @param nativeReporter 由makeReporter返回的值
 */
 + (void)Start:(void *)nativeReporter;
-该方法是开始上报线程。在创建实例后，设置好相应参数后调用
+
+  
 
 /**
 * 唤醒上报，在网络状态转好时调用或者其他想唤醒场景调用
@@ -522,7 +494,8 @@ implementation 'com.luojilab.component:datareporter:1.3.9'
 * @param nativeReporter 由makeReporter返回的值
 */		   
 + (void)ReaWaken:(void *)nativeReporter;
-在无网络后或者其他场景导致网络不通情况，网络恢复后调用该方法，触发再次上报逻辑
+
+  
 
 /**
 * 数据上报调用接口
@@ -532,8 +505,8 @@ implementation 'com.luojilab.component:datareporter:1.3.9'
 */
 + (void)Push:(void *)nativeReporter
    byteArray:(NSData *)byteArray;
-该方法为上报的调用接口，data为需要上报的数据，数据需要是字符串类型
-  
+
+
 /**
 * 上报成功后调用该方法
 *
@@ -542,9 +515,9 @@ implementation 'com.luojilab.component:datareporter:1.3.9'
 */
 + (void)UploadSucess:(void *)nativeReporter
                  key:(NSInteger)key;
-该方法为上报成功后调用的方法，数据通过网络上报成功后调用该方法。通知Reporter数据上报完成
- 
- 
+
+
+
 /**
 * 上报失败后调用该方法
 *
@@ -553,15 +526,15 @@ implementation 'com.luojilab.component:datareporter:1.3.9'
 */
 + (void)UploadFailed:(void *)nativeReporter
                  key:(NSInteger)key;
-该方法为上报失败后调用该方法，数据通过网络上报失败后调用该方法。通知Reporter数据上报失败
-  
+
+
 /**
 * 释放上报实例，释放后其他方法都不可以调用
 *
 * @param nativeReporter 由makeReporter返回的值
 */
 + (void)ReleaseReporter:(void *)nativeReporter;
-该方法为释放上报实例方法，当上报功能不再使用，调用该方法，释放上报实例。
+
 ## 注意：调用该方法后，不可以再调用以上任何方法。因为实例已经释放
 
 ## Support
