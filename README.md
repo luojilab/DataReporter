@@ -157,115 +157,170 @@ step:
 ## way of use
 
 /**
-* Create a Reporter instance
-*
-* @param uuid      Business unique id, defined by the user as a unique id
-* @param cachePath Cache path, must be globally unique, different paths for different services
-* @param encryptKey Cache Encrypt Key
-* @param reportImp Reporting implementation interface
-* @return
-*/
-+ (void *)MakeReporter:(NSString *)uuid
-             cachePath:(NSString *)cachePath
-			 encryptKey:(NSString *)encryptKey
-           uploadBlock:(void(^)(int64_t key,
-                                NSArray *dataArray))uploadBlock;
+
+  \*  Create a Reporter instance
+  *
+
+  \*  @param uuid      Business unique id, defined by the user as a unique id
+
+  \*  @param cachePath Cache path, must be globally unique, different paths for different services
+
+  \*  @param encryptKey Cache Encrypt Key
+
+  \*  @param reportImp Reporting implementation interface
+
+  \*  @return
+  */
+
+(void *)MakeReporter:(NSString *)uuid
+    cachePath:(NSString *)cachePath
+		 encryptKey:(NSString *)encryptKey
+  uploadBlock:(void(^)(int64_t key,
+                       NSArray *dataArray))uploadBlock;
 
 
 
 /**
-* Set the number of data to be reported in a single time, and call it before start
-*
-* @param nativeReporter The value returned by makeReporter
-* @param count          Number of data reported at one time
-*/	
-+ (void)SetReportCount:(void *)nativeReporter
-                 count:(NSInteger)count;
+
+ \*  Set the number of data to be reported in a single time, and call it before start
+ *
+
+ \*  @param nativeReporter The value returned by makeReporter
+
+ \*  @param count          Number of data reported at one time
+ */	
+
+(void)SetReportCount:(void *)nativeReporter
+    count:(NSInteger)count;
+
+
 
 
 /**
-* Set the maximum size limit of the cache file single file, the default value is 10k
+
+\*  Set the maximum size limit of the cache file single file, the default value is 10k
 *
-* @param nativeReporter The value returned by makeReporter
-* @param fileMaxSize    Cache file maximum size
+
+\*  @param nativeReporter The value returned by makeReporter
+
+\*  @param fileMaxSize    Cache file maximum size
 */				 
-+ (void)SetFileMaxSize:(void *)nativeReporter
-           fileMaxSize:(NSUInteger)fileMaxSize;
+
+(void)SetFileMaxSize:(void *)nativeReporter
+    fileMaxSize:(NSUInteger)fileMaxSize;
+
+
 
 
 /**
-* Set the cache effective time in seconds
+
+\*  Set the cache effective time in seconds
 *
-* @param nativeReporter The value returned by makeReporter
-* @param expiredTime    Validity period is the unit
+
+\*  @param nativeReporter The value returned by makeReporter
+
+\*  @param expiredTime    Validity period is the unit
 */
-+ (void)SetExpiredTime:(void *)nativeReporter
-           expiredTime:(int64_t)expiredTime;
+
+(void)SetExpiredTime:(void *)nativeReporter
+    expiredTime:(int64_t)expiredTime;
 
 /**
-* Set the reporting interval
+
+\*  Set the reporting interval
 *
-* @param nativeReporter The value returned by makeReporter
-* @param reportingInterval    Report interval, in seconds
+
+\*  @param nativeReporter The value returned by makeReporter
+
+\*  @param reportingInterval    Report interval, in seconds
 */
-+ (void)SetReportingInterval:(void *)nativeReporter
-           reportingInterval:(int64_t)reportingInterval;
+
+(void)SetReportingInterval:(void *)nativeReporter
+    reportingInterval:(int64_t)reportingInterval;
+
+
 
 /**
-* Start reporting thread After setting the relevant parameters, execute it once.
+
+\*  Start reporting thread After setting the relevant parameters, execute it once.
 *
-* @param nativeReporter The value returned by makeReporter
+
+\*  @param nativeReporter The value returned by makeReporter
 */
-+ (void)Start:(void *)nativeReporter;
+
+(void)Start:(void *)nativeReporter;
+
+
 
 
 /**
-* Wake up the report, call when the network status is good or other wake up scene call
+
+\*  Wake up the report, call when the network status is good or other wake up scene call
 *
-* @param nativeReporter The value returned by makeReporter
+
+\*  @param nativeReporter The value returned by makeReporter
 */		   
-+ (void)ReaWaken:(void *)nativeReporter;
 
-  
-
-/**
-* Data reporting call interface
-*
-* @param nativeReporter The value returned by makeReporter
-* @param data           Data to be reported
-*/
-+ (void)Push:(void *)nativeReporter
-   byteArray:(NSData *)byteArray;
- 
-   
-
-/**
-* Call this method after the report is successful
-*
-* @param nativeReporter The value returned by makeReporter
-* @param key            The value returned by the escalation implementation interface
-*/
-+ (void)UploadSucess:(void *)nativeReporter
-                 key:(NSInteger)key;
+(void)ReaWaken:(void *)nativeReporter;
 
 
 
 /**
-* Call this method after the report fails
+
+\*  Data reporting call interface
 *
-* @param nativeReporter The value returned by makeReporter
-* @param key            The value returned by the escalation implementation interface
+
+\*  @param nativeReporter The value returned by makeReporter
+
+\*  @param data           Data to be reported
 */
-+ (void)UploadFailed:(void *)nativeReporter
-                 key:(NSInteger)key;
+
+(void)Push:(void *)nativeReporter
+byteArray:(NSData *)byteArray;
+
 
 
 /**
-* Release the report instance, other methods can not be called after release
+
+\*  Call this method after the report is successful
 *
-* @param nativeReporter The value returned by makeReporter
+
+\*  @param nativeReporter The value returned by makeReporter
+
+\*  @param key            The value returned by the escalation implementation interface
 */
-+ (void)ReleaseReporter:(void *)nativeReporter;
+
+(void)UploadSucess:(void *)nativeReporter
+    key:(NSInteger)key;
+
+
+
+/**
+
+\*  Call this method after the report fails
+*
+
+\*  @param nativeReporter The value returned by makeReporter
+
+\*  @param key            The value returned by the escalation implementation interface
+*/
+
+(void)UploadFailed:(void *)nativeReporter
+    key:(NSInteger)key;
+
+
+
+
+/**
+
+\*  Release the report instance, other methods can not be called after release
+*
+
+\*  @param nativeReporter The value returned by makeReporter
+*/
+
+(void)ReleaseReporter:(void *)nativeReporter;
+
 ## Note: After calling this method, you can no longer call any of the above methods. Because the instance has been released
 
 ## <a name="data_reporter_cn">DataReporter</a>
@@ -428,112 +483,167 @@ implementation 'com.luojilab.component:datareporter:1.3.9'
 ## 调用方式
 
 /**
-* 创建Reporter实例
+
+\*  创建Reporter实例
 *
-* @param uuid      业务唯一id,由使用者定义一个唯一id
-* @param cachePath 缓存路径，必须全局唯一，不同业务不同路径
-* @param encryptKey 缓存加密key
-* @param reportImp 上报实现接口
-* @return
+
+\*  @param uuid      业务唯一id,由使用者定义一个唯一id
+
+\*  @param cachePath 缓存路径，必须全局唯一，不同业务不同路径
+
+\*  @param encryptKey 缓存加密key
+
+\*  @param reportImp 上报实现接口
+
+\*  @return
 */
-+ (void *)MakeReporter:(NSString *)uuid
-             cachePath:(NSString *)cachePath
-			 encryptKey:(NSString *)encryptKey
-           uploadBlock:(void(^)(int64_t key,
-                                NSArray *dataArray))uploadBlock;	
+
+(void *)MakeReporter:(NSString *)uuid
+    cachePath:(NSString *)cachePath
+		 encryptKey:(NSString *)encryptKey
+  uploadBlock:(void(^)(int64_t key,
+                       NSArray *dataArray))uploadBlock;	
+
+
 
 /**
-* 设置单次上报的数据条数，在start之前调用
+
+\*  设置单次上报的数据条数，在start之前调用
 *
-* @param nativeReporter 由makeReporter返回的值
-* @param count          一次上报的数据条数
+
+\*  @param nativeReporter 由makeReporter返回的值
+
+\*  @param count          一次上报的数据条数
 */	
-+ (void)SetReportCount:(void *)nativeReporter
-                 count:(NSInteger)count;
+
+(void)SetReportCount:(void *)nativeReporter
+    count:(NSInteger)count;
+
+
 
 /**
-* 设置缓存文件单文件最大大小限制，默认值为10k
+
+\*  设置缓存文件单文件最大大小限制，默认值为10k
 *
-* @param nativeReporter 由makeReporter返回的值
-* @param fileMaxSize    缓存文件最大大小
+
+\*  @param nativeReporter 由makeReporter返回的值
+
+\*  @param fileMaxSize    缓存文件最大大小
 */				 
-+ (void)SetFileMaxSize:(void *)nativeReporter
-           fileMaxSize:(NSUInteger)fileMaxSize;
+
+(void)SetFileMaxSize:(void *)nativeReporter
+    fileMaxSize:(NSUInteger)fileMaxSize;
+
+
 
 /**
-* 设置缓存有效时间，秒为单位
+
+\*  设置缓存有效时间，秒为单位
 *
-* @param nativeReporter 由makeReporter返回的值
-* @param expiredTime    有效期 秒为单位
+
+\*  @param nativeReporter 由makeReporter返回的值
+
+\*  @param expiredTime    有效期 秒为单位
 */
-+ (void)SetExpiredTime:(void *)nativeReporter
-           expiredTime:(int64_t)expiredTime;
+
+(void)SetExpiredTime:(void *)nativeReporter
+    expiredTime:(int64_t)expiredTime;
+
+
 
 /**
-* 设置上报间隔
+
+\*  设置上报间隔
 *
-* @param nativeReporter 由makeReporter返回的值
-* @param reportingInterval    上报间隔，秒为单位
+
+\*  @param nativeReporter 由makeReporter返回的值
+
+\*  @param reportingInterval    上报间隔，秒为单位
 */
-+ (void)SetReportingInterval:(void *)nativeReporter
-           reportingInterval:(int64_t)reportingInterval;
-		   
+
+(void)SetReportingInterval:(void *)nativeReporter
+    reportingInterval:(int64_t)reportingInterval;
+
+​	   
 
 /**
-* 开始上报线程 设置完相关参数之后，执行一次。
+
+\*  开始上报线程 设置完相关参数之后，执行一次。
 *
-* @param nativeReporter 由makeReporter返回的值
+
+\*  @param nativeReporter 由makeReporter返回的值
 */
-+ (void)Start:(void *)nativeReporter;
 
-  
+(void)Start:(void *)nativeReporter;
+
+
 
 /**
-* 唤醒上报，在网络状态转好时调用或者其他想唤醒场景调用
+
+\*  唤醒上报，在网络状态转好时调用或者其他想唤醒场景调用
 *
-* @param nativeReporter 由makeReporter返回的值
+
+\*  @param nativeReporter 由makeReporter返回的值
 */		   
-+ (void)ReaWaken:(void *)nativeReporter;
 
-  
-
-/**
-* 数据上报调用接口
-*
-* @param nativeReporter 由makeReporter返回的值
-* @param data           需要上报的数据
-*/
-+ (void)Push:(void *)nativeReporter
-   byteArray:(NSData *)byteArray;
-
-
-/**
-* 上报成功后调用该方法
-*
-* @param nativeReporter 由makeReporter返回的值
-* @param key            由上报实现接口返回的值
-*/
-+ (void)UploadSucess:(void *)nativeReporter
-                 key:(NSInteger)key;
+(void)ReaWaken:(void *)nativeReporter;
 
 
 
 /**
-* 上报失败后调用该方法
+
+\*  数据上报调用接口
 *
-* @param nativeReporter 由makeReporter返回的值
-* @param key            由上报实现接口返回的值
+
+\*  @param nativeReporter 由makeReporter返回的值
+
+\*  @param data           需要上报的数据
 */
-+ (void)UploadFailed:(void *)nativeReporter
-                 key:(NSInteger)key;
+
+\*  (void)Push:(void *)nativeReporter
+byteArray:(NSData *)byteArray;
 
 
 /**
-* 释放上报实例，释放后其他方法都不可以调用
+
+\*  上报成功后调用该方法
 *
-* @param nativeReporter 由makeReporter返回的值
+
+\*  @param nativeReporter 由makeReporter返回的值
+
+\*  @param key            由上报实现接口返回的值
 */
-+ (void)ReleaseReporter:(void *)nativeReporter;
+
+(void)UploadSucess:(void *)nativeReporter
+    key:(NSInteger)key;
+
+
+
+/**
+
+\*  上报失败后调用该方法
+*
+
+\*  @param nativeReporter 由makeReporter返回的值
+
+\*  @param key            由上报实现接口返回的值
+*/
+
+(void)UploadFailed:(void *)nativeReporter
+    key:(NSInteger)key;
+
+
+
+
+/**
+
+\*  释放上报实例，释放后其他方法都不可以调用
+*
+
+\*  @param nativeReporter 由makeReporter返回的值
+*/
+
+(void)ReleaseReporter:(void *)nativeReporter;
 
 ## 注意：调用该方法后，不可以再调用以上任何方法。因为实例已经释放
 
