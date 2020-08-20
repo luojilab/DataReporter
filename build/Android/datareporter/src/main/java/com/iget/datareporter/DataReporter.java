@@ -44,47 +44,77 @@ public class DataReporter {
         return new DataReporter(uuid, cachePath, encryptKey, reportImp);
     }
 
-    public static void releaseDataReporter(DataReporter dataReporter) {
+    public synchronized static void releaseDataReporter(DataReporter dataReporter) {
         dataReporter.release();
     }
 
-    public void setReportCount(int count) {
+    public synchronized void setReportCount(int count) {
+        if(mNativeReporter == 0){
+            return;
+        }
         setReportCount(mNativeReporter, count);
     }
 
-    public void setFileMaxSize(int fileMaxSize) {
+    public synchronized void setFileMaxSize(int fileMaxSize) {
+        if(mNativeReporter == 0){
+            return;
+        }
         setFileMaxSize(mNativeReporter, fileMaxSize);
     }
 
-    public void setExpiredTime(long expiredTime) {
+    public synchronized void setExpiredTime(long expiredTime) {
+        if(mNativeReporter == 0){
+            return;
+        }
         setExpiredTime(mNativeReporter, expiredTime);
     }
 
-    public void setReportingInterval(long reportingInterval) {
+    public synchronized void setReportingInterval(long reportingInterval) {
+        if(mNativeReporter == 0){
+            return;
+        }
         setReportingInterval(mNativeReporter, reportingInterval);
     }
 
-    public void setRetryInterval(long retryInterval) {
+    public synchronized void setRetryInterval(long retryInterval) {
+        if(mNativeReporter == 0){
+            return;
+        }
         setRetryInterval(mNativeReporter, retryInterval);
     }
 
-    public void start() {
+    public synchronized void start() {
+        if(mNativeReporter == 0){
+            return;
+        }
         start(mNativeReporter);
     }
 
-    public void reaWaken() {
+    public synchronized void reaWaken() {
+        if(mNativeReporter == 0){
+            return;
+        }
         reaWaken(mNativeReporter);
     }
 
-    public void push(byte[] data) {
+    public synchronized void push(byte[] data) {
+        if(mNativeReporter == 0){
+            return;
+        }
         push(mNativeReporter, data);
     }
 
-    public void uploadSucess(long key) {
+    public synchronized void uploadSucess(long key) {
+        if(mNativeReporter == 0){
+            return;
+        }
         uploadSucess(mNativeReporter, key);
     }
 
-    public void uploadFailed(long key) {
+    public synchronized void uploadFailed(long key) {
+        if(mNativeReporter == 0){
+            return;
+        }
         uploadFailed(mNativeReporter, key);
     }
 
@@ -93,8 +123,12 @@ public class DataReporter {
         mNativeReporter = makeReporter(uuid, cachePath, encryptKey, reportImp);
     }
 
-    private void release() {
+    private synchronized void release() {
+        if(mNativeReporter == 0){
+            return;
+        }
         releaseReporter(mNativeReporter);
+        mNativeReporter = 0;
     }
 
     private static void upload(long key, byte[][] data, IReport report) {
