@@ -2,6 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'maven'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
+apply plugin: 'bugly'
 
 
 version = VERSION_NAME
@@ -143,6 +144,17 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
 
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def buglyAppid = properties.getProperty('bugly.appid')
+def buglyAppkey = properties.getProperty('bugly.appkey')
+
+bugly {
+    appId = buglyAppid
+    appKey = buglyAppkey
+    debug = false
+}
+
 def siteUrl = 'https://github.com/luojilab/DataReporter'      // 项目的主页   这个是说明，可随便填
 def gitUrl = 'https://github.com/luojilab/DataReporter.git'      // Git仓库的url  这个是说明，可随便填
 group = "com.luojilab.component"    // 这里是groupId ,必须填写  一般填你唯一的包名
@@ -197,8 +209,6 @@ artifacts {
     archives sourcesJar
 }
 
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
 bintray {
     user = properties.getProperty("bintray.user")    //读取 local.properties 文件里面的 bintray.user
     key = properties.getProperty("bintray.apikey")   //读取 local.properties 文件里面的 bintray.apikey
