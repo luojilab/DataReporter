@@ -16,7 +16,6 @@ public class DataReporter {
                     try {
                         mSoloadImp.loadLibrary("c++_shared");
                         mSoloadImp.loadLibrary("data-reporter");
-                        Log.d("soload:", "net-dispatcher load error!");
                         sIsLoad = true;
                         return;
 
