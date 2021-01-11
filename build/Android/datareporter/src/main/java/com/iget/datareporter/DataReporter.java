@@ -20,16 +20,22 @@ public class DataReporter {
                         return;
 
                     } catch (Throwable e) {
-                        Log.d("soload:", e.getMessage());
+                        Log.d("DataReporter", "soload " + e.getMessage());
                     }
                 }
 
                 try {
                     System.loadLibrary("c++_shared");
+                } catch (Throwable e) {
+                    Log.d("DataReporter", "soload:c++_shared load failed " + e.getMessage());
+                }
+
+                try {
                     System.loadLibrary("data-reporter");
                 } catch (Throwable e) {
-                    Log.d("soload:", e.getMessage());
+                    Log.d("DataReporter", "soload:c++_shared load failed " + e.getMessage());
                 }
+
                 sIsLoad = true;
             }
         }
@@ -48,70 +54,70 @@ public class DataReporter {
     }
 
     public synchronized void setReportCount(int count) {
-        if(mNativeReporter == 0){
+        if (mNativeReporter == 0) {
             return;
         }
         setReportCount(mNativeReporter, count);
     }
 
     public synchronized void setFileMaxSize(int fileMaxSize) {
-        if(mNativeReporter == 0){
+        if (mNativeReporter == 0) {
             return;
         }
         setFileMaxSize(mNativeReporter, fileMaxSize);
     }
 
     public synchronized void setExpiredTime(long expiredTime) {
-        if(mNativeReporter == 0){
+        if (mNativeReporter == 0) {
             return;
         }
         setExpiredTime(mNativeReporter, expiredTime);
     }
 
     public synchronized void setReportingInterval(long reportingInterval) {
-        if(mNativeReporter == 0){
+        if (mNativeReporter == 0) {
             return;
         }
         setReportingInterval(mNativeReporter, reportingInterval);
     }
 
     public synchronized void setRetryInterval(long retryInterval) {
-        if(mNativeReporter == 0){
+        if (mNativeReporter == 0) {
             return;
         }
         setRetryInterval(mNativeReporter, retryInterval);
     }
 
     public synchronized void start() {
-        if(mNativeReporter == 0){
+        if (mNativeReporter == 0) {
             return;
         }
         start(mNativeReporter);
     }
 
     public synchronized void reaWaken() {
-        if(mNativeReporter == 0){
+        if (mNativeReporter == 0) {
             return;
         }
         reaWaken(mNativeReporter);
     }
 
     public synchronized void push(byte[] data) {
-        if(mNativeReporter == 0){
+        if (mNativeReporter == 0) {
             return;
         }
         push(mNativeReporter, data);
     }
 
     public synchronized void uploadSucess(long key) {
-        if(mNativeReporter == 0){
+        if (mNativeReporter == 0) {
             return;
         }
         uploadSucess(mNativeReporter, key);
     }
 
     public synchronized void uploadFailed(long key) {
-        if(mNativeReporter == 0){
+        if (mNativeReporter == 0) {
             return;
         }
         uploadFailed(mNativeReporter, key);
@@ -123,7 +129,7 @@ public class DataReporter {
     }
 
     private synchronized void release() {
-        if(mNativeReporter == 0){
+        if (mNativeReporter == 0) {
             return;
         }
         releaseReporter(mNativeReporter);
