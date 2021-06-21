@@ -1,6 +1,6 @@
 ## DataReporter
 
-[![name](https://img.shields.io/badge/release-1.4.4-green?style=flat)]()
+[![name](https://img.shields.io/badge/release-1.4.6-green?style=flat)]()
 [![license](https://img.shields.io/badge/license-MIT-brightgreen?style=flat)]()
 [![platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS-red?style=flat)]()
 
@@ -25,10 +25,10 @@ Choose [Android](#android) or [iOS](#apple)
 ## Use AAR
 1. Join to the build.gradle where in the project root directory
 repositories {
-        jcenter()
+        mavenCentral()
     }
 2. Join to the build.gradle where in the project directory
-implementation 'com.luojilab.component:datareporter:1.4.4'
+implementation 'com.luojilab.component:datareporter:1.4.6'
 3. Access according to the call mode of the demo
 
 ## Source Compile
@@ -268,10 +268,10 @@ demo 的使用请参考[这里](https://github.com/luojilab/DataReporter/tree/ma
 ## aar接入
 1. 在项目跟目录build.gradle中加入
 repositories {
-        jcenter()
+        mavenCentral()
     }
 2. 在项目build.gradle中加入
-implementation 'com.luojilab.component:datareporter:1.4.4'
+implementation 'com.luojilab.component:datareporter:1.4.6'
 3. 按照demo的调用方式接入
 
 ## 源码编译
