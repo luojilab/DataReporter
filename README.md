@@ -28,7 +28,7 @@ repositories {
         mavenCentral()
     }
 2. Join to the build.gradle where in the project directory
-implementation 'com.luojilab.component:datareporter:1.4.6'
+implementation 'io.github.luojilab:datareporter:1.4.6'
 3. Access according to the call mode of the demo
 
 ## Source Compile
@@ -271,7 +271,7 @@ repositories {
         mavenCentral()
     }
 2. 在项目build.gradle中加入
-implementation 'com.luojilab.component:datareporter:1.4.6'
+implementation 'io.github.luojilab:datareporter:1.4.6'
 3. 按照demo的调用方式接入
 
 ## 源码编译
