@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.button_start:
                 if (mDataReporter == null) {
                     final NetPost netPost = new NetPost();
-                    mDataReporter = DataReporter.makeDataReporter("test", MainActivity.this.getFilesDir().getPath() + "/data", "", netPost);
+                    mDataReporter = DataReporter.makeDataReporter("test", MainActivity.this.getFilesDir().getPath() + "/data", "HKkbJ6PrCd7C68e3Xz1TOgnzVrXZ424K", netPost);
                     netPost.setDataReporter(mDataReporter);
                     //设置单次上报最大条数
                     mDataReporter.setReportCount(10);

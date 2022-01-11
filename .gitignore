@@ -7,6 +7,8 @@ build/Android/datareporter/build/.cxx
 build/Android/local.properties
 build/Android/datareporter/bugly
 build/Android/datareporter/.cxx
+build/Android/for_aar
+build/Android/for_so
 build/iOS/build
 sample/Android/.idea
 sample/Android/.gradle

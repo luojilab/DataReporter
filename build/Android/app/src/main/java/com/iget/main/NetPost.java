@@ -36,6 +36,7 @@ public class NetPost implements IReport {
                 int max = 10;
                 Random random = new Random();
                 int num = random.nextInt(max) % (max - min + 1) + min;
+                num = 4;
 
                 //随机定义一个数值5 来模拟网络失败的情况
                 if (num != 5) {
@@ -61,7 +62,7 @@ public class NetPost implements IReport {
                     }
                 }
             }
-        }, 200);
+        }, 20);
 
     }
 }

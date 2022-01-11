@@ -18,7 +18,7 @@ namespace future {
 
     const std::string Reporter::DATA_SUFFIX = ".data";
     const int RETRY_STEP = 1000 * 5;
-    const int MAX_RETRY_STEP = 1000 * 60 * 60;
+    const int MAX_RETRY_STEP = 1000 * 60 * 15;
 
     Reporter::Reporter(const std::string &uuid, const std::string &cachePath,
                        const std::string &encryptKey,
@@ -237,6 +237,8 @@ namespace future {
                             free(plainText);
                             iter++;
                         }
+                    }else{
+                        iter++;
                     }
                 }
             }
