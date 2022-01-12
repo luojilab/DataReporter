@@ -1,6 +1,6 @@
 ## DataReporter
 
-[![name](https://img.shields.io/badge/release-1.4.8-green?style=flat)]()
+[![name](https://img.shields.io/badge/release-1.4.9-green?style=flat)]()
 [![license](https://img.shields.io/badge/license-MIT-brightgreen?style=flat)]()
 [![platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS-red?style=flat)]()
 
@@ -28,7 +28,7 @@ repositories {
         mavenCentral()
     }
 2. Join to the build.gradle where in the project directory
-implementation 'io.github.luojilab:datareporter:1.4.8'
+implementation 'io.github.luojilab:datareporter:1.4.9'
 3. Access according to the call mode of the demo
 
 ## Source Compile
@@ -271,7 +271,7 @@ repositories {
         mavenCentral()
     }
 2. 在项目build.gradle中加入
-implementation 'io.github.luojilab:datareporter:1.4.8'
+implementation 'io.github.luojilab:datareporter:1.4.9'
 3. 按照demo的调用方式接入
 
 ## 源码编译
