@@ -1,6 +1,7 @@
 *.iml
 .gradle
 /local.properties
+/bugly_upload_sys.bat
 /.idea/caches/build_file_checksums.ser
 /.idea/libraries
 /.idea/modules.xml
