@@ -165,6 +165,9 @@ namespace future {
             if (docode_len + (unsigned char *) m_MemOffset > (unsigned char *) m_MemDataEndPos) {
                 break;
             }
+            if (item.data_len == 0) {
+                continue;
+            }
 
             m_MemOffset = (unsigned char *) m_MemOffset + docode_len;
 

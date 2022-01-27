@@ -184,7 +184,7 @@ namespace future {
                 std::map<int64_t, std::shared_ptr<std::list<std::shared_ptr<CacheItem> > > >::iterator iter = m_Reporting.find(
                         key);
                 if (m_UploadImpl != NULL && iter != m_Reporting.end()) {
-                    m_UploadImpl(key, *(m_Reporting[key]));
+                    m_UploadImpl(key, *(iter->second));
                 }
                 m_DelayUploadTasks.erase(delayTask);
             });
@@ -226,7 +226,7 @@ namespace future {
                         plainText = (unsigned char *) m_DecryptFun(
                                 (*iter)->pbEncodeItem.data.GetBegin(),
                                 (*iter)->pbEncodeItem.data.Length(), plainTextLen);
-                        if (plainText == nullptr) {
+                        if (plainText == nullptr || plainTextLen == 0) {
                             Debug("Report ClearItem\n");
                             m_DataProvider->ClearItem(*(*iter));
                             iter = data->erase(iter);
@@ -247,7 +247,7 @@ namespace future {
                 return;
             }
             m_Reporting[now] = data;
-            m_UploadImpl(now, *(m_Reporting[now]));
+            m_UploadImpl(now, *data);
         }
     }
 

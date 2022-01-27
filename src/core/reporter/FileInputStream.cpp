@@ -73,6 +73,10 @@ namespace future {
                 return ret;
             }
 
+            if (pbEncodeItem.data_len == 0) {
+                continue;
+            }
+
             std::shared_ptr<CacheItem> cacheItem(new CacheItem);
             cacheItem->pbEncodeItem = std::move(pbEncodeItem);
 

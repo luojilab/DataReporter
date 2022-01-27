@@ -1,12 +1,8 @@
 apply plugin: 'com.android.library'
-apply plugin: 'maven'
-apply plugin: 'com.github.dcendents.android-maven'
-apply plugin: 'bugly'
+apply plugin: 'maven-publish'
 
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
-def buglyAppid = properties.getProperty('bugly.appid')
-def buglyAppkey = properties.getProperty('bugly.appkey')
 def version_code = properties.getProperty('version.Code')
 def version_name = properties.getProperty('version.Name')
 ext {
@@ -24,8 +20,6 @@ android {
         minSdkVersion 15
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 23
-        versionCode version_code as Integer
-        versionName version_name
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -37,7 +31,7 @@ android {
                     cppFlags "-std=c++14",
                             "-DPIC",
                             "-fPIC",
-                            "-DVERSION_CODE=${defaultConfig.versionCode}",
+                            "-DVERSION_CODE=${version_code}",
                             "-llog"
                             //"-fsanitize=address -fno-omit-frame-pointer"
 
@@ -82,7 +76,7 @@ android {
                             "-fPIC",
                             "-O3", //gcc use Os
                             "-DNDEBUG",
-                            "-DVERSION_CODE=${defaultConfig.versionCode}",
+                            "-DVERSION_CODE=${version_code}",
                             "-fvisibility=hidden",
                             "-llog"
 
@@ -152,12 +146,6 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-}
-
-bugly {
-    appId = buglyAppid
-    appKey = buglyAppkey
-    debug = false
 }
 
 
