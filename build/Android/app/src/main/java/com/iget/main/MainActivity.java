@@ -6,26 +6,19 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Environment;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.iget.data_reporter.R;
 import com.iget.datareporter.DataReporter;
-import com.iget.datareporter.IReport;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-
-import static android.net.ConnectivityManager.TYPE_WIFI;
-import static android.provider.ContactsContract.CommonDataKinds.Email.TYPE_MOBILE;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
