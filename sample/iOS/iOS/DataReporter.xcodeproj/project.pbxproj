@@ -17,7 +17,7 @@
 		840DA6E721A658BC000458B1 /* DataReporterManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 840DA6E421A658BC000458B1 /* DataReporterManager.m */; };
 		848183EC21A65E020043BB06 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 848183EB21A65E020043BB06 /* libc++.tbd */; };
 		848183EE21A65E290043BB06 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 848183ED21A65E290043BB06 /* libz.tbd */; };
-		DF45847724343A9A0098B522 /* libdata-reporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DF45847624343A9A0098B522 /* libdata-reporter.a */; };
+		DF07DDA027C778E0002EDC50 /* DataReporter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF07DD9F27C778E0002EDC50 /* DataReporter.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,7 +46,7 @@
 		840DA6E521A658BC000458B1 /* DataReporterManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataReporterManager.h; sourceTree = "<group>"; };
 		848183EB21A65E020043BB06 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		848183ED21A65E290043BB06 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
-		DF45847624343A9A0098B522 /* libdata-reporter.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libdata-reporter.a"; path = "../../../release/iOS/all/libdata-reporter.a"; sourceTree = SOURCE_ROOT; };
+		DF07DD9F27C778E0002EDC50 /* DataReporter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DataReporter.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,9 +54,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DF45847724343A9A0098B522 /* libdata-reporter.a in Frameworks */,
 				848183EE21A65E290043BB06 /* libz.tbd in Frameworks */,
 				848183EC21A65E020043BB06 /* libc++.tbd in Frameworks */,
+				DF07DDA027C778E0002EDC50 /* DataReporter.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -73,7 +73,7 @@
 		840DA6B321A65848000458B1 = {
 			isa = PBXGroup;
 			children = (
-				840DA6E821A65926000458B1 /* Lib */,
+				DF07DD9F27C778E0002EDC50 /* DataReporter.framework */,
 				840DA6E321A6587D000458B1 /* Classes */,
 				840DA6BE21A65848000458B1 /* DataReporter */,
 				840DA6D721A65849000458B1 /* DataReporterTests */,
@@ -123,25 +123,9 @@
 			path = Classes;
 			sourceTree = "<group>";
 		};
-		840DA6E821A65926000458B1 /* Lib */ = {
-			isa = PBXGroup;
-			children = (
-				840DA6E921A65926000458B1 /* include */,
-			);
-			path = Lib;
-			sourceTree = "<group>";
-		};
-		840DA6E921A65926000458B1 /* include */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = include;
-			sourceTree = "<group>";
-		};
 		848183EA21A65E010043BB06 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				DF45847624343A9A0098B522 /* libdata-reporter.a */,
 				848183ED21A65E290043BB06 /* libz.tbd */,
 				848183EB21A65E020043BB06 /* libc++.tbd */,
 			);
@@ -409,7 +393,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 897SN97QDY;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../../../release/iOS/include";
 				INFOPLIST_FILE = DataReporter/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -433,7 +420,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 897SN97QDY;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../../../release/iOS/include";
 				INFOPLIST_FILE = DataReporter/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

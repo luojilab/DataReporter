@@ -7,8 +7,7 @@
 //
 
 #import "DataReporterManager.h"
-#import "DataReporter.h"
-
+#import <DataReporter/DataReporter.h>
 
 static NSString *kReporterIndentify = @"kReporterIndentify";
 static NSUInteger kMaxFileSize = 100 * 1024;
