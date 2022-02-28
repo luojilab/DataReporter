@@ -125,10 +125,10 @@ static void *reporterInstanse;
 	//set report ExpiredTime 0表示永久有效 所有数据上报，10*24*60*60 表示10天内有效，10天外数据不上报
     [DataReporter SetExpiredTime:reporterInstanse expiredTime:0];
 	
-	//set report reporterInstanse 上报间隔 单位i秒  10 表示每隔10秒上报一次，0表示有数据立即上报
+	//set report reporterInstanse 上报间隔 单位i毫秒  10 表示每隔10毫秒上报一次，0表示有数据立即上报
     [DataReporter SetReportingInterval:reporterInstanse reportingInterval:0];
 	
-	//set report reporterInstanse 上报间隔 单位i秒  5 表示每第一次上报错误后延迟5秒重试上报，再次错误，再加5秒，也就是10秒后再重试，最长1个小时后重试，如果为0，表示出错后立即重试，容易导致服务器压力过大，默认值为5
+	//set report retryInterval 重试间隔 单位i秒  5 表示每第一次上报错误后延迟5秒重试上报，再次错误，再加5秒，也就是10秒后再重试，最长1个小时后重试，如果为0，表示出错后立即重试，容易导致服务器压力过大，默认值为5
     [DataReporter SetRetryInterval:reporterInstanse retryInterval:5];
 	
     //set save file size 设置缓存文件大小， 大小一定要比单条push进来的数据大
