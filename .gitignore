@@ -9,6 +9,10 @@ build/Android/datareporter/bugly
 build/Android/datareporter/.cxx
 build/Android/for_aar
 build/Android/for_so
+build/Android/buglybin
+build/Android/bugly_upload_symbol.bat
+build/Android/cp_buglyQqUploadSymbolLib.jar
+build/Android/cp_buglySymbolAndroid.jar
 build/iOS/build
 sample/Android/.idea
 sample/Android/.gradle
