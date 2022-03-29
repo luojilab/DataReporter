@@ -14,7 +14,7 @@ public class DataReporter {
             if (!sIsLoad) {
                 if (mSoloadImp != null) {
                     try {
-                        mSoloadImp.loadLibrary("c++_shared");
+                        //mSoloadImp.loadLibrary("c++_shared");
                         mSoloadImp.loadLibrary("data-reporter");
                         sIsLoad = true;
                         return;
@@ -24,16 +24,16 @@ public class DataReporter {
                     }
                 }
 
-                try {
-                    System.loadLibrary("c++_shared");
-                } catch (Throwable e) {
-                    Log.d("DataReporter", "soload:c++_shared load failed " + e.getMessage());
-                }
+//                try {
+//                    System.loadLibrary("c++_shared");
+//                } catch (Throwable e) {
+//                    Log.d("DataReporter", "soload:c++_shared load failed " + e.getMessage());
+//                }
 
                 try {
                     System.loadLibrary("data-reporter");
                 } catch (Throwable e) {
-                    Log.d("DataReporter", "soload:c++_shared load failed " + e.getMessage());
+                    Log.d("DataReporter", "soload:data-reporter load failed " + e.getMessage());
                 }
 
                 sIsLoad = true;
