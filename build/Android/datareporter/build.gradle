@@ -17,7 +17,7 @@ android {
 
 
     defaultConfig {
-        minSdkVersion 17
+        minSdkVersion 19
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 28
 
@@ -28,7 +28,7 @@ android {
         debug{
             externalNativeBuild {
                 cmake {
-                    cppFlags "-std=c++14",
+                    cppFlags "-std=c++17",
                             "-DPIC",
                             "-fPIC",
                             "-DVERSION_CODE=${version_code}",
@@ -47,7 +47,7 @@ android {
                     abiFilters "armeabi-v7a", "arm64-v8a"
                     arguments '-DANDROID_ARM_NEON=TRUE',
                             '-DANDROID_ARM_MODE=arm',
-                            '-DANDROID_PLATFORM=android-17',
+                            '-DANDROID_PLATFORM=android-19',
                             '-DANDROID_TOOLCHAIN=clang', '-DANDROID_STL=c++_static',
                             //'-DANDROID_ABI=armeabi-v7a',"-DCMAKE_BUILD_TYPE=Debug"
                             "-DCMAKE_BUILD_TYPE=Debug"
@@ -71,7 +71,7 @@ android {
 
             externalNativeBuild {
                 cmake {
-                    cppFlags "-std=c++14",
+                    cppFlags "-std=c++17",
                             "-DPIC",
                             "-fPIC",
                             "-O3", //gcc use Os
@@ -94,7 +94,7 @@ android {
                     abiFilters "armeabi-v7a","arm64-v8a"
                     arguments '-DANDROID_ARM_NEON=TRUE',
                             '-DANDROID_ARM_MODE=arm',
-                            '-DANDROID_PLATFORM=android-17',
+                            '-DANDROID_PLATFORM=android-19',
                             '-DANDROID_TOOLCHAIN=clang', '-DANDROID_STL=c++_static',
                             "-DCMAKE_BUILD_TYPE=Release"
 
@@ -112,7 +112,7 @@ android {
         }
     }
 
-    ndkPath "D:\\android_dev\\android-ndk-r23b"
+    ndkPath "D:\\android_dev\\android-ndk-r24"
 
     externalNativeBuild {
         cmake {
